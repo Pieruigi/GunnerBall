@@ -44,6 +44,8 @@ namespace Zoca
                     // Leave room
                     PhotonNetwork.LeaveRoom();
                 }
+
+                //Debug.Log("IsMaterClient:" + PhotonNetwork.IsMasterClient);
             }
         }
 
@@ -80,7 +82,7 @@ namespace Zoca
 
         public override void OnLeftRoom()
         {
-            Debug.LogFormat("PUN - Left room [Name:{0}].", PhotonNetwork.CurrentRoom.Name);
+            Debug.LogFormat("PUN - Left room.");
             SceneManager.LoadScene("MainScene");
         }
 

@@ -15,6 +15,8 @@ namespace Zoca
         string roomName = null;
         #endregion
 
+        bool connecting = false;
+
         private void Awake()
         {
             // Allow the master client to sync scene to other clients
@@ -38,6 +40,8 @@ namespace Zoca
         /// </summary>
         public void Connect()
         {
+            connecting = true;
+           
             if (PhotonNetwork.IsConnected)
             {
                 // Already connected to photon network, join a random room
@@ -61,10 +65,18 @@ namespace Zoca
         #region callbacks
         public override void OnConnectedToMaster()
         {
-            Debug.LogFormat("PUN - Connected to MasterServer.");
-            // Joining or creating room
-            Debug.LogFormat("PUN - Joining or creating room...");
-            PhotonNetwork.JoinRandomRoom(null, (byte)expectedMaxPlayers);
+            if (connecting)
+            {
+                // This callback is called even when you leave a game ( moving from game to 
+                // master server ); in that case we don't want to join again, so we check
+                // the connecting flag.
+                connecting = false;
+                Debug.LogFormat("PUN - Connected to MasterServer.");
+                // Joining or creating room
+                Debug.LogFormat("PUN - Joining or creating room...");
+                PhotonNetwork.JoinRandomRoom(null, (byte)expectedMaxPlayers);
+            }
+            
         }
 
         public override void OnDisconnected(DisconnectCause cause)
@@ -90,11 +102,16 @@ namespace Zoca
 
         public override void OnJoinRandomFailed(short returnCode, string message)
         {
-            Debug.LogErrorFormat("PUN - Unable to join random room: [{0}] {1}.", returnCode, message);
+            
             if(returnCode == ErrorCode.NoRandomMatchFound)
             {
                 // Create a new room
+                Debug.LogWarningFormat("PUN - Unable to join random room: [{0}] {1}.", returnCode, message);
                 PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = (byte)expectedMaxPlayers });
+            }
+            else
+            {
+                Debug.LogErrorFormat("PUN - Unable to join random room: [{0}] {1}.", returnCode, message);
             }
         }
 
