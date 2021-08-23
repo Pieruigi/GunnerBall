@@ -36,17 +36,16 @@ namespace Zoca
         // Update is called once per frame
         void Update()
         {
-            // To remove, only for test
+            
+        }
+
+        public void Exit()
+        {
             if (inGame)
             {
-                if (Input.GetKeyDown(KeyCode.Escape))
-                {
-                    // Leave room
-                    PhotonNetwork.LeaveRoom();
-                }
-
-                //Debug.Log("IsMaterClient:" + PhotonNetwork.IsMasterClient);
+                PhotonNetwork.LeaveRoom();
             }
+            
         }
 
         #region private
