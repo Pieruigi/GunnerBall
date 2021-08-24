@@ -124,17 +124,17 @@ namespace Zoca
             Debug.LogFormat("PUN - local player actor number: {0}", PhotonNetwork.LocalPlayer.ActorNumber);
             if (PhotonNetwork.LocalPlayer.ActorNumber == 1)
             {
-                PhotonNetwork.LocalPlayer.CustomProperties.Add(PlayerCustomProperties.TeamColor, Team.Blue);
+                PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomProperty.TeamColor, Team.Blue);
             }
             else
             {
-                PhotonNetwork.LocalPlayer.CustomProperties.Add(PlayerCustomProperties.TeamColor, Team.Red);
+                PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomProperty.TeamColor, Team.Red);
             }
 
-            // Set the 
+            // Set the default character
             Debug.LogFormat("PUN - Setting default character id.");
-            PhotonNetwork.LocalPlayer.CustomProperties.Add(PlayerCustomProperties.CharacterId, 0);
-
+            PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomProperty.CharacterId, 0);
+    
         }
         #endregion
 

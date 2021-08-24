@@ -6,11 +6,6 @@ namespace Zoca
 {
     public enum Team { Blue, Red }
 
-    public class PlayerCustomProperties
-    {
-        public static readonly string TeamColor = "tc";
-        public static readonly string CharacterId = "cid";
-    }
 
     public class ResourceFolders
     {

@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 707472009685262575}
   - component: {fileID: 707472009685262574}
   - component: {fileID: 707472009685262569}
-  - component: {fileID: 707472009685262568}
   - component: {fileID: 5356899110363376708}
   - component: {fileID: 5356899110363376709}
   - component: {fileID: 3858761619238562904}
@@ -90,20 +89,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &707472009685262568
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 707472009685262571}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &5356899110363376708
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -116,8 +101,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0bcc742b5305f24c82f397b76b30f59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
+  maxSpeed: 3
+  acceleration: 10
   playerCamera: {fileID: 9119370935336091842}
+  playerCollider: {fileID: 0}
 --- !u!114 &5356899110363376709
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -175,6 +162,22 @@ MonoBehaviour:
         m_CallState: 1
     m_ActionId: 5aa270ae-d582-4b08-9c79-1d56331b5226
     m_ActionName: PlayerControls/Exit[/Keyboard/escape]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5356899110363376708}
+        m_TargetAssemblyTypeName: Zoca.PlayerController, Assembly-CSharp
+        m_MethodName: OnLook
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
+    m_ActionId: e2ec2ae6-55fa-4802-96e0-b4157617f443
+    m_ActionName: PlayerControls/Look[/Mouse/delta]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: MouseAndKeyboard
   m_DefaultActionMap: PlayerControls
@@ -199,6 +202,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   observableSearch: 2
   ObservedComponents:
+  - {fileID: 5356899110363376708}
   - {fileID: 8603690223840455249}
   sceneViewId: 0
   InstantiationId: 0
@@ -215,12 +219,12 @@ CharacterController:
   m_Enabled: 1
   serializedVersion: 2
   m_Height: 2
-  m_Radius: 0.5
+  m_Radius: 0.4
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &8603690223840455249
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -233,8 +237,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
+  m_SynchronizePosition: 0
+  m_SynchronizeRotation: 0
   m_SynchronizeScale: 0
   m_UseLocal: 1
 --- !u!1 &9119370935336091842

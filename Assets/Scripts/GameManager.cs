@@ -102,13 +102,31 @@ namespace Zoca
             {
                 inGame = true;
 
-                // After the scene has been loaded we can network instantiate the player character
-                int cId = (int)PhotonNetwork.LocalPlayer.CustomProperties[PlayerCustomProperties.CharacterId];
-                Debug.LogFormat("Loading local player character [CharacterId:{0}].", cId);
-                GameObject player = Resources.LoadAll<PlayerController>(ResourceFolders.Characters)[0].gameObject;
-                Debug.LogFormat("Character found: {0}", player.name);
-                Debug.LogFormat("Spawning {0} on photon network...", player.name);
-                PhotonNetwork.Instantiate(System.IO.Path.Combine(ResourceFolders.Characters, player.name), Vector3.zero, Quaternion.identity);
+                // After the scene has been loaded on this client we can network instantiate 
+                // the player character
+                if (PhotonNetwork.IsConnected) // Online mode
+                {
+                    //int cId = (int)PhotonNetwork.LocalPlayer.CustomProperties[PlayerCustomProperty.CharacterId];
+                    int cId = 0;
+                    if (!PlayerCustomPropertyUtility.TryGetPlayerCustomProperty<int>(PhotonNetwork.LocalPlayer, PlayerCustomProperty.CharacterId, ref cId))
+                    {
+                        Debug.LogErrorFormat("GameManager - Empty property for local player: [{0}]", PlayerCustomProperty.CharacterId);
+                    }
+                    Debug.LogFormat("Loading local player character [CharacterId:{0}].", cId);
+                    GameObject player = Resources.LoadAll<PlayerController>(ResourceFolders.Characters)[(int)cId].gameObject;
+                    Debug.LogFormat("Character found: {0}", player.name);
+                    Debug.LogFormat("Spawning {0} on photon network...", player.name);
+                    PhotonNetwork.Instantiate(System.IO.Path.Combine(ResourceFolders.Characters, player.name), Vector3.zero, Quaternion.identity);
+                }
+                else // Offline mode ( for test )
+                {
+                    GameObject player = Resources.LoadAll<PlayerController>(ResourceFolders.Characters)[0].gameObject;
+                    Debug.LogFormat("Character found: {0}", player.name);
+                    Debug.LogFormat("Spawning {0} on photon network...", player.name);
+                    Instantiate(player, Vector3.zero, Quaternion.identity);
+                }
+                
+                
             }
             else
             {
