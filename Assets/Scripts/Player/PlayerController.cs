@@ -99,7 +99,8 @@ namespace Zoca
 
         public void OnPause(InputAction.CallbackContext context)
         {
-            GameManager.Instance.Pause();
+            if(context.started)
+                GameManager.Instance.Pause();
         }
         #endregion
 
