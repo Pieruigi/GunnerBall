@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,10 +6,13 @@ using UnityEngine.InputSystem;
 
 namespace Zoca
 {
-    public class PlayerController : MonoBehaviour
+    public class PlayerController : MonoBehaviourPunCallbacks
     {
         [SerializeField]
         float moveSpeed = 5f;
+
+        [SerializeField]
+        GameObject playerCamera;
 
         Rigidbody rb;
 
@@ -18,12 +22,31 @@ namespace Zoca
         private void Awake()
         {
             rb = GetComponent<Rigidbody>();
+
+            // Remove camera on others
+            if(!GetComponent<PhotonView>().IsMine)
+            {
+                Destroy(playerCamera);
+            }
         }
 
         // Start is called before the first frame update
         void Start()
         {
-
+            // Set player starting position
+            Transform spawnPoint;
+            Team team = (Team)PhotonNetwork.LocalPlayer.CustomProperties[PlayerCustomProperties.TeamColor];
+            Debug.LogFormat("LocalPlayer has joint the {0} team.", team.ToString());
+            if(team == Team.Blue)
+            {
+                spawnPoint = LevelManager.Instance.BlueTeamSpawnPoints[0];
+            }
+            else
+            {
+                spawnPoint = LevelManager.Instance.RedTeamSpawnPoints[0];
+            }
+            transform.position = spawnPoint.position;
+            transform.rotation = spawnPoint.rotation;
         }
 
         // Update is called once per frame
@@ -74,9 +97,9 @@ namespace Zoca
 
         }
 
-        public void OnExit(InputAction.CallbackContext context)
+        public void OnPause(InputAction.CallbackContext context)
         {
-            GameManager.Instance.Exit();
+            GameManager.Instance.Pause();
         }
         #endregion
 

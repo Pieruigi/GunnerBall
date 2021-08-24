@@ -39,12 +39,18 @@ namespace Zoca
             
         }
 
-        public void Exit()
+        public void Pause()
         {
             if (inGame)
             {
+                // We should open some kind of game menu here
                 PhotonNetwork.LeaveRoom();
             }
+            
+        }
+
+        public void Resume()
+        {
             
         }
 
@@ -94,8 +100,15 @@ namespace Zoca
         {
             if (!scene.name.Equals("MainScene"))
             {
-                
                 inGame = true;
+
+                // After the scene has been loaded we can network instantiate the player character
+                int cId = (int)PhotonNetwork.LocalPlayer.CustomProperties[PlayerCustomProperties.CharacterId];
+                Debug.LogFormat("Loading local player character [CharacterId:{0}].", cId);
+                GameObject player = Resources.LoadAll<PlayerController>(ResourceFolders.Characters)[0].gameObject;
+                Debug.LogFormat("Character found: {0}", player.name);
+                Debug.LogFormat("Spawning {0} on photon network...", player.name);
+                PhotonNetwork.Instantiate(System.IO.Path.Combine(ResourceFolders.Characters, player.name), Vector3.zero, Quaternion.identity);
             }
             else
             {

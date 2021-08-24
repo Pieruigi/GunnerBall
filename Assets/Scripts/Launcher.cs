@@ -118,6 +118,23 @@ namespace Zoca
         public override void OnJoinedRoom()
         {
             Debug.LogFormat("PUN - Room joined [Name:{0}].", PhotonNetwork.CurrentRoom.Name);
+
+            // Set the team
+            // The following code only support 1vs1
+            Debug.LogFormat("PUN - local player actor number: {0}", PhotonNetwork.LocalPlayer.ActorNumber);
+            if (PhotonNetwork.LocalPlayer.ActorNumber == 1)
+            {
+                PhotonNetwork.LocalPlayer.CustomProperties.Add(PlayerCustomProperties.TeamColor, Team.Blue);
+            }
+            else
+            {
+                PhotonNetwork.LocalPlayer.CustomProperties.Add(PlayerCustomProperties.TeamColor, Team.Red);
+            }
+
+            // Set the 
+            Debug.LogFormat("PUN - Setting default character id.");
+            PhotonNetwork.LocalPlayer.CustomProperties.Add(PlayerCustomProperties.CharacterId, 0);
+
         }
         #endregion
 
