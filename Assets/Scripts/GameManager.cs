@@ -104,7 +104,7 @@ namespace Zoca
 
                 // After the scene has been loaded on this client we can network instantiate 
                 // the player character
-                if (PhotonNetwork.IsConnected) // Online mode
+                if (!PhotonNetwork.OfflineMode) // Online mode
                 {
                     //int cId = (int)PhotonNetwork.LocalPlayer.CustomProperties[PlayerCustomProperty.CharacterId];
                     if (!PlayerController.localPlayer)
@@ -122,11 +122,16 @@ namespace Zoca
                     }
                     
                 }
-                else // Offline mode ( for test )
+                else // Offline mode: for test, means we are testing the arena from the editor
                 {
+                    // Add default custom properties
+                    PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomProperty.TeamColor, Team.Blue);
+                    PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomProperty.CharacterId, 0);
+                    // Get character resource
                     GameObject player = Resources.LoadAll<PlayerController>(ResourceFolders.Characters)[0].gameObject;
                     Debug.LogFormat("Character found: {0}", player.name);
                     Debug.LogFormat("Spawning {0} on photon network...", player.name);
+                    // Create local
                     Instantiate(player, Vector3.zero, Quaternion.identity);
                 }
                 

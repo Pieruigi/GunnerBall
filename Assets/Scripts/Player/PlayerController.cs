@@ -10,6 +10,7 @@ namespace Zoca
     {
         public static GameObject localPlayer { get; private set; } 
 
+        [Header("Physics")]
         [SerializeField]
         float maxSpeed = 5f;
 
@@ -17,15 +18,24 @@ namespace Zoca
         float acceleration = 10f;
 
         [SerializeField]
-        PlayerCamera playerCamera;
-
-        [SerializeField]
         Collider playerCollider;
 
+        [Header("Camera")]
+        [SerializeField]
+        PlayerCamera playerCamera;
+        public PlayerCamera PlayerCamera
+        {
+            get { return playerCamera; }
+        }
+
+        [Header("Equipment")]
+        [SerializeField]
+        FireWeapon fireWeapon;
 
         CharacterController cc;
 
         bool moving = false;
+        bool shooting = false;
         Vector2 input;
         Vector2 lookInput;
         float lookSensitivity = 50f;
@@ -46,11 +56,13 @@ namespace Zoca
 
         private void Awake()
         {
-
+            // Get the character controller
             cc = GetComponent<CharacterController>();
- 
+
+            // Set the fireweapon owner
+            fireWeapon.SetOwner(this);
             
-            if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
             {
                 // This is not the local player
                 Destroy(playerCamera.gameObject);
@@ -73,7 +85,7 @@ namespace Zoca
         // Start is called before the first frame update
         void Start()
         {
-            if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
                 return;
 
             
@@ -114,38 +126,22 @@ namespace Zoca
         void Update()
         {
 
-            if (photonView.IsMine || !PhotonNetwork.IsConnected)
+            if (photonView.IsMine || PhotonNetwork.OfflineMode)
             {
-                // Look
-                Vector2 lookAngles = lookInput * lookSensitivity * Time.deltaTime;
-                //Debug.LogFormat("LookAngles: {0}", lookAngles);
-                transform.eulerAngles += Vector3.up * lookAngles.x;
-                // Camera
-                playerCamera.Pitch(-lookAngles.y);
+                Move();
 
-
-                // Move
-                Vector3 dir = transform.forward * input.y + transform.right * input.x;
-                targetVelocity = dir.normalized * maxSpeed;
-                velocity = Vector3.MoveTowards(velocity, targetVelocity, Time.deltaTime * acceleration);
-
-                // Gravity
-                if (!cc.isGrounded)
+                if (shooting)
                 {
-                    ySpeed += Physics.gravity.y * Time.deltaTime;
+                    object[] parameters;
+                    if (fireWeapon.TryShoot(out parameters))
+                    {
+                        Debug.LogFormat("PlayerController - Shoot parameters length: {0}", parameters.Length);
+                        for(int i=0; i<parameters.Length; i++)
+                            Debug.LogFormat("PlayerController - Shoot parameter[{0}]: {1}", i, parameters[i]);
+                        // RPC("Shoot", All, parameters);
+                    }
                 }
-                else
-                {
-                    if(ySpeed < 0)
-                        ySpeed = 0;
-                }
-
-                velocity.y = ySpeed;
-
-                //transform.position += velocity * Time.deltaTime;
-                cc.Move(velocity * Time.deltaTime);
-                
-                //cc.transform.position += velocity * Time.deltaTime;
+                    
             }
             else
             {
@@ -165,7 +161,7 @@ namespace Zoca
 #region input_system_callbacks
         public void OnMove(InputAction.CallbackContext context)
         {
-            if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
                 return;
 
             if (context.performed)
@@ -202,7 +198,7 @@ namespace Zoca
 
         public void OnLook(InputAction.CallbackContext context)
         {
-            if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
                 return;
     
             lookInput = context.ReadValue<Vector2>();
@@ -212,7 +208,7 @@ namespace Zoca
 
         public void OnJump(InputAction.CallbackContext context)
         {
-            if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
                 return;
 
             // Jump
@@ -222,9 +218,30 @@ namespace Zoca
             }
         }
 
+        public void OnShoot(InputAction.CallbackContext context)
+        {
+            if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
+                return;
+
+            if (context.performed)
+            {
+                if (!shooting)
+                {
+                    shooting = true;
+                }
+            }
+            else
+            {
+                if (shooting)
+                {
+                    shooting = false;
+                }
+            }
+        }
+
         public void OnPause(InputAction.CallbackContext context)
         {
-            if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
                 return;
 
             if (context.started)
@@ -232,6 +249,49 @@ namespace Zoca
         }
 
 
+
+        #endregion
+
+        #region private
+        void Move()
+        {
+            // Look
+            Vector2 lookAngles = lookInput * lookSensitivity * Time.deltaTime;
+            //Debug.LogFormat("LookAngles: {0}", lookAngles);
+            transform.eulerAngles += Vector3.up * lookAngles.x;
+            // Camera
+            playerCamera.Pitch(-lookAngles.y);
+
+
+            // Move
+            Vector3 dir = transform.forward * input.y + transform.right * input.x;
+            targetVelocity = dir.normalized * maxSpeed;
+            velocity = Vector3.MoveTowards(velocity, targetVelocity, Time.deltaTime * acceleration);
+
+            // Gravity
+            if (!cc.isGrounded)
+            {
+                ySpeed += Physics.gravity.y * Time.deltaTime;
+            }
+            else
+            {
+                if (ySpeed < 0)
+                    ySpeed = 0;
+            }
+
+            velocity.y = ySpeed;
+
+            //transform.position += velocity * Time.deltaTime;
+            cc.Move(velocity * Time.deltaTime);
+
+            //cc.transform.position += velocity * Time.deltaTime;
+        }
+
+        [PunRPC]
+        void Shoot()
+        {
+
+        }
         #endregion
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
