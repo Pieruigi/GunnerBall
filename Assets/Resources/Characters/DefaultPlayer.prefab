@@ -103,7 +103,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxSpeed: 3
   acceleration: 10
-  playerCamera: {fileID: 9119370935336091842}
+  playerCamera: {fileID: 2001519252888002671}
   playerCollider: {fileID: 0}
 --- !u!114 &5356899110363376709
 MonoBehaviour:
@@ -178,6 +178,22 @@ MonoBehaviour:
         m_CallState: 1
     m_ActionId: e2ec2ae6-55fa-4802-96e0-b4157617f443
     m_ActionName: PlayerControls/Look[/Mouse/delta]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5356899110363376708}
+        m_TargetAssemblyTypeName: Zoca.PlayerController, Assembly-CSharp
+        m_MethodName: OnJump
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
+    m_ActionId: 7b293bcb-1481-4c09-a5db-070f3f8f2b91
+    m_ActionName: PlayerControls/Jump[/Keyboard/space]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: MouseAndKeyboard
   m_DefaultActionMap: PlayerControls
@@ -253,6 +269,7 @@ GameObject:
   - component: {fileID: 2008413226943004249}
   - component: {fileID: 7741824153712078607}
   - component: {fileID: 4825534187086737398}
+  - component: {fileID: 2001519252888002671}
   m_Layer: 0
   m_Name: Camera
   m_TagString: MainCamera
@@ -357,6 +374,18 @@ MonoBehaviour:
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_Version: 2
+--- !u!114 &2001519252888002671
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9119370935336091842}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58b5ad985d730f04a88fefc960a8f1ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &707472008435149998
 PrefabInstance:
   m_ObjectHideFlags: 0

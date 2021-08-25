@@ -8,6 +8,8 @@ namespace Zoca
 {
     public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
     {
+        public static GameObject localPlayer { get; private set; } 
+
         [SerializeField]
         float maxSpeed = 5f;
 
@@ -15,7 +17,7 @@ namespace Zoca
         float acceleration = 10f;
 
         [SerializeField]
-        GameObject playerCamera;
+        PlayerCamera playerCamera;
 
         [SerializeField]
         Collider playerCollider;
@@ -27,22 +29,44 @@ namespace Zoca
         Vector2 input;
         Vector2 lookInput;
         float lookSensitivity = 50f;
+        public float LookSensitivity
+        {
+            get { return lookSensitivity; }
+        }
         //float lookSpeed = 60f;
         Vector3 velocity; // The current character controller velocity
         Vector3 targetVelocity; // The target velocity ( dir * MAX_VEL )
         Vector3 networkPosition; // Position received from this controller's owner
         Quaternion networkRotation; // Position received from this controller's owner
-        float lerpSpeed = 20f; // Interpolation speed to adjust network transform
+        float lerpSpeed = 10f; // Interpolation speed to adjust network transform
+
+        float jumpSpeed = 3f;
+        float ySpeed = 0;
+
 
         private void Awake()
         {
 
             cc = GetComponent<CharacterController>();
  
-            // Remove camera on others
-            if (!GetComponent<PhotonView>().IsMine && PhotonNetwork.IsConnected)
+            
+            if (!photonView.IsMine && PhotonNetwork.IsConnected)
             {
-                Destroy(playerCamera);
+                // This is not the local player
+                Destroy(playerCamera.gameObject);
+
+                
+            }
+            else
+            {
+                // This is the local player
+                localPlayer = gameObject;
+
+                // Init player camera
+                playerCamera.SetPlayerController(this);
+
+                // Avoid to destroy the player 
+                DontDestroyOnLoad(gameObject);
             }
         }
 
@@ -78,8 +102,11 @@ namespace Zoca
             }
 
             Debug.LogFormat("PlayerController - Local player spawn point: {0}", spawnPoint.position);
-            transform.position = spawnPoint.position;
-            transform.rotation = spawnPoint.rotation;
+
+            cc.Move(spawnPoint.position - cc.transform.position);
+            
+            //cc.transform.position = spawnPoint.position;
+            cc.transform.rotation = spawnPoint.rotation;
 
         }
 
@@ -93,14 +120,32 @@ namespace Zoca
                 Vector2 lookAngles = lookInput * lookSensitivity * Time.deltaTime;
                 //Debug.LogFormat("LookAngles: {0}", lookAngles);
                 transform.eulerAngles += Vector3.up * lookAngles.x;
-                
+                // Camera
+                playerCamera.Pitch(-lookAngles.y);
+
 
                 // Move
                 Vector3 dir = transform.forward * input.y + transform.right * input.x;
                 targetVelocity = dir.normalized * maxSpeed;
                 velocity = Vector3.MoveTowards(velocity, targetVelocity, Time.deltaTime * acceleration);
-                transform.position += velocity * Time.deltaTime;
-                //cc.Move(velocity * Time.deltaTime);
+
+                // Gravity
+                if (!cc.isGrounded)
+                {
+                    ySpeed += Physics.gravity.y * Time.deltaTime;
+                }
+                else
+                {
+                    if(ySpeed < 0)
+                        ySpeed = 0;
+                }
+
+                velocity.y = ySpeed;
+
+                //transform.position += velocity * Time.deltaTime;
+                cc.Move(velocity * Time.deltaTime);
+                
+                //cc.transform.position += velocity * Time.deltaTime;
             }
             else
             {
@@ -165,6 +210,17 @@ namespace Zoca
             //Debug.LogFormat("PlayerController - Look input: {0}", lookInput);
         }
 
+        public void OnJump(InputAction.CallbackContext context)
+        {
+            if (!photonView.IsMine && PhotonNetwork.IsConnected)
+                return;
+
+            // Jump
+            if (cc.isGrounded)
+            {
+                ySpeed = jumpSpeed;
+            }
+        }
 
         public void OnPause(InputAction.CallbackContext context)
         {
