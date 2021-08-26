@@ -51,6 +51,7 @@ namespace Zoca
         float lerpSpeed = 10f; // Interpolation speed to adjust network transform
 
         float jumpSpeed = 3f;
+        bool jumping = false;
         float ySpeed = 0;
 
 
@@ -128,20 +129,68 @@ namespace Zoca
 
             if (photonView.IsMine || PhotonNetwork.OfflineMode)
             {
-                Move();
+                //
+                // Check movement
+                //
+                // Look around
+                Vector2 lookAngles = lookInput * lookSensitivity * Time.deltaTime;
+                // Set yaw
+                transform.eulerAngles += Vector3.up * lookAngles.x;
+                // Set camera pitch
+                playerCamera.Pitch(-lookAngles.y);
 
+                // Move character controller
+                // Get direction along player forward axis
+                Vector3 dir = transform.forward * input.y + transform.right * input.x;
+                // Target velocity is the max velocity we can reach
+                targetVelocity = dir.normalized * maxSpeed;
+                // The current velocity takes into account some acceleration
+                velocity = Vector3.MoveTowards(velocity, targetVelocity, Time.deltaTime * acceleration);
+
+                // Are jou jumping?
+                if (jumping)
+                {
+                    jumping = false;
+                    ySpeed = jumpSpeed;
+                }
+
+                // Gravity
+                if (!cc.isGrounded)
+                {
+                    ySpeed += Physics.gravity.y * Time.deltaTime;
+                }
+                else
+                {
+                    // When player hit the ground we must reset vertical speed if any
+                    if (ySpeed < 0)
+                        ySpeed = 0;
+                }
+
+                // Set the vertical speed
+                velocity.y = ySpeed;
+
+                // Move the character controller
+                cc.Move(velocity * Time.deltaTime);
+
+                //
+                // Check shooting
+                //
                 if (shooting)
                 {
                     object[] parameters;
+                    // Returns true if the weapon is ready to shoot, otherwise returns false
                     if (fireWeapon.TryShoot(out parameters))
                     {
                         Debug.LogFormat("PlayerController - Shoot parameters length: {0}", parameters.Length);
-                        for(int i=0; i<parameters.Length; i++)
+                        for (int i = 0; i < parameters.Length; i++)
                             Debug.LogFormat("PlayerController - Shoot parameter[{0}]: {1}", i, parameters[i]);
-                        // RPC("Shoot", All, parameters);
+                        
+                        // Call rpc on all the clients, even the local one.
+                        // By calling it via server we can balance lag.
+                        photonView.RPC("RpcShoot", RpcTarget.AllViaServer, parameters as object);
                     }
                 }
-                    
+
             }
             else
             {
@@ -214,7 +263,8 @@ namespace Zoca
             // Jump
             if (cc.isGrounded)
             {
-                ySpeed = jumpSpeed;
+                jumping = true;
+                
             }
         }
 
@@ -252,46 +302,21 @@ namespace Zoca
 
         #endregion
 
-        #region private
-        void Move()
-        {
-            // Look
-            Vector2 lookAngles = lookInput * lookSensitivity * Time.deltaTime;
-            //Debug.LogFormat("LookAngles: {0}", lookAngles);
-            transform.eulerAngles += Vector3.up * lookAngles.x;
-            // Camera
-            playerCamera.Pitch(-lookAngles.y);
-
-
-            // Move
-            Vector3 dir = transform.forward * input.y + transform.right * input.x;
-            targetVelocity = dir.normalized * maxSpeed;
-            velocity = Vector3.MoveTowards(velocity, targetVelocity, Time.deltaTime * acceleration);
-
-            // Gravity
-            if (!cc.isGrounded)
-            {
-                ySpeed += Physics.gravity.y * Time.deltaTime;
-            }
-            else
-            {
-                if (ySpeed < 0)
-                    ySpeed = 0;
-            }
-
-            velocity.y = ySpeed;
-
-            //transform.position += velocity * Time.deltaTime;
-            cc.Move(velocity * Time.deltaTime);
-
-            //cc.transform.position += velocity * Time.deltaTime;
-        }
-
+        #region rpc
         [PunRPC]
-        void Shoot()
+        void RpcShoot(object[] parameters, PhotonMessageInfo info)
         {
+            Debug.LogFormat("PlayerController - RpcShoot parameters count: {0}", parameters.Length);
+            for (int i = 0; i < parameters.Length; i++)
+                Debug.LogFormat("PlayerController - RpcShoot parameter[{0}]: {1}", i, parameters[i]);
 
+            fireWeapon.Shoot(parameters);
         }
+        #endregion
+
+        #region private
+       
+        
         #endregion
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

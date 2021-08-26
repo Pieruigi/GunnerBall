@@ -5,6 +5,11 @@ using UnityEngine;
 
 namespace Zoca
 {
+    /// <summary>
+    /// Generic fire weapon class.
+    /// Fire weapon is not networked, so RPC gets called on the player controller; the fire 
+    /// weapon only need to set shooting parameters when ready to shot.
+    /// </summary>
     public class FireWeapon : MonoBehaviour
     {
         [SerializeField]
@@ -21,6 +26,9 @@ namespace Zoca
 
         [SerializeField]
         float distance = 10;
+
+        [SerializeField]
+        GameObject bullet;
 
         float cooldown;
         float cooldownElapsed;
@@ -50,7 +58,13 @@ namespace Zoca
 
         }
 
-        public bool TryShoot(out object[] parameters)
+        /// <summary>
+        /// Returns true if it can shoot and some values are sent as param ( origin, speed etc );
+        /// otherwise return false.
+        /// </summary>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        public virtual bool TryShoot(out object[] parameters)
         {
             parameters = null;
 
@@ -85,8 +99,21 @@ namespace Zoca
         }
 
         
-        private void Shoot()
+        public virtual void Shoot(object[] parameters)
         {
+            // Get params
+            Vector3 origin = (Vector3)parameters[0];
+            Vector3 direction = (Vector3)parameters[1];
+            double timestamp = (double)parameters[2];
+
+            // Create the bullet
+            GameObject obj = Instantiate(bullet, Vector3.zero, Quaternion.identity);
+            Rigidbody rb = obj.GetComponent<Rigidbody>();
+            // Lag compensation
+            rb.position = origin + speed * (float)(PhotonNetwork.Time - timestamp) * direction;
+            // Set velocity
+            rb.velocity = direction * speed;
+          
 
         }
     }
