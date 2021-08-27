@@ -107,7 +107,7 @@ namespace Zoca
                 if (!PhotonNetwork.OfflineMode) // Online mode
                 {
                     
-                    if (!PlayerController.localPlayer)
+                    if (!PlayerController.localPlayer) // Local player is null
                     {
                         int cId = 0;
                         if (!PlayerCustomPropertyUtility.TryGetPlayerCustomProperty<int>(PhotonNetwork.LocalPlayer, PlayerCustomProperty.CharacterId, ref cId))
@@ -140,7 +140,16 @@ namespace Zoca
                         // Spawn
                         PhotonNetwork.Instantiate(System.IO.Path.Combine(ResourceFolder.Character, playerPrefab.name), spawnPoint.position, spawnPoint.rotation);
                     }
-                    
+
+                    // The master client also needs to instantiate the networked ball
+                    if (PhotonNetwork.LocalPlayer.IsMasterClient)
+                    {
+                        // For now we only have one ball ( id=0 ) in resources
+                        GameObject ballPrefab = Resources.LoadAll<Ball>(ResourceFolder.Ball)[0].gameObject;
+                        PhotonNetwork.InstantiateRoomObject(System.IO.Path.Combine(ResourceFolder.Ball, ballPrefab.name), LevelManager.Instance.BallSpawnPoint.position, Quaternion.identity); ;
+                        Debug.LogFormat("GameManager - Scene manager: {0}", LevelManager.Instance);
+                    }
+
                 }
                 else // Offline mode: for test, means we are testing the arena from the editor
                 {
@@ -154,16 +163,14 @@ namespace Zoca
                     // Create local player
                     Transform spawnPoint = LevelManager.Instance.BlueTeamSpawnPoints[0];
                     Instantiate(player, spawnPoint.position, spawnPoint.rotation);
-                }
 
-                // The master client also needs to instantiate the networked ball
-                if (PhotonNetwork.LocalPlayer.IsMasterClient)
-                {
-                    // For now we only have one ball ( id=0 ) in resources
+                    // Adding local ball
                     GameObject ballPrefab = Resources.LoadAll<Ball>(ResourceFolder.Ball)[0].gameObject;
-                    PhotonNetwork.InstantiateRoomObject(System.IO.Path.Combine(ResourceFolder.Ball, ballPrefab.name), LevelManager.Instance.BallSpawnPoint.position, Quaternion.identity); ;
+                    Instantiate(ballPrefab, LevelManager.Instance.BallSpawnPoint.position, Quaternion.identity); ;
                     Debug.LogFormat("GameManager - Scene manager: {0}", LevelManager.Instance);
                 }
+
+
                 
             }
             else

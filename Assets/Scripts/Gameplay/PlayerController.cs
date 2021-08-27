@@ -153,10 +153,18 @@ namespace Zoca
                         Debug.LogFormat("PlayerController - Shoot parameters length: {0}", parameters.Length);
                         for (int i = 0; i < parameters.Length; i++)
                             Debug.LogFormat("PlayerController - Shoot parameter[{0}]: {1}", i, parameters[i]);
-                        
+
                         // Call rpc on all the clients, even the local one.
                         // By calling it via server we can balance lag.
-                        photonView.RPC("RpcShoot", RpcTarget.AllViaServer, parameters as object);
+                        if (!PhotonNetwork.OfflineMode)
+                        {
+                            photonView.RPC("RpcShoot", RpcTarget.AllViaServer, parameters as object);
+                        }
+                        else
+                        {
+                            // In offline mode we call the weapon.Shoot() directly
+                            fireWeapon.Shoot(parameters);
+                        }
                     }
                 }
 

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Zoca
 {
-    public class Ball : MonoBehaviour
+    public class Bullet : MonoBehaviour
     {
         // Start is called before the first frame update
         void Start()
@@ -16,6 +16,11 @@ namespace Zoca
         void Update()
         {
 
+        }
+
+        private void OnCollisionEnter(Collision collision)
+        {
+            Destroy(gameObject);
         }
     }
 

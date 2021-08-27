@@ -16,7 +16,7 @@ namespace Zoca
         float mass = 5f;
 
         [SerializeField]
-        float speed = 20;
+        float speed = 60;
 
         [SerializeField]
         float damage = 10;
@@ -37,7 +37,7 @@ namespace Zoca
 
         private void Awake()
         {
-            cooldown = 1f / 0.5f;
+            cooldown = 1f / fireRate;
         }
 
         // Start is called before the first frame update
@@ -113,8 +113,9 @@ namespace Zoca
             rb.position = origin + speed * (float)(PhotonNetwork.Time - timestamp) * direction;
             // Set velocity
             rb.velocity = direction * speed;
-          
 
+            // Remove collision between bullet and its owner
+            Physics.IgnoreCollision(owner.GetComponent<CharacterController>(), obj.GetComponent<Collider>(), true);
         }
     }
 
