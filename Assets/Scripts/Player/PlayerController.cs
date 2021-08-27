@@ -89,37 +89,6 @@ namespace Zoca
             if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
                 return;
 
-            
-            // Get player team
-            Team team = Team.Blue;
-            if (PhotonNetwork.IsConnected)
-            {
-                if(!PlayerCustomPropertyUtility.TryGetPlayerCustomProperty<Team>(PhotonNetwork.LocalPlayer, PlayerCustomProperty.TeamColor, ref team))
-                {
-                    Debug.LogErrorFormat("PlayerController - property is empty: {0}", PlayerCustomProperty.TeamColor);
-                }
-                
-            }
-                
-
-            // Set local player starting position and rotation
-            Transform spawnPoint;
-            Debug.LogFormat("LocalPlayer has joint the {0} team.", team.ToString());
-            if(team == Team.Blue)
-            {
-                spawnPoint = LevelManager.Instance.BlueTeamSpawnPoints[0];
-            }
-            else
-            {
-                spawnPoint = LevelManager.Instance.RedTeamSpawnPoints[0];
-            }
-
-            Debug.LogFormat("PlayerController - Local player spawn point: {0}", spawnPoint.position);
-
-            cc.Move(spawnPoint.position - cc.transform.position);
-            
-            //cc.transform.position = spawnPoint.position;
-            cc.transform.rotation = spawnPoint.rotation;
 
         }
 

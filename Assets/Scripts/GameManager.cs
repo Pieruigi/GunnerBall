@@ -102,11 +102,11 @@ namespace Zoca
             {
                 inGame = true;
 
-                // After the scene has been loaded on this client we can network instantiate 
-                // the player character
+                // After the scene has been loaded on this client we can instantiate the networked
+                // local player
                 if (!PhotonNetwork.OfflineMode) // Online mode
                 {
-                    //int cId = (int)PhotonNetwork.LocalPlayer.CustomProperties[PlayerCustomProperty.CharacterId];
+                    
                     if (!PlayerController.localPlayer)
                     {
                         int cId = 0;
@@ -115,10 +115,30 @@ namespace Zoca
                             Debug.LogErrorFormat("GameManager - Empty property for local player: [{0}]", PlayerCustomProperty.CharacterId);
                         }
                         Debug.LogFormat("Loading local player character [CharacterId:{0}].", cId);
-                        GameObject player = Resources.LoadAll<PlayerController>(ResourceFolders.Characters)[(int)cId].gameObject;
-                        Debug.LogFormat("Character found: {0}", player.name);
-                        Debug.LogFormat("Spawning {0} on photon network...", player.name);
-                        PhotonNetwork.Instantiate(System.IO.Path.Combine(ResourceFolders.Characters, player.name), Vector3.zero, Quaternion.identity);
+                        GameObject playerPrefab = Resources.LoadAll<PlayerController>(ResourceFolder.Character)[(int)cId].gameObject;
+                        Debug.LogFormat("Character found: {0}", playerPrefab.name);
+                        Debug.LogFormat("Spawning {0} on photon network...", playerPrefab.name);
+
+                        // Spawn the networked local player ( only support 1vs1 at the moment )
+                        // Get the player team
+                        Team team = Team.Blue;
+                        if (!PlayerCustomPropertyUtility.TryGetPlayerCustomProperty<Team>(PhotonNetwork.LocalPlayer, PlayerCustomProperty.TeamColor, ref team))
+                        {
+                            Debug.LogErrorFormat("PlayerController - property is empty: {0}", PlayerCustomProperty.TeamColor);
+                        }
+
+                        // Get the spawn point depending on the team the player belongs to
+                        Transform spawnPoint = null;
+                        if (team == Team.Blue)
+                        {
+                            spawnPoint = LevelManager.Instance.BlueTeamSpawnPoints[0];
+                        }
+                        else
+                        {
+                            spawnPoint = LevelManager.Instance.RedTeamSpawnPoints[0];
+                        }
+                        // Spawn
+                        PhotonNetwork.Instantiate(System.IO.Path.Combine(ResourceFolder.Character, playerPrefab.name), spawnPoint.position, spawnPoint.rotation);
                     }
                     
                 }
@@ -128,13 +148,22 @@ namespace Zoca
                     PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomProperty.TeamColor, Team.Blue);
                     PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomProperty.CharacterId, 0);
                     // Get character resource
-                    GameObject player = Resources.LoadAll<PlayerController>(ResourceFolders.Characters)[0].gameObject;
+                    GameObject player = Resources.LoadAll<PlayerController>(ResourceFolder.Character)[0].gameObject;
                     Debug.LogFormat("Character found: {0}", player.name);
                     Debug.LogFormat("Spawning {0} on photon network...", player.name);
-                    // Create local
-                    Instantiate(player, Vector3.zero, Quaternion.identity);
+                    // Create local player
+                    Transform spawnPoint = LevelManager.Instance.BlueTeamSpawnPoints[0];
+                    Instantiate(player, spawnPoint.position, spawnPoint.rotation);
                 }
-                
+
+                // The master client also needs to instantiate the networked ball
+                if (PhotonNetwork.LocalPlayer.IsMasterClient)
+                {
+                    // For now we only have one ball ( id=0 ) in resources
+                    GameObject ballPrefab = Resources.LoadAll<Ball>(ResourceFolder.Ball)[0].gameObject;
+                    PhotonNetwork.InstantiateRoomObject(System.IO.Path.Combine(ResourceFolder.Ball, ballPrefab.name), LevelManager.Instance.BallSpawnPoint.position, Quaternion.identity); ;
+                    Debug.LogFormat("GameManager - Scene manager: {0}", LevelManager.Instance);
+                }
                 
             }
             else

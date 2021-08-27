@@ -22,6 +22,14 @@ namespace Zoca
             get { return redTeamSpawnPoints.AsReadOnly(); }
         }
 
+        [SerializeField]
+        Transform ballSpawnPoint;
+        public Transform BallSpawnPoint
+        {
+            get { return ballSpawnPoint; }
+        }
+        
+
         private void Awake()
         {
             if (!Instance)

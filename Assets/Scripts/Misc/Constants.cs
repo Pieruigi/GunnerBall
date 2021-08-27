@@ -7,9 +7,10 @@ namespace Zoca
     public enum Team { Blue, Red }
 
 
-    public class ResourceFolders
+    public class ResourceFolder
     {
-        public static readonly string Characters = "Characters";
+        public static readonly string Character = "Characters";
+        public static readonly string Ball = "Balls";
     }
 
 }
