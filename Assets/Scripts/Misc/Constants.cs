@@ -13,4 +13,9 @@ namespace Zoca
         public static readonly string Ball = "Balls";
     }
 
+    public class Tag
+    {
+        public static readonly string Ball = "Ball";
+    }
+
 }

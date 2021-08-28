@@ -27,13 +27,19 @@ namespace Zoca
         [SerializeField]
         float distance = 10;
 
+#if SHOOT_BULLET
         [SerializeField]
         GameObject bullet;
-
+#else
+        float shootDelay = 0.2f;
+#endif
         float cooldown;
         float cooldownElapsed;
 
         PlayerController owner;
+
+        
+
 
         private void Awake()
         {
@@ -98,7 +104,7 @@ namespace Zoca
             this.owner = owner;
         }
 
-        
+#if SHOOT_BULLET
         public virtual void Shoot(object[] parameters)
         {
             // Get params
@@ -117,6 +123,56 @@ namespace Zoca
             // Remove collision between bullet and its owner
             Physics.IgnoreCollision(owner.GetComponent<CharacterController>(), obj.GetComponent<Collider>(), true);
         }
+#else
+        public void Shoot(object[] parameters)
+        {
+            StartCoroutine(ShootDelayed(parameters));
+        }
+#endif
+
+        #region private
+#if !SHOOT_BULLET
+        IEnumerator ShootDelayed(object[] parameters)
+        {
+            // Get params
+            Vector3 origin = (Vector3)parameters[0];
+            Vector3 direction = (Vector3)parameters[1];
+            double timestamp = (double)parameters[2];
+
+            // Check the time passed
+            float lag = (float)(PhotonNetwork.Time - timestamp);
+            if (shootDelay > lag)
+                yield return new WaitForSeconds(shootDelay - lag);
+
+            // Shoot
+            if (PhotonNetwork.IsMasterClient)
+            {
+                // Cast a ray from the origin along the direction received
+                Ray ray = new Ray(origin, direction);
+                RaycastHit info;
+                if(Physics.Raycast(ray, out info, distance))
+                {
+                   
+                    if(Tag.Ball.Equals(info.collider.tag))
+                    {
+                        Vector3 position = info.transform.position;
+                        Quaternion rotation = info.transform.rotation;
+                        Vector3 velocity = info.normal * -3;
+                        double ts = PhotonNetwork.Time;
+
+                        // Change velocity
+                        info.collider.GetComponent<Ball>().photonView.RPC("RpcHit", RpcTarget.All, position, rotation, velocity, ts);
+                        // I'm updating other clients via rpc, so no other syncs are needed
+                        // for 0.1 sec
+                        info.collider.GetComponent<Ball>().DelaySynchronization();
+                    }
+                    
+                }
+            }
+        }
+
+#endif
+#endregion
     }
 
 }
