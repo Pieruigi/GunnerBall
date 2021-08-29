@@ -280,6 +280,7 @@ namespace Zoca
         #endregion
 
         #region rpc
+
         [PunRPC]
         void RpcShoot(object[] parameters, PhotonMessageInfo info)
         {
@@ -289,11 +290,12 @@ namespace Zoca
 
             fireWeapon.Shoot(parameters);
         }
-        #endregion
+
+#endregion
 
         #region private
-       
-        
+
+
         #endregion
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

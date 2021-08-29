@@ -17,17 +17,14 @@ namespace Zoca
         Quaternion networkRotation;
         Vector3 networkVelocity;
         double networkTime;
-        float lerpSpeed = 10;
+        float lerpSpeed = 20;
 
-        // When you hit the ball the rpc is called via server; in the meantime the master client
-        // might send a sync for the ball with an updated timestamp; so we must stop for 0.1 sec
-        //bool delaySync = false;
-        float delaySyncTime = 0;
 
         private void Awake()
         {
             rb = GetComponent<Rigidbody>();
-            
+
+           
         }
 
         // Start is called before the first frame update
@@ -39,18 +36,17 @@ namespace Zoca
         // Update is called once per frame
         void Update()
         {
-            if (delaySyncTime > 0)
-                delaySyncTime -= Time.deltaTime;
+          
         }
 
         private void FixedUpdate()
         {
-            
+            //Debug.LogFormat("PhotonNetwork.Ping():" + PhotonNetwork.GetPing());
 
             //return;
             if (photonView.IsMine)
                 return;
-
+            
             if (networkDisplacement != Vector3.zero)
             {
                 //float lerpSpeed = 10;
@@ -67,10 +63,11 @@ namespace Zoca
                     deltaDisp = networkDisplacement.normalized * netDispMag;
                     networkDisplacement = Vector3.zero;
                 }
-                
+
 
                 //Vector3.MoveTowards(rb.position, rb.position + lerpDisp, Time.fixedDeltaTime*lerpSpeed);
                 rb.position += deltaDisp;
+                //rb.MovePosition(rb.position + deltaDisp);
                 
 
             }
@@ -78,11 +75,7 @@ namespace Zoca
 
         }
 
-        public void DelaySynchronization()
-        {
-            //delaySync = true;
-            delaySyncTime = 0.1f;
-        }
+       
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
@@ -91,11 +84,10 @@ namespace Zoca
 
             if (stream.IsWriting) // Local ( should be the MasterClient )
             {
-                double time = delaySyncTime > 0 ? 0 : PhotonNetwork.Time;
+              
                
-                stream.SendNext(time);
-                if (time == 0)
-                    return;
+                stream.SendNext(PhotonNetwork.Time);
+                
                 stream.SendNext(rb.position);
                 stream.SendNext(rb.rotation);
                 stream.SendNext(rb.velocity);
@@ -106,28 +98,38 @@ namespace Zoca
                 
                
                 double timestamp = (double)stream.ReceiveNext();
-                if (timestamp == 0)
-                    return;
+               
                
                 Vector3 position = (Vector3)stream.ReceiveNext();
                 Quaternion rotation = (Quaternion)stream.ReceiveNext();
                 Vector3 velocity = (Vector3)stream.ReceiveNext();
 
-
+                Debug.LogFormat("Ball - Sync() ........................");
+                Debug.LogFormat("Ball - Sync() Timestamp: {0}", timestamp);
+                Debug.LogFormat("Ball - Sync() Position: {0}", position);
+                Debug.LogFormat("Ball - Sync() Velocity: {0}", velocity);
+                Debug.LogFormat("Ball - Sync() completed ........................");
                 Synchronize(timestamp, position, rotation, velocity);
             }
         }
 
         [PunRPC]
-        void RpcHit(Vector3 position, Quaternion rotation, Vector3 velocity, double timestamp)
+        void RpcHit(Vector3 velocity, double timestamp)
         {
-            Debug.LogFormat("Ball - Receiving RpcHit() ...");
-            // Delete previuos sync
-            networkTime = 0;
-            networkDisplacement = Vector3.zero;
-            Synchronize(timestamp, position, rotation, velocity);
+            Debug.LogFormat("Ball - RpcHit() ....................");
+            Debug.LogFormat("Ball - RpcHit() Timestamp: {0}", timestamp);
+            Debug.LogFormat("Ball - RpcHit() Velocity: {0}", velocity);
+            Debug.LogFormat("Ball - RpcHit() completed ....................");
 
+           
+
+            float lag = Mathf.Abs((float)(PhotonNetwork.Time - timestamp));
+
+            rb.velocity = velocity + Physics.gravity * lag;
+            
         }
+
+       
 
         /// <summary>
         /// In case of collision the old network sync gets skipped.
@@ -163,12 +165,20 @@ namespace Zoca
             networkPosition = position;
             networkRotation = rotation;
             networkVelocity = velocity;
-            Debug.LogFormat("Ball - Receiving sync [Time:{0}].", networkTime);
+            
 
             float lag = Mathf.Abs((float)(PhotonNetwork.Time - networkTime));
 
-            networkDisplacement = networkPosition + networkVelocity * lag - rb.position;
-            rb.velocity = networkVelocity;
+            networkDisplacement = (Physics.gravity / 2.0f) * Mathf.Pow(lag,2) + networkPosition + networkVelocity * lag - rb.position;
+            //networkDisplacement += (Physics.gravity / 2.0f) * lag * lag;
+            rb.velocity = networkVelocity + Physics.gravity * lag;
+
+            lerpSpeed = networkDisplacement.magnitude / 0.08f;
+
+            //rb.position += networkDisplacement;
+            //rb.MovePosition(rb.position + networkDisplacement);
+            //networkDisplacement = Vector3.zero;
+
         }
 
     }

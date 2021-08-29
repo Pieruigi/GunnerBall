@@ -1,6 +1,6 @@
+//#define SHOOT_AS_PEER
 using Photon.Pun;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Zoca
@@ -13,7 +13,7 @@ namespace Zoca
     public class FireWeapon : MonoBehaviour
     {
         [SerializeField]
-        float mass = 5f;
+        float power = 5f;
 
         [SerializeField]
         float speed = 60;
@@ -27,12 +27,9 @@ namespace Zoca
         [SerializeField]
         float distance = 10;
 
-#if SHOOT_BULLET
-        [SerializeField]
-        GameObject bullet;
-#else
+
         float shootDelay = 0.2f;
-#endif
+
         float cooldown;
         float cooldownElapsed;
 
@@ -104,34 +101,15 @@ namespace Zoca
             this.owner = owner;
         }
 
-#if SHOOT_BULLET
-        public virtual void Shoot(object[] parameters)
-        {
-            // Get params
-            Vector3 origin = (Vector3)parameters[0];
-            Vector3 direction = (Vector3)parameters[1];
-            double timestamp = (double)parameters[2];
 
-            // Create the bullet
-            GameObject obj = Instantiate(bullet, Vector3.zero, Quaternion.identity);
-            Rigidbody rb = obj.GetComponent<Rigidbody>();
-            // Lag compensation
-            rb.position = origin + speed * (float)(PhotonNetwork.Time - timestamp) * direction;
-            // Set velocity
-            rb.velocity = direction * speed;
-
-            // Remove collision between bullet and its owner
-            Physics.IgnoreCollision(owner.GetComponent<CharacterController>(), obj.GetComponent<Collider>(), true);
-        }
-#else
         public void Shoot(object[] parameters)
         {
             StartCoroutine(ShootDelayed(parameters));
         }
-#endif
+
 
         #region private
-#if !SHOOT_BULLET
+
         IEnumerator ShootDelayed(object[] parameters)
         {
             // Get params
@@ -145,10 +123,13 @@ namespace Zoca
                 yield return new WaitForSeconds(shootDelay - lag);
 
             // Shoot
+
+
             if (PhotonNetwork.IsMasterClient)
             {
-                // Cast a ray from the origin along the direction received
-                Ray ray = new Ray(origin, direction);
+
+            // Cast a ray from the origin along the direction received
+            Ray ray = new Ray(origin, direction);
                 RaycastHit info;
                 if(Physics.Raycast(ray, out info, distance))
                 {
@@ -157,21 +138,25 @@ namespace Zoca
                     {
                         Vector3 position = info.transform.position;
                         Quaternion rotation = info.transform.rotation;
-                        Vector3 velocity = info.normal * -3;
+                        Vector3 velocity = info.normal * -3 * power;
                         double ts = PhotonNetwork.Time;
 
                         // Change velocity
-                        info.collider.GetComponent<Ball>().photonView.RPC("RpcHit", RpcTarget.All, position, rotation, velocity, ts);
-                        // I'm updating other clients via rpc, so no other syncs are needed
-                        // for 0.1 sec
-                        info.collider.GetComponent<Ball>().DelaySynchronization();
-                    }
-                    
-                }
-            }
-        }
+                        info.collider.GetComponent<Rigidbody>().velocity = velocity;
 
-#endif
+                        info.collider.GetComponent<Ball>().photonView.RPC("RpcHit", RpcTarget.Others, velocity, ts);
+
+                    // I'm updating other clients via rpc, so no other syncs are needed for
+                    // a while
+                    //info.collider.GetComponent<Ball>().DelaySynchronization();
+                }
+
+            }
+
+        }
+     }
+
+
 #endregion
     }
 
