@@ -28,13 +28,13 @@ namespace Zoca
         float distance = 10;
 
 
-        float shootDelay = 0.2f;
+        float shootDelay = 0.1f;
 
         float cooldown;
         float cooldownElapsed;
 
         PlayerController owner;
-
+        Collider ownerCollider;
         
 
 
@@ -69,6 +69,7 @@ namespace Zoca
         /// <returns></returns>
         public virtual bool TryShoot(out object[] parameters)
         {
+            Debug.Log("FireWeapon - TryShoot().");
             parameters = null;
 
             // Not ready yet
@@ -99,6 +100,7 @@ namespace Zoca
         public void SetOwner(PlayerController owner)
         {
             this.owner = owner;
+            ownerCollider = owner.GetComponent<Collider>();
         }
 
 
@@ -128,27 +130,29 @@ namespace Zoca
             if (PhotonNetwork.IsMasterClient)
             {
 
-            // Cast a ray from the origin along the direction received
-            Ray ray = new Ray(origin, direction);
+                // Cast a ray from the origin along the direction received
+                Ray ray = new Ray(origin, direction);
                 RaycastHit info;
-                if(Physics.Raycast(ray, out info, distance))
+                ownerCollider.enabled = false;
+                bool hit = Physics.Raycast(ray, out info, distance);
+                ownerCollider.enabled = true;
+                if (hit)
                 {
                    
                     if(Tag.Ball.Equals(info.collider.tag))
                     {
+                        Debug.LogFormat("FireWeapon - Ball Hit.");
                         Vector3 position = info.transform.position;
                         Quaternion rotation = info.transform.rotation;
                         Vector3 velocity = info.normal * -3 * power;
                         double ts = PhotonNetwork.Time;
 
                         // Change velocity
-                        info.collider.GetComponent<Rigidbody>().velocity = velocity;
+                        info.collider.GetComponent<Rigidbody>().velocity += velocity;
 
                         info.collider.GetComponent<Ball>().photonView.RPC("RpcHit", RpcTarget.Others, velocity, ts);
 
-                    // I'm updating other clients via rpc, so no other syncs are needed for
-                    // a while
-                    //info.collider.GetComponent<Ball>().DelaySynchronization();
+                   
                 }
 
             }

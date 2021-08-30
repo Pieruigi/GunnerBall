@@ -153,6 +153,9 @@ namespace Zoca
                 }
                 else // Offline mode: for test, means we are testing the arena from the editor
                 {
+                    // Hide cursor
+                    Cursor.lockState = CursorLockMode.Locked;
+
                     // Add default custom properties
                     PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomProperty.TeamColor, Team.Blue);
                     PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomProperty.CharacterId, 0);

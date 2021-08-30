@@ -18,12 +18,16 @@ namespace Zoca
         Vector3 networkVelocity;
         double networkTime;
         float lerpSpeed = 20;
+        //Vector3 expectedPosition;
 
+        Collider coll;
+        float radius; // Collider radius
 
         private void Awake()
         {
             rb = GetComponent<Rigidbody>();
-
+            coll = GetComponent<Collider>();
+            radius = ((SphereCollider)coll).radius;
            
         }
 
@@ -46,7 +50,7 @@ namespace Zoca
             //return;
             if (photonView.IsMine)
                 return;
-            
+
             if (networkDisplacement != Vector3.zero)
             {
                 //float lerpSpeed = 10;
@@ -63,13 +67,18 @@ namespace Zoca
                     deltaDisp = networkDisplacement.normalized * netDispMag;
                     networkDisplacement = Vector3.zero;
                 }
-
-
-                //Vector3.MoveTowards(rb.position, rb.position + lerpDisp, Time.fixedDeltaTime*lerpSpeed);
-                rb.position += deltaDisp;
-                //rb.MovePosition(rb.position + deltaDisp);
                 
+                rb.MovePosition(rb.position + deltaDisp);
 
+                // Check for collisions
+                coll.enabled = false;
+                if (Physics.CheckSphere(rb.position, radius))
+                {
+                    Debug.LogFormat("Ball - Lerp hit");
+                    networkTime = PhotonNetwork.Time;
+                    networkDisplacement = Vector3.zero;
+                }
+                coll.enabled = true;
             }
          
 
@@ -124,9 +133,19 @@ namespace Zoca
            
 
             float lag = Mathf.Abs((float)(PhotonNetwork.Time - timestamp));
+            int numOfTicks = (int)(lag / Time.fixedDeltaTime); // For physics computations
 
-            rb.velocity = velocity + Physics.gravity * lag;
-            
+            // Adding gravity
+            // Velocity changes in a discrete mode, so we just need to calculate the displacement
+            // for each physics tick
+            Vector3 expectedVelocity = velocity;
+            for (int i = 0; i < numOfTicks; i++)
+            {
+                expectedVelocity = (expectedVelocity + Physics.gravity * Time.fixedDeltaTime) * (1 - rb.drag * Time.fixedDeltaTime);
+            }
+
+            rb.velocity = expectedVelocity;
+
         }
 
        
@@ -150,7 +169,7 @@ namespace Zoca
                 networkTime = PhotonNetwork.Time;
                 networkDisplacement = Vector3.zero;
             }
-                
+
         }
 
         void Synchronize(double timestamp, Vector3 position, Quaternion rotation, Vector3 velocity)
@@ -168,12 +187,24 @@ namespace Zoca
             
 
             float lag = Mathf.Abs((float)(PhotonNetwork.Time - networkTime));
+            int numOfTicks = (int)(lag / Time.fixedDeltaTime); // For physics computations
 
-            networkDisplacement = (Physics.gravity / 2.0f) * Mathf.Pow(lag,2) + networkPosition + networkVelocity * lag - rb.position;
-            //networkDisplacement += (Physics.gravity / 2.0f) * lag * lag;
-            rb.velocity = networkVelocity + Physics.gravity * lag;
+            Vector3 expectedPosition = networkPosition;
+            Vector3 expectedVelocity = networkVelocity;
 
-            lerpSpeed = networkDisplacement.magnitude / 0.08f;
+            // Adding gravity and drag
+            // Velocity changes in a discrete mode, so we just need to calculate the displacement
+            // for each physics tick
+            for (int i=0; i<numOfTicks; i++)
+            {
+                expectedVelocity = (expectedVelocity + Physics.gravity * Time.fixedDeltaTime) * (1 - rb.drag * Time.fixedDeltaTime); 
+                expectedPosition += expectedVelocity * Time.fixedDeltaTime;
+            }
+
+            networkDisplacement = expectedPosition - rb.position;
+            rb.velocity = expectedVelocity;
+
+            lerpSpeed = networkDisplacement.magnitude / 0.075f;
 
             //rb.position += networkDisplacement;
             //rb.MovePosition(rb.position + networkDisplacement);
