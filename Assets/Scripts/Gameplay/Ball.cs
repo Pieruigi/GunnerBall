@@ -9,6 +9,8 @@ namespace Zoca
     public class Ball : MonoBehaviourPunCallbacks, IPunObservable
     {
 
+        public static Ball Instance { get; private set; }
+
         Rigidbody rb;
         float drag = 0;
 
@@ -25,10 +27,19 @@ namespace Zoca
 
         private void Awake()
         {
-            rb = GetComponent<Rigidbody>();
-            coll = GetComponent<Collider>();
-            radius = ((SphereCollider)coll).radius;
-           
+            if (!Instance)
+            {
+                Instance = this;
+                rb = GetComponent<Rigidbody>();
+                coll = GetComponent<Collider>();
+                radius = ((SphereCollider)coll).radius;
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+
+
         }
 
         // Start is called before the first frame update
@@ -74,7 +85,6 @@ namespace Zoca
                 coll.enabled = false;
                 if (Physics.CheckSphere(rb.position, radius))
                 {
-                    Debug.LogFormat("Ball - Lerp hit");
                     networkTime = PhotonNetwork.Time;
                     networkDisplacement = Vector3.zero;
                 }
@@ -113,11 +123,11 @@ namespace Zoca
                 Quaternion rotation = (Quaternion)stream.ReceiveNext();
                 Vector3 velocity = (Vector3)stream.ReceiveNext();
 
-                Debug.LogFormat("Ball - Sync() ........................");
-                Debug.LogFormat("Ball - Sync() Timestamp: {0}", timestamp);
-                Debug.LogFormat("Ball - Sync() Position: {0}", position);
-                Debug.LogFormat("Ball - Sync() Velocity: {0}", velocity);
-                Debug.LogFormat("Ball - Sync() completed ........................");
+                //Debug.LogFormat("Ball - Sync() ........................");
+                //Debug.LogFormat("Ball - Sync() Timestamp: {0}", timestamp);
+                //Debug.LogFormat("Ball - Sync() Position: {0}", position);
+                //Debug.LogFormat("Ball - Sync() Velocity: {0}", velocity);
+                //Debug.LogFormat("Ball - Sync() completed ........................");
                 Synchronize(timestamp, position, rotation, velocity);
             }
         }
@@ -125,10 +135,10 @@ namespace Zoca
         [PunRPC]
         void RpcHit(Vector3 velocity, double timestamp)
         {
-            Debug.LogFormat("Ball - RpcHit() ....................");
-            Debug.LogFormat("Ball - RpcHit() Timestamp: {0}", timestamp);
-            Debug.LogFormat("Ball - RpcHit() Velocity: {0}", velocity);
-            Debug.LogFormat("Ball - RpcHit() completed ....................");
+            //Debug.LogFormat("Ball - RpcHit() ....................");
+            //Debug.LogFormat("Ball - RpcHit() Timestamp: {0}", timestamp);
+            //Debug.LogFormat("Ball - RpcHit() Velocity: {0}", velocity);
+            //Debug.LogFormat("Ball - RpcHit() completed ....................");
 
            
 

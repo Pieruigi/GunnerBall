@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Zoca
 {
    
-    public class PlayerCustomProperty
+    public class PlayerCustomPropertyKey
     {
         public static readonly string TeamColor = "tc";
         public static readonly string CharacterId = "cid";

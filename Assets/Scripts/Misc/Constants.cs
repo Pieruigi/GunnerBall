@@ -18,4 +18,13 @@ namespace Zoca
         public static readonly string Ball = "Ball";
     }
 
+    public class Constants
+    {
+        public static readonly float StartDelay = 7;
+    }
+
+    public class PhotonEvent
+    {
+        public static readonly byte StartMatch = 200;
+    }
 }

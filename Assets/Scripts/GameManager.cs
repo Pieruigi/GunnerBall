@@ -68,22 +68,47 @@ namespace Zoca
         #region callbacks
 
 
+
+        /// <summary>
+        /// This is called whene another player enters the room; 
+        /// </summary>
+        /// <param name="newPlayer"></param>
         public override void OnPlayerEnteredRoom(Player newPlayer)
         {
             Debug.LogFormat("PUN - New player [ID:{0}] entered the room [Name:{1}].", newPlayer.UserId, PhotonNetwork.CurrentRoom.Name);
-            // Only the master client can load the arena
-            if (PhotonNetwork.IsMasterClient)
+            // We don't need to reload the arena if we are already playing; this may happen
+            // when game has started and a player disconnects and then connects again.
+            if (!GameManager.Instance.inGame)
             {
-                Debug.LogFormat("PUN - IsMasterClient: {0}", PhotonNetwork.IsMasterClient);
-                Debug.LogFormat("PUN - Current room max players: {0}", PhotonNetwork.CurrentRoom.MaxPlayers);
-                Debug.LogFormat("PUN - Current room current players: {0}", PhotonNetwork.CurrentRoom.PlayerCount);
-                if (PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers)
+                // Only the master client can load the arena
+                if (PhotonNetwork.IsMasterClient)
                 {
-                    // The room is full, load the arena
-                    LoadArena();
+
+                    Debug.LogFormat("PUN - IsMasterClient: {0}", PhotonNetwork.IsMasterClient);
+                    Debug.LogFormat("PUN - Current room max players: {0}", PhotonNetwork.CurrentRoom.MaxPlayers);
+                    Debug.LogFormat("PUN - Current room current players: {0}", PhotonNetwork.CurrentRoom.PlayerCount);
+                    if (PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers)
+                    {
+                        // A match starting time is needed to set countdown
+                        PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.StartTime] = PhotonNetwork.Time;
+                        PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.MatchState] = MatchState.Starting;
+                        PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.MatchElapsed] = 0;
+                        // The room is full, load the arena
+                        LoadArena();
+
+                        
+                    }
+
                 }
             }
         }
+
+        public override void OnPlayerLeftRoom(Player otherPlayer)
+        {
+            Debug.LogFormat("PUN - Player [ID:{0}] left room [Name:{1}].", otherPlayer.UserId, PhotonNetwork.CurrentRoom.Name);
+        }
+
+        
 
         public override void OnLeftRoom()
         {
@@ -91,10 +116,7 @@ namespace Zoca
             SceneManager.LoadScene("MainScene");
         }
 
-        public override void OnPlayerLeftRoom(Player otherPlayer)
-        {
-            Debug.LogFormat("PUN - Player [ID:{0}] left room [Name:{1}].", otherPlayer.UserId, PhotonNetwork.CurrentRoom.Name);
-        }
+       
 
         void HandleOnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
@@ -110,9 +132,9 @@ namespace Zoca
                     if (!PlayerController.localPlayer) // Local player is null
                     {
                         int cId = 0;
-                        if (!PlayerCustomPropertyUtility.TryGetPlayerCustomProperty<int>(PhotonNetwork.LocalPlayer, PlayerCustomProperty.CharacterId, ref cId))
+                        if (!PlayerCustomPropertyUtility.TryGetPlayerCustomProperty<int>(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.CharacterId, ref cId))
                         {
-                            Debug.LogErrorFormat("GameManager - Empty property for local player: [{0}]", PlayerCustomProperty.CharacterId);
+                            Debug.LogErrorFormat("GameManager - Empty property for local player: [{0}]", PlayerCustomPropertyKey.CharacterId);
                         }
                         Debug.LogFormat("Loading local player character [CharacterId:{0}].", cId);
                         GameObject playerPrefab = Resources.LoadAll<PlayerController>(ResourceFolder.Character)[(int)cId].gameObject;
@@ -122,9 +144,9 @@ namespace Zoca
                         // Spawn the networked local player ( only support 1vs1 at the moment )
                         // Get the player team
                         Team team = Team.Blue;
-                        if (!PlayerCustomPropertyUtility.TryGetPlayerCustomProperty<Team>(PhotonNetwork.LocalPlayer, PlayerCustomProperty.TeamColor, ref team))
+                        if (!PlayerCustomPropertyUtility.TryGetPlayerCustomProperty<Team>(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.TeamColor, ref team))
                         {
-                            Debug.LogErrorFormat("PlayerController - property is empty: {0}", PlayerCustomProperty.TeamColor);
+                            Debug.LogErrorFormat("PlayerController - property is empty: {0}", PlayerCustomPropertyKey.TeamColor);
                         }
 
                         // Get the spawn point depending on the team the player belongs to
@@ -141,14 +163,22 @@ namespace Zoca
                         PhotonNetwork.Instantiate(System.IO.Path.Combine(ResourceFolder.Character, playerPrefab.name), spawnPoint.position, spawnPoint.rotation);
                     }
 
-                    // The master client also needs to instantiate the networked ball
+                    
                     if (PhotonNetwork.LocalPlayer.IsMasterClient)
                     {
-                        // For now we only have one ball ( id=0 ) in resources
-                        GameObject ballPrefab = Resources.LoadAll<Ball>(ResourceFolder.Ball)[0].gameObject;
-                        PhotonNetwork.InstantiateRoomObject(System.IO.Path.Combine(ResourceFolder.Ball, ballPrefab.name), LevelManager.Instance.BallSpawnPoint.position, Quaternion.identity); ;
-                        Debug.LogFormat("GameManager - Scene manager: {0}", LevelManager.Instance);
+                        // The master client also needs to instantiate the networked ball
+                        if (!Ball.Instance)
+                        {
+                            // For now we only have one ball ( id=0 ) in resources
+                            GameObject ballPrefab = Resources.LoadAll<Ball>(ResourceFolder.Ball)[0].gameObject;
+                            PhotonNetwork.InstantiateRoomObject(System.IO.Path.Combine(ResourceFolder.Ball, ballPrefab.name), LevelManager.Instance.BallSpawnPoint.position, Quaternion.identity); ;
+                            Debug.LogFormat("GameManager - Scene manager: {0}; Ball created:{1}", LevelManager.Instance, Ball.Instance);
+                        }
+                        
+                        
                     }
+
+
 
                 }
                 else // Offline mode: for test, means we are testing the arena from the editor
@@ -157,8 +187,8 @@ namespace Zoca
                     Cursor.lockState = CursorLockMode.Locked;
 
                     // Add default custom properties
-                    PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomProperty.TeamColor, Team.Blue);
-                    PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomProperty.CharacterId, 0);
+                    PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.TeamColor, Team.Blue);
+                    PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.CharacterId, 0);
                     // Get character resource
                     GameObject player = Resources.LoadAll<PlayerController>(ResourceFolder.Character)[0].gameObject;
                     Debug.LogFormat("Character found: {0}", player.name);
