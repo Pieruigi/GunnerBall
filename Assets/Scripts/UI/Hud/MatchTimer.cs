@@ -12,13 +12,10 @@ namespace Zoca.UI
         [SerializeField]
         Text timerText;
 
-        float matchLength;
-       
-
+        
         private void Awake()
         {
             
-            matchLength = (float)PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.MatchLength];
         }
 
         // Start is called before the first frame update
@@ -31,7 +28,7 @@ namespace Zoca.UI
         // Update is called once per frame
         void Update()
         {
-            int timer = (int)Mathf.Max(matchLength - Match.Instance.TimeElapsed, 0);
+            int timer = (int)Mathf.Max(Match.Instance.Length - Match.Instance.TimeElapsed, 0);
             
             timerText.text = timer.ToString();
         }

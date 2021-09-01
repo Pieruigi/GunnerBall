@@ -17,20 +17,31 @@ namespace Zoca
 
         public static Match Instance { get; private set; }
 
-        float elapsed;
+        float matchElapsed;
         public float TimeElapsed
         {
-            get { return elapsed; }
+            get { return matchElapsed; }
         }
 
         float startTime;
+        public float StartTime
+        {
+            get { return startTime; }
+        }
+
         float matchLength;
+        public float Length
+        {
+            get { return matchLength; }
+        }
 
         MatchState state = MatchState.Starting;
         public MatchState State
         {
             get { return state; }
         }
+
+        
 
         private void Awake()
         {
@@ -40,10 +51,16 @@ namespace Zoca
 
                 // We keep trace of the elapsed time because we want to stop the time match for example
                 // when a player gets a score.
-                elapsed = (float)PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.MatchElapsed];
-                startTime = (float)PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.StartTime];
-                matchLength = (float)PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.MatchLength];
-                state = (MatchState)PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.MatchState];
+                RoomCustomPropertyUtility.TryGetCurrentRoomCustomProperty<float>(RoomCustomPropertyKey.MatchLength, ref matchLength);
+                RoomCustomPropertyUtility.TryGetCurrentRoomCustomProperty<float>(RoomCustomPropertyKey.MatchElapsed, ref matchElapsed);
+                RoomCustomPropertyUtility.TryGetCurrentRoomCustomProperty<float>(RoomCustomPropertyKey.StartTime, ref startTime);
+                RoomCustomPropertyUtility.TryGetCurrentRoomCustomProperty<MatchState>(RoomCustomPropertyKey.MatchState, ref state);
+                
+
+                //matchLength = (float)PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.MatchLength];
+                //matchElapsed = (float)PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.MatchElapsed];
+                //startTime = (float)PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.StartTime];
+                //state = (MatchState)PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.MatchState];
             }
             else
             {
@@ -54,7 +71,15 @@ namespace Zoca
         // Start is called before the first frame update
         void Start()
         {
+            // Get the local player 
+            PlayerController playerController = PlayerController.LocalPlayer.GetComponent<PlayerController>();
 
+            if(state == MatchState.Starting)
+            {
+                // Player can only look around
+                playerController.MoveDisabled = true;
+                playerController.ShootDisabled = true;
+            }
         }
 
         // Update is called once per frame
@@ -64,9 +89,6 @@ namespace Zoca
         }
 
 
-        
-        
-
 
         void CheckState()
         {
@@ -74,29 +96,46 @@ namespace Zoca
             {
                 case MatchState.Starting:
                     // Every client must check the starting time and switch the game to the running state
-                    if (startTime + Constants.StartDelay > PhotonNetwork.Time)
+                    if ((float)PhotonNetwork.Time > startTime + Constants.StartDelay)
                     {
                         state = MatchState.Running;
+
+                        // Update the player controller
+                        PlayerController playerController = PlayerController.LocalPlayer.GetComponent<PlayerController>();
+                        playerController.MoveDisabled = false;
+                        playerController.ShootDisabled = false;
 
                         if (PhotonNetwork.IsMasterClient)
                         {
                             // Update the room property
-                            PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.MatchState] = MatchState.Running;
+                            //PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.MatchState] = MatchState.Running;
+                            //PhotonNetwork.CurrentRoom.SetCustomProperties(PhotonNetwork.CurrentRoom.CustomProperties);
+
+                            RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchState, MatchState.Running);
+                            RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
                         }
                     }
                     
                     break;
                 case MatchState.Running:
-                    elapsed += Time.deltaTime;
-                    if(elapsed > matchLength)
+                    matchElapsed += Time.deltaTime;
+                    if(matchElapsed > matchLength)
                     {
                         // Game is completed
                         state = MatchState.Completed;
 
+                        // Update the player controller
+                        PlayerController playerController = PlayerController.LocalPlayer.GetComponent<PlayerController>();
+                        playerController.ShootDisabled = false;
+
                         if (PhotonNetwork.IsMasterClient)
                         {
                             // Update the state property
-                            PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.MatchState] = MatchState.Completed;
+                            //PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.MatchState] = MatchState.Completed;
+                            //PhotonNetwork.CurrentRoom.SetCustomProperties(PhotonNetwork.CurrentRoom.CustomProperties);
+
+                            RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchState, MatchState.Completed);
+                            RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
                         }
                     }
                     break;

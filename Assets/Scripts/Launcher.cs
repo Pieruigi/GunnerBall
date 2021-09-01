@@ -63,11 +63,9 @@ namespace Zoca
         {
             // We must read the choosen join mode first
 
-            // Prepare room custom property hashtable
-            ExitGames.Client.Photon.Hashtable rcp = new ExitGames.Client.Photon.Hashtable();
-            rcp.Add(RoomCustomPropertyKey.MatchLength, matchLength);
+            
 
-            PhotonNetwork.JoinRandomRoom(rcp, (byte)expectedMaxPlayers);
+            PhotonNetwork.JoinRandomRoom(null, (byte)expectedMaxPlayers);
         }
 
         #region private
@@ -120,7 +118,13 @@ namespace Zoca
             {
                 // Create a new room
                 Debug.LogWarningFormat("PUN - Unable to join random room: [{0}] {1}.", returnCode, message);
-                PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = (byte)expectedMaxPlayers });
+                // Prepare room custom property hashtable
+                RoomOptions roomOptions = new RoomOptions() { MaxPlayers = (byte)expectedMaxPlayers };
+                roomOptions.CustomRoomPropertiesForLobby = new string[] { RoomCustomPropertyKey.MatchLength };
+                roomOptions.CustomRoomProperties = new ExitGames.Client.Photon.Hashtable();
+                roomOptions.CustomRoomProperties.Add(RoomCustomPropertyKey.MatchLength, matchLength);
+
+                PhotonNetwork.CreateRoom(null, roomOptions);
             }
             else
             {
@@ -137,17 +141,19 @@ namespace Zoca
             Debug.LogFormat("PUN - local player actor number: {0}", PhotonNetwork.LocalPlayer.ActorNumber);
             if (PhotonNetwork.LocalPlayer.ActorNumber == 1)
             {
-                PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.TeamColor, Team.Blue);
+                //PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.TeamColor, Team.Blue);
+                PlayerCustomPropertyUtility.AddOrUpdateLocalPlayerCustomProperty(PlayerCustomPropertyKey.TeamColor, Team.Blue);
             }
             else
             {
-                PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.TeamColor, Team.Red);
+                //PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.TeamColor, Team.Red);
+                PlayerCustomPropertyUtility.AddOrUpdateLocalPlayerCustomProperty(PlayerCustomPropertyKey.TeamColor, Team.Red);
             }
 
             // Set the default character
             Debug.LogFormat("PUN - Setting default character id.");
             PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.CharacterId, 0);
-    
+            PlayerCustomPropertyUtility.SynchronizePlayerCustomProperties(PhotonNetwork.LocalPlayer);
         }
         #endregion
 

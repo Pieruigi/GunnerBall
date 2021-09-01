@@ -1,3 +1,4 @@
+#define TEST_SINGLE_PLAYER
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -90,9 +91,17 @@ namespace Zoca
                     if (PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers)
                     {
                         // A match starting time is needed to set countdown
-                        PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.StartTime] = PhotonNetwork.Time;
-                        PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.MatchState] = MatchState.Starting;
-                        PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.MatchElapsed] = 0;
+                        RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.StartTime, (float)PhotonNetwork.Time);
+                        RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchState, MatchState.Starting);
+                        RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchElapsed, 0f);
+                        RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
+
+                        //PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.StartTime] = (float)PhotonNetwork.Time;
+                        //PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.MatchState] = MatchState.Starting;
+                        //PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.MatchElapsed] = 0f;
+
+                        //PhotonNetwork.CurrentRoom.SetCustomProperties(PhotonNetwork.CurrentRoom.CustomProperties);
+
                         // The room is full, load the arena
                         LoadArena();
 
@@ -108,8 +117,22 @@ namespace Zoca
             Debug.LogFormat("PUN - Player [ID:{0}] left room [Name:{1}].", otherPlayer.UserId, PhotonNetwork.CurrentRoom.Name);
         }
 
-        
+#if TEST_SINGLE_PLAYER
+        public override void OnJoinedRoom()
+        {
+            // A match starting time is needed to set countdown
+            RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.StartTime, (float)PhotonNetwork.Time);
+            RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchState, MatchState.Starting);
+            RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchElapsed, 0f);
+            RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
 
+            //PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.StartTime] = (float)PhotonNetwork.Time;
+            //PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.MatchState] = MatchState.Starting;
+            //PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.MatchElapsed] = 0f;
+            // The room is full, load the arena
+            LoadArena();
+        }
+#endif
         public override void OnLeftRoom()
         {
             Debug.LogFormat("PUN - Left room.");
@@ -129,7 +152,7 @@ namespace Zoca
                 if (!PhotonNetwork.OfflineMode) // Online mode
                 {
                     
-                    if (!PlayerController.localPlayer) // Local player is null
+                    if (!PlayerController.LocalPlayer) // Local player is null
                     {
                         int cId = 0;
                         if (!PlayerCustomPropertyUtility.TryGetPlayerCustomProperty<int>(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.CharacterId, ref cId))
@@ -211,6 +234,15 @@ namespace Zoca
                 inGame = false;
             }
             Debug.LogFormat("GameManager - scene loaded [Name:{0}]; inGame:{1}", scene.name, inGame);
+        }
+
+        public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
+        {
+            Debug.LogFormat("GameManager - OnRoomPropertiesUpdate");
+            foreach(string key in propertiesThatChanged.Keys)
+            {
+                Debug.LogFormat("GameManager - {0}:{1}", key, propertiesThatChanged[key]);
+            }
         }
         #endregion
     }

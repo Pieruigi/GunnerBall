@@ -8,7 +8,7 @@ namespace Zoca
 {
     public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
     {
-        public static GameObject localPlayer { get; private set; } 
+        public static GameObject LocalPlayer { get; private set; } 
 
         [Header("Physics")]
         [SerializeField]
@@ -54,6 +54,24 @@ namespace Zoca
         bool jumping = false;
         float ySpeed = 0;
 
+        bool moveDisabled = false;
+        public bool MoveDisabled
+        {
+            get { return moveDisabled; }
+            set { moveDisabled = value; }
+        }
+        bool lookDisabled = false;
+        public bool LookDisabled
+        {
+            get { return lookDisabled; }
+            set { lookDisabled = value; }
+        }
+        bool shootDisabled = false;
+        public bool ShootDisabled
+        {
+            get { return shootDisabled; }
+            set { shootDisabled = value; }
+        }
 
         private void Awake()
         {
@@ -73,7 +91,7 @@ namespace Zoca
             else
             {
                 // This is the local player
-                localPlayer = gameObject;
+                LocalPlayer = gameObject;
 
                 // Init player camera
                 playerCamera.SetPlayerController(this);
@@ -98,6 +116,8 @@ namespace Zoca
 
             if (photonView.IsMine || PhotonNetwork.OfflineMode)
             {
+                
+
                 //
                 // Check movement
                 //
@@ -190,6 +210,9 @@ namespace Zoca
             if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
                 return;
 
+            if (moveDisabled)
+                return;
+
             if (context.performed)
             {
                 if (!moving)
@@ -226,7 +249,10 @@ namespace Zoca
         {
             if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
                 return;
-    
+
+            if (lookDisabled)
+                return;
+
             lookInput = context.ReadValue<Vector2>();
                 
             //Debug.LogFormat("PlayerController - Look input: {0}", lookInput);
@@ -235,6 +261,9 @@ namespace Zoca
         public void OnJump(InputAction.CallbackContext context)
         {
             if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
+                return;
+
+            if (moveDisabled)
                 return;
 
             // Jump
@@ -248,6 +277,9 @@ namespace Zoca
         public void OnShoot(InputAction.CallbackContext context)
         {
             if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
+                return;
+
+            if (shootDisabled)
                 return;
 
             if (context.performed)

@@ -1,3 +1,4 @@
+using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,7 +15,11 @@ namespace Zoca
 
     public class PlayerCustomPropertyUtility
     {
-        
+        public static void SynchronizePlayerCustomProperties(Player player)
+        {
+            player.SetCustomProperties(player.CustomProperties);
+        }
+
 
         public static void AddOrUpdatePlayerCustomProperty(Player player, string key, object value)
         {
@@ -24,6 +29,10 @@ namespace Zoca
                 player.CustomProperties.Add(key, value);
         }
 
+        public static void AddOrUpdateLocalPlayerCustomProperty(string key, object value)
+        {
+            AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, key, value);
+        }
 
         public static bool TryGetPlayerCustomProperty<T>(Player player, string key, ref T value)
         {
@@ -32,6 +41,11 @@ namespace Zoca
 
             value = (T)player.CustomProperties[key];
             return true;
+        }
+
+        public static bool TryGetLocalPlayerCustomProperty<T>(string key, ref T value)
+        {
+            return TryGetPlayerCustomProperty<T>(PhotonNetwork.LocalPlayer, key, ref value);
         }
     }
 
