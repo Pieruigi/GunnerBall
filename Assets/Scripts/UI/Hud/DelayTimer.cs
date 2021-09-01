@@ -13,6 +13,8 @@ namespace Zoca.UI
 
         bool loop = false;
 
+        
+
         private void Awake()
         {
             
@@ -21,7 +23,7 @@ namespace Zoca.UI
         // Start is called before the first frame update
         void Start()
         {
-            if(Match.Instance.State != MatchState.Starting)
+            if (Match.Instance.State != MatchState.Starting && Match.Instance.State != MatchState.Paused)
             {
                 loop = false;
                 
@@ -37,19 +39,28 @@ namespace Zoca.UI
         // Update is called once per frame
         void Update()
         {
-            if (!loop)
-                return;
+            
 
-            if(Match.Instance.State != MatchState.Starting)
+            if(Match.Instance.State != MatchState.Starting && Match.Instance.State != MatchState.Paused)
             {
                 loop = false;
                 // Hide text
                 timerText.gameObject.SetActive(false);
-                return;
+            }
+            else
+            {
+                loop = true;
+
+                timerText.gameObject.SetActive(true);
             }
 
+            if (!loop)
+                return;
+
             // Set the timer
-            int timer = (int)(Constants.StartDelay - Mathf.Max((float)PhotonNetwork.Time - Match.Instance.StartTime, 0));
+            float delay = Match.Instance.State == MatchState.Starting ? Constants.StartDelay : Constants.PauseDelay;
+            float start = Match.Instance.State == MatchState.Starting ? Match.Instance.StartTime : Match.Instance.PauseTime;
+            int timer = (int)( delay - Mathf.Max((float)PhotonNetwork.Time - start, 0));
 
             timerText.text = timer.ToString();
 

@@ -58,7 +58,15 @@ namespace Zoca
         public bool MoveDisabled
         {
             get { return moveDisabled; }
-            set { moveDisabled = value; }
+            set 
+            { 
+                moveDisabled = value; 
+                if (value) 
+                { 
+                    moving = false; 
+                    input = Vector2.zero; 
+                } 
+            }
         }
         bool lookDisabled = false;
         public bool LookDisabled
@@ -70,8 +78,11 @@ namespace Zoca
         public bool ShootDisabled
         {
             get { return shootDisabled; }
-            set { shootDisabled = value; }
+            set { shootDisabled = value; if (value) shooting = false; }
         }
+
+        Vector3 startPosition;
+        Quaternion startRotation;
 
         private void Awake()
         {
@@ -95,6 +106,10 @@ namespace Zoca
 
                 // Init player camera
                 playerCamera.SetPlayerController(this);
+
+                // Store initial position
+                startPosition = transform.position;
+                startRotation = transform.rotation;
 
                 // Avoid to destroy the player 
                 DontDestroyOnLoad(gameObject);
@@ -202,7 +217,18 @@ namespace Zoca
 
         }
 
+        public void ResetPlayer()
+        {
+            if (photonView.IsMine)
+            {
+                velocity = Vector3.zero; 
+                targetVelocity = Vector3.zero;
+                
+                cc.Move(startPosition - transform.position);
+                transform.rotation = startRotation;
 
+            }
+        }
 
 #region input_system_callbacks
         public void OnMove(InputAction.CallbackContext context)
@@ -212,6 +238,7 @@ namespace Zoca
 
             if (moveDisabled)
                 return;
+                
 
             if (context.performed)
             {

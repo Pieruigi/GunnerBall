@@ -7,12 +7,12 @@ using UnityEngine;
 
 namespace Zoca
 {
-    public enum MatchState { Starting, Running, Completed }
+    public enum MatchState { Starting, Running, Paused, Completed }
 
     /// <summary>
     /// This class implement match rules
     /// </summary>
-    public class Match : MonoBehaviour
+    public class Match : MonoBehaviour, IOnEventCallback
     {
 
         public static Match Instance { get; private set; }
@@ -41,7 +41,12 @@ namespace Zoca
             get { return state; }
         }
 
-        
+        public int blueTeamScore = 0, redTeamScore = 0;
+        float pauseTime;
+        public float PauseTime
+        {
+            get { return pauseTime; }
+        }
 
         private void Awake()
         {
@@ -55,12 +60,12 @@ namespace Zoca
                 RoomCustomPropertyUtility.TryGetCurrentRoomCustomProperty<float>(RoomCustomPropertyKey.MatchElapsed, ref matchElapsed);
                 RoomCustomPropertyUtility.TryGetCurrentRoomCustomProperty<float>(RoomCustomPropertyKey.StartTime, ref startTime);
                 RoomCustomPropertyUtility.TryGetCurrentRoomCustomProperty<MatchState>(RoomCustomPropertyKey.MatchState, ref state);
-                
+                byte b = 0;
+                RoomCustomPropertyUtility.TryGetCurrentRoomCustomProperty<byte>(RoomCustomPropertyKey.BlueTeamScore, ref b);
+                blueTeamScore = b;
+                RoomCustomPropertyUtility.TryGetCurrentRoomCustomProperty<byte>(RoomCustomPropertyKey.RedTeamScore, ref b);
+                redTeamScore = b;
 
-                //matchLength = (float)PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.MatchLength];
-                //matchElapsed = (float)PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.MatchElapsed];
-                //startTime = (float)PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.StartTime];
-                //state = (MatchState)PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.MatchState];
             }
             else
             {
@@ -88,6 +93,96 @@ namespace Zoca
             CheckState();
         }
 
+        private void OnEnable()
+        {
+            PhotonNetwork.AddCallbackTarget(this);
+        }
+
+        private void OnDisable()
+        {
+            PhotonNetwork.RemoveCallbackTarget(this);
+        }
+
+        
+        public void TeamScored(Team team)
+        {
+           
+            if (team == Team.Blue)
+            {
+                blueTeamScore += 1;
+            }
+            else
+            {
+                redTeamScore += 1;
+            }
+
+            // Room custom properties synchronization is here
+            SetNewState(MatchState.Paused);
+
+
+
+            if (PhotonNetwork.IsMasterClient)
+            {
+                // Update room properties
+                RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(team == Team.Blue ? RoomCustomPropertyKey.BlueTeamScore : RoomCustomPropertyKey.RedTeamScore, team == Team.Blue ? blueTeamScore : redTeamScore);
+                RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.PauseTime, (float)PhotonNetwork.Time);
+                RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchState, MatchState.Paused);
+                RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
+
+                // Send event to the others
+                object[] content = new object[] { team };
+                RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.Others };
+                PhotonNetwork.RaiseEvent(PhotonEvent.TeamScored, content, raiseEventOptions, SendOptions.SendReliable);
+            }
+            
+
+        }
+
+        public void OnEvent(EventData photonEvent)
+        {
+            byte eventCode = photonEvent.Code;
+
+            switch (eventCode)
+            {
+                case PhotonEvent.TeamScored:
+                    if (PhotonNetwork.IsMasterClient)
+                        return;
+                    // Get the paused time
+                    RoomCustomPropertyUtility.TryGetCurrentRoomCustomProperty<float>(RoomCustomPropertyKey.PauseTime, ref pauseTime);
+                    TeamScored((Team)((object[])photonEvent.CustomData)[0]);
+                    break;
+
+            }
+        }
+
+        void SetNewState(MatchState newState)
+        {
+            Debug.LogFormat("Setting new state: {0}", newState);
+
+            state = newState;
+
+            if(newState == MatchState.Paused)
+            {
+                pauseTime = Time.time;
+
+                // Reset the ball
+                Ball.Instance.ResetBall();
+
+                PlayerController.LocalPlayer.GetComponent<PlayerController>().MoveDisabled = true;
+                PlayerController.LocalPlayer.GetComponent<PlayerController>().ShootDisabled = true;
+
+
+                // Reset local player
+                PlayerController.LocalPlayer.GetComponent<PlayerController>().ResetPlayer();
+
+               
+                
+
+            }
+
+            
+        }
+
 
 
         void CheckState()
@@ -107,12 +202,9 @@ namespace Zoca
 
                         if (PhotonNetwork.IsMasterClient)
                         {
-                            // Update the room property
-                            //PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.MatchState] = MatchState.Running;
-                            //PhotonNetwork.CurrentRoom.SetCustomProperties(PhotonNetwork.CurrentRoom.CustomProperties);
-
-                            RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchState, MatchState.Running);
-                            RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
+                            
+                            //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchState, MatchState.Running);
+                            //RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
                         }
                     }
                     
@@ -130,12 +222,10 @@ namespace Zoca
 
                         if (PhotonNetwork.IsMasterClient)
                         {
-                            // Update the state property
-                            //PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.MatchState] = MatchState.Completed;
-                            //PhotonNetwork.CurrentRoom.SetCustomProperties(PhotonNetwork.CurrentRoom.CustomProperties);
+                            
 
-                            RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchState, MatchState.Completed);
-                            RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
+                            //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchState, MatchState.Completed);
+                            //RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
                         }
                     }
                     break;
@@ -143,8 +233,28 @@ namespace Zoca
                 case MatchState.Completed:
 
                     break;
+
+                case MatchState.Paused:
+                    if(Time.time > pauseTime + Constants.PauseDelay)
+                    {
+                        state = MatchState.Running;
+
+                        if (PhotonNetwork.IsMasterClient)
+                        {
+                            RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchState, MatchState.Running);
+                            RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
+                        }
+
+                        PlayerController playerController = PlayerController.LocalPlayer.GetComponent<PlayerController>();
+                        playerController.MoveDisabled = false;
+                        playerController.ShootDisabled = false;
+                    }
+                    break;
             }
         }
+
+        
+
     }
 }
 

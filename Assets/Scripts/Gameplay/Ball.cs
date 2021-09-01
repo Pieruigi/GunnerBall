@@ -95,6 +95,18 @@ namespace Zoca
         }
 
        
+        public void ResetBall()
+        {
+            rb.velocity = Vector3.zero;
+            rb.position = LevelManager.Instance.BallSpawnPoint.position;
+            rb.rotation = LevelManager.Instance.BallSpawnPoint.rotation;
+
+            if(!PhotonNetwork.IsMasterClient)
+            {
+                networkTime = PhotonNetwork.Time;
+                networkDisplacement = Vector3.zero;
+            }
+        }
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {

@@ -94,7 +94,10 @@ namespace Zoca
                         RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.StartTime, (float)PhotonNetwork.Time);
                         RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchState, MatchState.Starting);
                         RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchElapsed, 0f);
+                        RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.BlueTeamScore, (byte)0);
+                        RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.RedTeamScore, (byte)0);
                         RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
+                        
 
                         //PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.StartTime] = (float)PhotonNetwork.Time;
                         //PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.MatchState] = MatchState.Starting;
@@ -124,6 +127,8 @@ namespace Zoca
             RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.StartTime, (float)PhotonNetwork.Time);
             RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchState, MatchState.Starting);
             RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchElapsed, 0f);
+            RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.BlueTeamScore, (byte)0);
+            RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.RedTeamScore, (byte)0);
             RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
 
             //PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.StartTime] = (float)PhotonNetwork.Time;

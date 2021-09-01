@@ -12,6 +12,9 @@ namespace Zoca
         public static readonly string StartTime = "st";
         public static readonly string MatchState = "ms";
         public static readonly string MatchElapsed = "me";
+        public static readonly string BlueTeamScore = "bts";
+        public static readonly string RedTeamScore = "rts";
+        public static readonly string PauseTime = "pt";
 
         //public static readonly float MatchTimeValueDefault = 300f;
     }
