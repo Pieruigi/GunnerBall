@@ -69,7 +69,7 @@ namespace Zoca
         /// <returns></returns>
         public virtual bool TryShoot(out object[] parameters)
         {
-            Debug.Log("FireWeapon - TryShoot().");
+            //Debug.Log("FireWeapon - TryShoot().");
             parameters = null;
 
             // Not ready yet

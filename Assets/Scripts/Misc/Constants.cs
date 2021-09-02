@@ -20,13 +20,12 @@ namespace Zoca
 
     public class Constants
     {
-        public static readonly float StartDelay = 7;
-        public static readonly float PauseDelay = 3;
+        public static readonly float StartDelay = 4;
+        public static readonly float GoalDelay = 7;
     }
 
     public class PhotonEvent
     {
-        public const byte StartMatch = 200;
-        public const byte TeamScored = 199;
+        public const byte StateChanged = 199;
     }
 }

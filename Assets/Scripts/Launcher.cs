@@ -122,7 +122,7 @@ namespace Zoca
                 RoomOptions roomOptions = new RoomOptions() { MaxPlayers = (byte)expectedMaxPlayers };
                 roomOptions.CustomRoomPropertiesForLobby = new string[] { RoomCustomPropertyKey.MatchLength };
                 roomOptions.CustomRoomProperties = new ExitGames.Client.Photon.Hashtable();
-                roomOptions.CustomRoomProperties.Add(RoomCustomPropertyKey.MatchLength, matchLength);
+                roomOptions.CustomRoomProperties.Add(RoomCustomPropertyKey.MatchLength, (int)matchLength);
 
                 PhotonNetwork.CreateRoom(null, roomOptions);
             }

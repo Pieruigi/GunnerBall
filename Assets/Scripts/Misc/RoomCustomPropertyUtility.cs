@@ -8,14 +8,14 @@ namespace Zoca
 {
     public class RoomCustomPropertyKey
     {
-        public static readonly string MatchLength = "ml";
-        public static readonly string StartTime = "st";
-        public static readonly string MatchState = "ms";
-        public static readonly string MatchElapsed = "me";
-        public static readonly string BlueTeamScore = "bts";
-        public static readonly string RedTeamScore = "rts";
-        public static readonly string PauseTime = "pt";
-
+        public static readonly string MatchLength = "ml"; // int
+        public static readonly string MatchStateTimestamp = "mst"; // float
+        public static readonly string MatchState = "ms"; // byte
+        public static readonly string MatchOldState = "mos"; // byte
+        public static readonly string MatchTimeElapsed = "mte"; // float
+        public static readonly string BlueTeamScore = "bts"; // byte
+        public static readonly string RedTeamScore = "rts"; // byte
+        
         //public static readonly float MatchTimeValueDefault = 300f;
     }
 
@@ -60,6 +60,19 @@ namespace Zoca
         public static void AddOrUpdateCurrentRoomCustomProperty(string key, object value)
         {
             AddOrUpdateRoomCustomProperty(PhotonNetwork.CurrentRoom, key, value);
+        }
+
+        public static object GetRoomCustomProperty(Room room, string key)
+        {
+            if (!room.CustomProperties.ContainsKey(key))
+                return null;
+
+            return room.CustomProperties[key];
+        }
+
+        public static object GetCurrentRoomCustomProperty(string key)
+        {
+            return GetRoomCustomProperty(PhotonNetwork.CurrentRoom, key);
         }
 
         public static bool TryGetRoomCustomProperty<T>(Room room, string key, ref T value)

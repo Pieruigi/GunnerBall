@@ -51,7 +51,7 @@ namespace Zoca
                     //else
                     //    Match.Instance.TeamScored(Team.Blue);
 
-                    Match.Instance.TeamScored(team);
+                    Match.Instance.Goal(team);
                 }
             }
 

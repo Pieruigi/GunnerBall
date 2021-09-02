@@ -249,7 +249,7 @@ namespace Zoca
                     // Start moving
                     //animator.SetBool(walkParam, true);
 
-                    Debug.LogFormat("Player starts moving");
+                    //Debug.LogFormat("Player starts moving");
                 }
 
                 input = context.ReadValue<Vector2>();
@@ -264,7 +264,7 @@ namespace Zoca
                     // Stop moving
                     //animator.SetBool(walkParam, false);
 
-                    Debug.LogFormat("Player stops moving");
+                    //Debug.LogFormat("Player stops moving");
                 }
 
                 input = Vector2.zero;
