@@ -179,7 +179,9 @@ namespace Zoca
             {
                 case (int)MatchState.Paused:
                     // Reset players and ball
-                    Ball.Instance.ResetBall();
+                    if(Ball.Instance)
+                        Ball.Instance.ResetBall();
+
                     PlayerController.LocalPlayer.GetComponent<PlayerController>().MoveDisabled = true;
                     PlayerController.LocalPlayer.GetComponent<PlayerController>().ShootDisabled = true;
                     PlayerController.LocalPlayer.GetComponent<PlayerController>().ResetPlayer();
