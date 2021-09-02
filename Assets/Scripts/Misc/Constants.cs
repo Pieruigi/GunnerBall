@@ -27,5 +27,6 @@ namespace Zoca
     public class PhotonEvent
     {
         public const byte StateChanged = 199;
+        public const byte Synchronize = 198;
     }
 }

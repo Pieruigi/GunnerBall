@@ -12,8 +12,7 @@ namespace Zoca
         [SerializeField]
         Team team = Team.Blue;
 
-        bool checkDisabled = false;
-
+   
         // Start is called before the first frame update
         void Start()
         {
@@ -28,8 +27,7 @@ namespace Zoca
 
         private void OnTriggerEnter(Collider other)
         {
-            // Already checked
-            if (checkDisabled)
+            if (Match.Instance.State != (int)MatchState.Started)
                 return;
 
             // Check for the ball
@@ -45,11 +43,7 @@ namespace Zoca
                 // Dot product
                 if(Vector3.Dot(transform.forward, triggerToBallDirection) > 0)
                 {
-                    //// The other team sets a score
-                    //if (team == Team.Blue)
-                    //    Match.Instance.TeamScored(Team.Red);
-                    //else
-                    //    Match.Instance.TeamScored(Team.Blue);
+                    
 
                     Match.Instance.Goal(team == Team.Blue ? Team.Red : Team.Blue);
                 }

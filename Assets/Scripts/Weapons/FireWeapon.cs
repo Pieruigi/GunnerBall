@@ -1,4 +1,4 @@
-//#define SHOOT_AS_PEER
+#define PEER_SHOT
 using Photon.Pun;
 using System.Collections;
 using UnityEngine;
@@ -61,6 +61,7 @@ namespace Zoca
 
         }
 
+#if !PEER_SHOT
         /// <summary>
         /// Returns true if it can shoot and some values are sent as param ( origin, speed etc );
         /// otherwise return false.
@@ -90,9 +91,55 @@ namespace Zoca
 
             return true;
         }
+#else
+        /// <summary>
+        /// Returns true if it can shoot and some values are sent as param ( origin, speed etc );
+        /// otherwise return false.
+        /// </summary>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        public virtual bool TryShoot(out object[] parameters)
+        {
+            //Debug.Log("FireWeapon - TryShoot().");
+            parameters = null;
 
-        
+            // Not ready yet
+            if (cooldownElapsed > 0)
+                return false;
+
+            // Ready to shoot
+            cooldownElapsed = cooldown;
+
+            // Get origin, direction and speed
+            Vector3 origin = owner.PlayerCamera.transform.position;
+            Vector3 direction = owner.PlayerCamera.transform.forward;
+
+            Ray ray = new Ray(origin, direction);
+            RaycastHit info;
+            ownerCollider.enabled = false;
+            bool hit = Physics.Raycast(ray, out info, distance);
+            ownerCollider.enabled = true;
+            if (hit)
+            {
+                if (Tag.Ball.Equals(info.collider.tag))
+                {
+                    parameters = new object[3];
+                    parameters[0] = info.point;
+                    parameters[1] = info.normal;
+                    parameters[2] = PhotonNetwork.Time;
+                    return true;
+                }
+
+                
+            }
             
+            
+
+            return false;
+        }
+#endif
+
+
 
 
         //}
@@ -110,8 +157,9 @@ namespace Zoca
         }
 
 
-        #region private
+#region private
 
+#if !PEER_SHOT
         IEnumerator ShootDelayed(object[] parameters)
         {
             // Get params
@@ -144,7 +192,7 @@ namespace Zoca
                         Debug.LogFormat("FireWeapon - Ball Hit.");
                         Vector3 position = info.transform.position;
                         Quaternion rotation = info.transform.rotation;
-                        Vector3 velocity = info.normal * -3 * power;
+                        Vector3 velocity = -info.normal * power;
                         double ts = PhotonNetwork.Time;
 
                         // Change velocity
@@ -153,13 +201,44 @@ namespace Zoca
                         info.collider.GetComponent<Ball>().photonView.RPC("RpcHit", RpcTarget.Others, velocity, ts);
 
                    
+                    }
+
                 }
 
             }
+        }
+#else
+        IEnumerator ShootDelayed(object[] parameters)
+        {
+            // Get params
+            Vector3 origin = (Vector3)parameters[0];
+            Vector3 direction = (Vector3)parameters[1];
+            double timestamp = (double)parameters[2];
+
+            // Check the time passed
+            float lag = (float)(PhotonNetwork.Time - timestamp);
+            if (shootDelay > lag)
+                yield return new WaitForSeconds(shootDelay - lag);
+
+            // Shoot
+
+
+
+
+
+
+            Vector3 velocity = -direction * power;
+            Ball.Instance.GetComponent<Rigidbody>().velocity += velocity;
+            Ball.Instance.SkipClientSynchronization();
+            double ts = PhotonNetwork.Time;
+            //if(PhotonNetwork.IsMasterClient)
+            //    Ball.Instance.photonView.RPC("RpcHit", RpcTarget.Others, velocity, ts);
+
+    
+               
 
         }
-     }
-
+#endif
 
 #endregion
     }

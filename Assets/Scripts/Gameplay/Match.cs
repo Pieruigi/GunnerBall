@@ -178,6 +178,8 @@ namespace Zoca
             switch (state)
             {
                 case (int)MatchState.Paused:
+
+                   
                     // Reset players and ball
                     if(Ball.Instance)
                         Ball.Instance.ResetBall();
@@ -190,6 +192,7 @@ namespace Zoca
                     targetTime = stateTimestamp + Constants.StartDelay;
                     break;
                 case (int)MatchState.Started:
+                   
                     // To be sure get the time elapsed from the properties
                     timeElapsed = (float)RoomCustomPropertyUtility.GetCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchTimeElapsed);
                     
@@ -316,6 +319,7 @@ namespace Zoca
             PhotonNetwork.RaiseEvent(PhotonEvent.StateChanged, null, raiseEventOptions, SendOptions.SendReliable);
         }
 
+        
     }
 }
 

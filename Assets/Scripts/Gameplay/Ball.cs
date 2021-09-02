@@ -1,4 +1,10 @@
+//#define RPC_SYNC
+using ExitGames.Client.Photon;
 using Photon.Pun;
+using Photon.Realtime;
+#if RPC_SYNC
+using System;
+#endif
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,6 +13,9 @@ namespace Zoca
 {
     
     public class Ball : MonoBehaviourPunCallbacks, IPunObservable
+#if RPC_SYNC
+        ,IOnEventCallback
+#endif
     {
 
         public static Ball Instance { get; private set; }
@@ -24,6 +33,11 @@ namespace Zoca
 
         Collider coll;
         float radius; // Collider radius
+
+#if RPC_SYNC
+        float sendRate = 0.05f;
+        DateTime lastSentTime;
+#endif
 
         private void Awake()
         {
@@ -51,9 +65,50 @@ namespace Zoca
         // Update is called once per frame
         void Update()
         {
-          
+#if RPC_SYNC
+            if (PhotonNetwork.IsMasterClient)
+            {
+                if((DateTime.UtcNow - lastSentTime).TotalSeconds > sendRate)
+                {
+                    lastSentTime = DateTime.UtcNow;
+                    object[] data = new object[4];
+                    data[0] = (double)PhotonNetwork.Time;
+                    data[1] = (Vector3)rb.position;
+                    data[2] = (Quaternion)rb.rotation;
+                    data[3] = (Vector3)rb.velocity;
+
+                    //RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.Others }; // You would have to set the Receivers to All in order to receive this event on the local client as well
+                    //PhotonNetwork.RaiseEvent(PhotonEvent.Synchronize, data, raiseEventOptions, SendOptions.SendUnreliable);
+
+                    photonView.RPC ("RpcSynchronize", RpcTarget.Others, data);
+                }
+            }
+#endif
         }
 
+#if RPC_SYNC
+        public void OnEvent(EventData photonEvent)
+        {
+            byte eventCode = photonEvent.Code;
+
+            switch (eventCode)
+            {
+                case PhotonEvent.Synchronize:
+
+                    object[] data = (object[])photonEvent.CustomData;
+                    double timestamp = (double)data[0];
+
+                    Vector3 position = (Vector3)data[1];
+                    Quaternion rotation = (Quaternion)data[2];
+                    Vector3 velocity = (Vector3)data[3];
+
+                    Synchronize(timestamp, position, rotation, velocity);
+
+                    break;
+
+            }
+        }
+#endif
         private void FixedUpdate()
         {
             //Debug.LogFormat("PhotonNetwork.Ping():" + PhotonNetwork.GetPing());
@@ -108,10 +163,10 @@ namespace Zoca
             }
         }
 
+
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
-            //return;
-            
+#if !RPC_SYNC
 
             if (stream.IsWriting) // Local ( should be the MasterClient )
             {
@@ -142,7 +197,22 @@ namespace Zoca
                 //Debug.LogFormat("Ball - Sync() completed ........................");
                 Synchronize(timestamp, position, rotation, velocity);
             }
+#endif
         }
+
+#if RPC_SYNC
+        [PunRPC]
+        void RpcSynchronize(object[] data)
+        {
+            double timestamp = (double)data[0];
+
+            Vector3 position = (Vector3)data[1];
+            Quaternion rotation = (Quaternion)data[2];
+            Vector3 velocity = (Vector3)data[3];
+
+            Synchronize(timestamp, position, rotation, velocity);
+        }
+#endif
 
         [PunRPC]
         void RpcHit(Vector3 velocity, double timestamp)
@@ -167,6 +237,8 @@ namespace Zoca
             }
 
             rb.velocity = expectedVelocity;
+
+            SkipClientSynchronization();
 
         }
 
@@ -194,15 +266,41 @@ namespace Zoca
 
         }
 
+        public void SkipClientSynchronization()
+        {
+            if (!photonView.IsMine)
+            {
+                // Update network time to skip any sync that is just arrived
+                networkTime = PhotonNetwork.Time;
+                networkDisplacement = Vector3.zero;
+            }
+
+        }
+
+
         void Synchronize(double timestamp, Vector3 position, Quaternion rotation, Vector3 velocity)
         {
+            // Skip old synchs
             double oldNetworkTime = networkTime;
             networkTime = timestamp;
             if (oldNetworkTime > networkTime)
             {
-                networkTime = oldNetworkTime;
+                networkTime = oldNetworkTime; 
                 return;
             }
+
+            // Is it too old? 
+#if !RPC_SYNC
+            if(PhotonNetwork.Time > networkTime + 0.165f)
+#else
+            if (PhotonNetwork.Time > networkTime + sendRate * 1.65f)
+#endif
+            {
+                // Too old, skip
+                networkTime = 0;
+                return;
+            }
+
             networkPosition = position;
             networkRotation = rotation;
             networkVelocity = velocity;
@@ -226,7 +324,11 @@ namespace Zoca
             networkDisplacement = expectedPosition - rb.position;
             rb.velocity = expectedVelocity;
 
+#if !RPC_SYNC
             lerpSpeed = networkDisplacement.magnitude / 0.075f;
+#else
+            lerpSpeed = networkDisplacement.magnitude / sendRate / 0.075f;
+#endif
 
             //rb.position += networkDisplacement;
             //rb.MovePosition(rb.position + networkDisplacement);
