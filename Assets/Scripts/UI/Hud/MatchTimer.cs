@@ -15,7 +15,7 @@ namespace Zoca.UI
         
         private void Awake()
         {
-            
+            Cursor.lockState = CursorLockMode.Locked;
         }
 
         // Start is called before the first frame update
