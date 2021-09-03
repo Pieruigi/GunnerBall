@@ -1,3 +1,4 @@
+#define PEER_SHOT
 using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
@@ -179,6 +180,7 @@ namespace Zoca
                 //
                 // Check shooting
                 //
+#if !PEER_SHOT
                 if (shooting)
                 {
                     object[] parameters;
@@ -202,6 +204,36 @@ namespace Zoca
                         }
                     }
                 }
+#else
+                if (shooting)
+                {
+                    object[] parameters;
+                    Collider hitCollider;
+                    // Returns true if the weapon is ready to shoot, otherwise returns false
+                    if (fireWeapon.TryShoot(out parameters))
+                    {
+                        if(parameters != null)
+                        {
+                            Debug.LogFormat("PlayerController - Shoot parameters length: {0}", parameters.Length);
+                            for (int i = 0; i < parameters.Length; i++)
+                                Debug.LogFormat("PlayerController - Shoot parameter[{0}]: {1}", i, parameters[i]);
+                        }
+                        
+
+                        // Call rpc on all the clients, even the local one.
+                        // By calling it via server we can balance lag.
+                        if (!PhotonNetwork.OfflineMode)
+                        {
+                            photonView.RPC("RpcShoot", RpcTarget.AllViaServer, parameters as object);
+                        }
+                        else
+                        {
+                            // In offline mode we call the weapon.Shoot() directly
+                            fireWeapon.Shoot(parameters);
+                        }
+                    }
+                }
+#endif
 
             }
             else
@@ -343,9 +375,13 @@ namespace Zoca
         [PunRPC]
         void RpcShoot(object[] parameters, PhotonMessageInfo info)
         {
-            Debug.LogFormat("PlayerController - RpcShoot parameters count: {0}", parameters.Length);
-            for (int i = 0; i < parameters.Length; i++)
-                Debug.LogFormat("PlayerController - RpcShoot parameter[{0}]: {1}", i, parameters[i]);
+            if (parameters != null)
+            {
+                Debug.LogFormat("PlayerController - RpcShoot parameters count: {0}", parameters.Length);
+                for (int i = 0; i < parameters.Length; i++)
+                    Debug.LogFormat("PlayerController - RpcShoot parameter[{0}]: {1}", i, parameters[i]);
+            }
+            
 
             fireWeapon.Shoot(parameters);
         }

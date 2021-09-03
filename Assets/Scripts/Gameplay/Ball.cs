@@ -8,11 +8,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zoca.Interfaces;
 
 namespace Zoca
 {
     
-    public class Ball : MonoBehaviourPunCallbacks, IPunObservable
+    public class Ball : MonoBehaviourPunCallbacks, IPunObservable, IHittable
 #if RPC_SYNC
         ,IOnEventCallback
 #endif
@@ -114,7 +115,7 @@ namespace Zoca
             //Debug.LogFormat("PhotonNetwork.Ping():" + PhotonNetwork.GetPing());
 
             //return;
-            if (photonView.IsMine)
+            if (PhotonNetwork.IsMasterClient)
                 return;
 
             if (networkDisplacement != Vector3.zero)
@@ -140,8 +141,9 @@ namespace Zoca
                 coll.enabled = false;
                 if (Physics.CheckSphere(rb.position, radius))
                 {
-                    networkTime = PhotonNetwork.Time;
-                    networkDisplacement = Vector3.zero;
+                    //networkTime = PhotonNetwork.Time;
+                    //networkDisplacement = Vector3.zero;
+                    SkipLastMasterClientSync();
                 }
                 coll.enabled = true;
             }
@@ -149,18 +151,35 @@ namespace Zoca
 
         }
 
-       
+        public void Hit(GameObject hitOwner, Vector3 hitPoint, Vector3 hitNormal, float hitPower) 
+        {
+            // We want the ball to get moved on all the clients in order
+            // to have a very smooth movement
+            Vector3 velocity = -hitNormal * hitPower;
+            rb.velocity += velocity;
+
+            // Just skip the last sync from the master client
+            SkipLastMasterClientSync();
+        }
+
+        void SkipLastMasterClientSync()
+        {
+            if (!photonView.IsMine)
+            {
+                // Update network time to skip any sync that is just arrived
+                networkTime = PhotonNetwork.Time;
+                networkDisplacement = Vector3.zero;
+            }
+
+        }
+
         public void ResetBall()
         {
             rb.velocity = Vector3.zero;
             rb.position = LevelManager.Instance.BallSpawnPoint.position;
             rb.rotation = LevelManager.Instance.BallSpawnPoint.rotation;
 
-            if(!PhotonNetwork.IsMasterClient)
-            {
-                networkTime = PhotonNetwork.Time;
-                networkDisplacement = Vector3.zero;
-            }
+            SkipLastMasterClientSync();
         }
 
 
@@ -238,7 +257,7 @@ namespace Zoca
 
             rb.velocity = expectedVelocity;
 
-            SkipClientSynchronization();
+            SkipLastMasterClientSync();
 
         }
 
@@ -257,25 +276,11 @@ namespace Zoca
         /// <param name="collision"></param>
         private void OnCollisionEnter(Collision collision)
         {
-            if (!photonView.IsMine)
-            {
-                // Update network time to skip any sync that is just arrived
-                networkTime = PhotonNetwork.Time;
-                networkDisplacement = Vector3.zero;
-            }
+            SkipLastMasterClientSync();
 
         }
 
-        public void SkipClientSynchronization()
-        {
-            if (!photonView.IsMine)
-            {
-                // Update network time to skip any sync that is just arrived
-                networkTime = PhotonNetwork.Time;
-                networkDisplacement = Vector3.zero;
-            }
-
-        }
+       
 
 
         void Synchronize(double timestamp, Vector3 position, Quaternion rotation, Vector3 velocity)
