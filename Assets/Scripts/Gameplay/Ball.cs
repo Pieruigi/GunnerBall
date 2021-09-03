@@ -161,7 +161,7 @@ namespace Zoca
             float vComp = Vector3.Dot(rb.velocity, hitNormal);
             if(vComp > 0)
             {
-                velocity += -0.3f * vComp * hitNormal;
+                velocity += -0.75f * vComp * hitNormal;
             }
 
             rb.velocity += velocity;
