@@ -156,6 +156,14 @@ namespace Zoca
             // We want the ball to get moved on all the clients in order
             // to have a very smooth movement
             Vector3 velocity = -hitNormal * hitPower;
+
+            // We want to keep some energy if ball is coming towards us
+            float vComp = Vector3.Dot(rb.velocity, hitNormal);
+            if(vComp > 0)
+            {
+                velocity += -0.3f * vComp * hitNormal;
+            }
+
             rb.velocity += velocity;
 
             // Just skip the last sync from the master client
@@ -233,33 +241,33 @@ namespace Zoca
         }
 #endif
 
-        [PunRPC]
-        void RpcHit(Vector3 velocity, double timestamp)
-        {
-            //Debug.LogFormat("Ball - RpcHit() ....................");
-            //Debug.LogFormat("Ball - RpcHit() Timestamp: {0}", timestamp);
-            //Debug.LogFormat("Ball - RpcHit() Velocity: {0}", velocity);
-            //Debug.LogFormat("Ball - RpcHit() completed ....................");
+        //[PunRPC]
+        //void RpcHit(Vector3 velocity, double timestamp)
+        //{
+        //    //Debug.LogFormat("Ball - RpcHit() ....................");
+        //    //Debug.LogFormat("Ball - RpcHit() Timestamp: {0}", timestamp);
+        //    //Debug.LogFormat("Ball - RpcHit() Velocity: {0}", velocity);
+        //    //Debug.LogFormat("Ball - RpcHit() completed ....................");
 
            
 
-            float lag = Mathf.Abs((float)(PhotonNetwork.Time - timestamp));
-            int numOfTicks = (int)(lag / Time.fixedDeltaTime); // For physics computations
+        //    float lag = Mathf.Abs((float)(PhotonNetwork.Time - timestamp));
+        //    int numOfTicks = (int)(lag / Time.fixedDeltaTime); // For physics computations
 
-            // Adding gravity
-            // Velocity changes in a discrete mode, so we just need to calculate the displacement
-            // for each physics tick
-            Vector3 expectedVelocity = velocity;
-            for (int i = 0; i < numOfTicks; i++)
-            {
-                expectedVelocity = (expectedVelocity + Physics.gravity * Time.fixedDeltaTime) * (1 - rb.drag * Time.fixedDeltaTime);
-            }
+        //    // Adding gravity
+        //    // Velocity changes in a discrete mode, so we just need to calculate the displacement
+        //    // for each physics tick
+        //    Vector3 expectedVelocity = velocity;
+        //    for (int i = 0; i < numOfTicks; i++)
+        //    {
+        //        expectedVelocity = (expectedVelocity + Physics.gravity * Time.fixedDeltaTime) * (1 - rb.drag * Time.fixedDeltaTime);
+        //    }
 
-            rb.velocity = expectedVelocity;
+        //    rb.velocity = expectedVelocity;
 
-            SkipLastMasterClientSync();
+        //    SkipLastMasterClientSync();
 
-        }
+        //}
 
        
 
@@ -276,6 +284,7 @@ namespace Zoca
         /// <param name="collision"></param>
         private void OnCollisionEnter(Collision collision)
         {
+            Debug.LogFormat("Ball - Collision detected: {0}", collision.gameObject);
             SkipLastMasterClientSync();
 
         }
@@ -302,7 +311,7 @@ namespace Zoca
 #endif
             {
                 // Too old, skip
-                networkTime = 0;
+                networkTime = oldNetworkTime;
                 return;
             }
 
