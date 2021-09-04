@@ -303,15 +303,22 @@ namespace Zoca
                 return;
             }
 
-            // Is it too old? 
-#if !RPC_SYNC
-            if(PhotonNetwork.Time > networkTime + 0.165f)
-#else
-            if (PhotonNetwork.Time > networkTime + sendRate * 1.65f)
-#endif
+//            // Is it too old? 
+//#if !RPC_SYNC
+//            if(PhotonNetwork.Time > networkTime + 0.165f)
+//#else
+//            if (PhotonNetwork.Time > networkTime + sendRate * 1.65f)
+//#endif
+//            {
+//                // Too old, skip
+//                networkTime = oldNetworkTime;
+//                return;
+//            }
+
+            // This should avoid strange bouncing when you shoot the ball
+            // near walls
+            if(networkTime < PhotonNetwork.Time + 0.5f)
             {
-                // Too old, skip
-                networkTime = oldNetworkTime;
                 return;
             }
 

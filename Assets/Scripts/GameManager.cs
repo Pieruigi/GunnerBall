@@ -1,4 +1,4 @@
-#define TEST_SINGLE_PLAYER
+//#define TEST_SINGLE_PLAYER
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -121,7 +121,7 @@ namespace Zoca
             Debug.LogFormat("PUN - Player [ID:{0}] left room [Name:{1}].", otherPlayer.UserId, PhotonNetwork.CurrentRoom.Name);
         }
 
-#if TEST_SINGLE_PLAYER
+#if TEST_SINGLE_PLAYER && UNITY_EDITOR
         public override void OnJoinedRoom()
         {
             // A match starting time is needed to set countdown
