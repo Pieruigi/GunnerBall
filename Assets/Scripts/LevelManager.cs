@@ -35,7 +35,7 @@ namespace Zoca
             if (!Instance)
             {
                 Instance = this;
-                Physics.gravity = Vector3.down * 12;
+                //Physics.gravity = Vector3.down * 12;
             }
             else
             {
