@@ -180,35 +180,11 @@ namespace Zoca
                 //
                 // Check shooting
                 //
-#if !PEER_SHOT
-                if (shooting)
-                {
-                    object[] parameters;
-                    // Returns true if the weapon is ready to shoot, otherwise returns false
-                    if (fireWeapon.TryShoot(out parameters))
-                    {
-                        Debug.LogFormat("PlayerController - Shoot parameters length: {0}", parameters.Length);
-                        for (int i = 0; i < parameters.Length; i++)
-                            Debug.LogFormat("PlayerController - Shoot parameter[{0}]: {1}", i, parameters[i]);
 
-                        // Call rpc on all the clients, even the local one.
-                        // By calling it via server we can balance lag.
-                        if (!PhotonNetwork.OfflineMode)
-                        {
-                            photonView.RPC("RpcShoot", RpcTarget.AllViaServer, parameters as object);
-                        }
-                        else
-                        {
-                            // In offline mode we call the weapon.Shoot() directly
-                            fireWeapon.Shoot(parameters);
-                        }
-                    }
-                }
-#else
                 if (shooting)
                 {
                     object[] parameters;
-                    Collider hitCollider;
+                    //Collider hitCollider;
                     // Returns true if the weapon is ready to shoot, otherwise returns false
                     if (fireWeapon.TryShoot(out parameters))
                     {
@@ -233,7 +209,7 @@ namespace Zoca
                         }
                     }
                 }
-#endif
+
 
             }
             else
