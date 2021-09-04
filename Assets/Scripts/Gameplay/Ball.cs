@@ -217,12 +217,12 @@ namespace Zoca
 //                return;
 //            }
 
-            // This should avoid strange bouncing when you shoot the ball
-            // near walls.
-            if(networkTime < PhotonNetwork.Time + 0.5f)
-            {
-                return;
-            }
+            //// This should avoid strange bouncing when you shoot the ball
+            //// near walls.
+            //if(networkTime < PhotonNetwork.Time + 0.5f)
+            //{
+            //    return;
+            //}
 
             networkPosition = position;
             networkRotation = rotation;
