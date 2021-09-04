@@ -93,14 +93,14 @@ namespace Zoca
                 return false;
 
             // Check coolers
-            if (activeCoolerCount == 0)
-                return false;
+            //if (activeCoolerCount == 0)
+            //    return false;
 
-            activeCoolerCount--;
+            //activeCoolerCount--;
 
             // Ready to shoot
             cooldownElapsed = cooldown;
-            coolerCooldownElapsed = coolerCooldown;
+            //coolerCooldownElapsed = coolerCooldown;
 
             // Get origin, direction and speed
             Vector3 origin = owner.PlayerCamera.transform.position;
