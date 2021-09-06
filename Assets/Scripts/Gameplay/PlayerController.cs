@@ -4,12 +4,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Zoca.Interfaces;
 
 namespace Zoca
 {
-    public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
+    public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable, IHittable
     {
-        public static GameObject LocalPlayer { get; private set; } 
+        public static GameObject LocalPlayer { get; private set; }
+
+        public static PlayerController Local { get; private set; }
 
         [Header("Physics")]
         [SerializeField]
@@ -32,6 +35,10 @@ namespace Zoca
         [Header("Equipment")]
         [SerializeField]
         FireWeapon fireWeapon;
+        public FireWeapon FireWeapon
+        {
+            get { return fireWeapon; }
+        }
 
         CharacterController cc;
 
@@ -82,6 +89,12 @@ namespace Zoca
             set { shootDisabled = value; if (value) shooting = false; }
         }
 
+        [SerializeField]
+        GameObject damageable;
+
+
+        GameObject damageableDefault;
+
         Vector3 startPosition;
         Quaternion startRotation;
 
@@ -92,6 +105,9 @@ namespace Zoca
 
             // Set the fireweapon owner
             fireWeapon.SetOwner(this);
+
+            // Store default health damageable
+            damageableDefault = damageable;
             
             if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
             {
@@ -104,6 +120,8 @@ namespace Zoca
             {
                 // This is the local player
                 LocalPlayer = gameObject;
+
+                Local = this;
 
                 // Init player camera
                 playerCamera.SetPlayerController(this);
@@ -396,6 +414,17 @@ namespace Zoca
             }
         }
 
+        public void Hit(GameObject owner, Vector3 hitPoint, Vector3 hitNormal, float hitDamage)
+        {
+            // Apply damage to the current damageable
+            IDamageable iDamageable = damageable.GetComponent<IDamageable>();
+            iDamageable.ApplyDamage(hitDamage);
+
+            if (iDamageable.IsDestroyed())
+            {
+                Debug.LogFormat("PlayerController - Health is empy, freezing player...");
+            }
+        }
     }
 
 }

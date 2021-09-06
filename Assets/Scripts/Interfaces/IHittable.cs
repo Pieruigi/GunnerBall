@@ -6,6 +6,7 @@ namespace Zoca.Interfaces
 {
     public interface IHittable
     {
+       
         void Hit(GameObject owner, Vector3 hitPoint, Vector3 hitNormal, float hitPower);
     }
 

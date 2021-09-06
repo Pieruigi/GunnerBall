@@ -59,7 +59,7 @@ namespace Zoca
 
         private void FixedUpdate()
         {
-            //Debug.LogFormat("PhotonNetwork.Ping():" + PhotonNetwork.GetPing());
+            Debug.LogFormat("PhotonNetwork.Ping():" + PhotonNetwork.GetPing());
 
             //return;
             if (PhotonNetwork.IsMasterClient)
@@ -209,18 +209,19 @@ namespace Zoca
                 return;
             }
 
-//            // Is it too old? Why I should skip it?
-//            if(PhotonNetwork.Time > networkTime + 0.165f)
-//            {
-//                // Too old, skip
-//                networkTime = oldNetworkTime;
-//                return;
-//            }
+            //            // Is it too old? Why I should skip it?
+            //            if(PhotonNetwork.Time > networkTime + 0.165f)
+            //            {
+            //                // Too old, skip
+            //                networkTime = oldNetworkTime;
+            //                return;
+            //            }
 
-            //// This should avoid strange bouncing when you shoot the ball
-            //// near walls.
-            //if(networkTime < PhotonNetwork.Time + 0.5f)
+            // This should avoid strange bouncing when you shoot the ball
+            // near walls.
+            //if (PhotonNetwork.Time - networkTime < 0.04f)
             //{
+            //    networkTime = oldNetworkTime;
             //    return;
             //}
 

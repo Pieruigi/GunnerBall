@@ -23,9 +23,17 @@ namespace Zoca
 
         [SerializeField]
         float fireRate = 0.5f;
+        public float FireRate
+        {
+            get { return fireRate; }
+        }
 
         [SerializeField]
         float distance = 10;
+        public float Distance
+        {
+            get { return distance; }
+        }
 
         [SerializeField]
         int coolerCount = 3;
@@ -36,7 +44,16 @@ namespace Zoca
         float shootDelay = 0.1f;
 
         float cooldown;
+        public float Cooldown
+        {
+            get { return cooldown; }
+        }
+       
         float cooldownElapsed;
+        public float CooldownElapsed
+        {
+            get { return cooldownElapsed; }
+        }
 
         PlayerController owner;
         Collider ownerCollider;
