@@ -107,6 +107,7 @@ MonoBehaviour:
   playerCollider: {fileID: 0}
   playerCamera: {fileID: 2001519252888002671}
   fireWeapon: {fileID: 8869336742984168590}
+  damageable: {fileID: 0}
 --- !u!114 &5356899110363376709
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -321,7 +322,7 @@ MonoBehaviour:
   power: 50
   speed: 60
   damage: 10
-  fireRate: 0.5
+  fireRate: 1
   distance: 50
   coolerCount: 3
   coolerCooldown: 4
