@@ -103,7 +103,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxSpeed: 20
-  acceleration: 40
+  acceleration: 80
+  sprintMultiplier: 2
+  jumpSpeed: 30
+  stamina: 100
   playerCollider: {fileID: 0}
   playerCamera: {fileID: 2001519252888002671}
   fireWeapon: {fileID: 8869336742984168590}
@@ -216,6 +219,22 @@ MonoBehaviour:
         m_CallState: 1
     m_ActionId: e7b64f56-136b-4d9c-8d54-efa5996a93dc
     m_ActionName: PlayerControls/Shoot[/Mouse/leftButton]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5356899110363376708}
+        m_TargetAssemblyTypeName: Zoca.PlayerController, Assembly-CSharp
+        m_MethodName: OnSprint
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
+    m_ActionId: e6c0bb39-9877-4a75-b181-1b11888ae60d
+    m_ActionName: PlayerControls/Sprint[/Keyboard/leftShift]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: MouseAndKeyboard
   m_DefaultActionMap: PlayerControls

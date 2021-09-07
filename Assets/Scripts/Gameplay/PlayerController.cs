@@ -1,5 +1,6 @@
 #define PEER_SHOT
 using Photon.Pun;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,6 +21,15 @@ namespace Zoca
 
         [SerializeField]
         float acceleration = 10f;
+
+        [SerializeField]
+        float sprintMultiplier = 2;
+
+        [SerializeField]
+        float jumpSpeed = 30f;
+
+        [SerializeField]
+        float stamina = 100; // Used for sprint and jump
 
         [SerializeField]
         Collider playerCollider;
@@ -51,16 +61,20 @@ namespace Zoca
         {
             get { return lookSensitivity; }
         }
-        //float lookSpeed = 60f;
+      
         Vector3 velocity; // The current character controller velocity
         Vector3 targetVelocity; // The target velocity ( dir * MAX_VEL )
         Vector3 networkPosition; // Position received from this controller's owner
         Quaternion networkRotation; // Position received from this controller's owner
         float lerpSpeed = 10f; // Interpolation speed to adjust network transform
 
-        float jumpSpeed = 3f;
+        
+
         bool jumping = false;
         float ySpeed = 0;
+        bool sprinting = false;
+        float sprintSpeed;
+        float jumpStamina = 20;
 
         // Freezing system
         bool freezed = false;
@@ -98,6 +112,12 @@ namespace Zoca
 
         float healthDefault;
 
+        
+        float staminaDefault;
+        float staminaRechargeDelay = 2;
+        float staminaRechargeSpeed = 30;
+        DateTime staminaLast;
+
         [SerializeField]
         GameObject damageable;
 
@@ -118,6 +138,8 @@ namespace Zoca
             damageableDefault = damageable;
 
             healthDefault = health;
+            sprintSpeed = maxSpeed * sprintMultiplier;
+            staminaDefault = stamina;
             
             if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
             {
@@ -182,7 +204,8 @@ namespace Zoca
                 // Get direction along player forward axis
                 Vector3 dir = transform.forward * input.y + transform.right * input.x;
                 // Target velocity is the max velocity we can reach
-                targetVelocity = dir.normalized * maxSpeed;
+                targetVelocity = dir.normalized * ((sprinting && stamina > 0) ? sprintSpeed : maxSpeed);
+                CheckStamina();
 
                 // Stop moving if paused 
                 if (freezed || startPaused)
@@ -193,7 +216,7 @@ namespace Zoca
 
                 // The current velocity takes into account some acceleration
                 velocity = Vector3.MoveTowards(velocity, targetVelocity, Time.deltaTime * acceleration);
-
+                
 
 
                 // Are jou jumping?
@@ -419,13 +442,36 @@ namespace Zoca
             if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
                 return;
 
-          
+            if (stamina < jumpStamina)
+                return;
+
             // Jump
             if (cc.isGrounded)
             {
                 jumping = true;
+                stamina -= jumpStamina;
+                staminaLast = DateTime.UtcNow;
+            }
+        }
 
-              
+        public void OnSprint(InputAction.CallbackContext context)
+        {
+            if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
+                return;
+
+            if (context.performed)
+            {
+                if (!sprinting)
+                {
+                    sprinting = true;
+                }
+            }
+            else
+            {
+                if (sprinting)
+                {
+                    sprinting = false;
+                }
             }
         }
 
@@ -476,6 +522,26 @@ namespace Zoca
         //    }
         //}
         
+        void CheckStamina()
+        {
+            if (sprinting)
+            {
+                if(stamina > 0)
+                    stamina = Mathf.Max(0, stamina - Time.deltaTime);
+
+                staminaLast = DateTime.UtcNow;
+            }
+            else
+            {
+                if (stamina < staminaDefault)
+                {
+                    // Some delay before reloading stamina
+                    if((DateTime.UtcNow - staminaLast).TotalSeconds > staminaRechargeDelay)
+                        stamina = Mathf.Min(staminaDefault, stamina + Time.deltaTime * staminaRechargeSpeed);
+                }
+                    
+            }
+        }
 
         #endregion
 
