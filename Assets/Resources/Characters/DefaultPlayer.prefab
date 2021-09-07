@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 8603690223840455249}
   m_Layer: 0
   m_Name: DefaultPlayer
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -107,6 +107,9 @@ MonoBehaviour:
   playerCollider: {fileID: 0}
   playerCamera: {fileID: 2001519252888002671}
   fireWeapon: {fileID: 8869336742984168590}
+  freezingCooldown: 4
+  healthMax: 150
+  health: 100
   damageable: {fileID: 0}
 --- !u!114 &5356899110363376709
 MonoBehaviour:

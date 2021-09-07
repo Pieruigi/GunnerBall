@@ -16,6 +16,7 @@ namespace Zoca
     public class Tag
     {
         public static readonly string Ball = "Ball";
+        public static readonly string Player = "Player";
     }
 
     public class Constants

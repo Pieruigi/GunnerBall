@@ -25,9 +25,16 @@ namespace Zoca
 
         }
 
-        public void ApplyDamage(float damage)
+        public float ApplyDamage(float damage)
         {
+            float oldHealth = health;
             health = Mathf.Max(0, health - damage);
+
+            if (oldHealth >= damage)
+                return damage;
+            else
+                return damage - oldHealth;
+
         }
 
         public bool IsDestroyed()
@@ -38,6 +45,11 @@ namespace Zoca
         public void Heal(float value)
         {
             health = Mathf.Min(healthMax, health + value);
+        }
+
+        public float GetHealth()
+        {
+            return health;
         }
     }
 

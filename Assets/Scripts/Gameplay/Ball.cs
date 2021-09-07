@@ -59,9 +59,11 @@ namespace Zoca
 
         private void FixedUpdate()
         {
-            Debug.LogFormat("PhotonNetwork.Ping():" + PhotonNetwork.GetPing());
+            // If the player move towards the ball on collision might not be triggered, 
+            // I guess because we are using character controller; so we check for collision
+            // with all the players here.
+            CheckPlayersCollision();
 
-            //return;
             if (PhotonNetwork.IsMasterClient)
                 return;
 
@@ -193,10 +195,38 @@ namespace Zoca
             Debug.LogFormat("Ball - Collision detected: {0}", collision.gameObject);
             SkipLastMasterClientSync();
 
+            //// Check if the ball hit the local player, and in that case apply damage
+            //if (Tag.Player.Equals(collision.gameObject.tag))
+            //{
+            //    if(collision.gameObject.GetComponent<PlayerController>() == PlayerController.Local)
+            //    {
+            //        // Apply a lot of damage
+            //        PlayerController.Local.Hit(gameObject, Vector3.zero, Vector3.zero, 1000);
+            //    }
+                
+            //}
+
         }
 
-       
 
+        void CheckPlayersCollision()
+        {
+            Collider[] colls = Physics.OverlapSphere(transform.position, (coll as SphereCollider).radius + 0.5f);
+            if (colls != null)
+            {
+                foreach (Collider c in colls)
+                {
+                    if (Tag.Player.Equals(c.gameObject.tag))
+                    {
+                        Debug.LogFormat("PlayerController - Collision with the ball.");
+                        // Send hit for each player, but only the local player will take care
+                        // of the health; anyway the others can apply some effect or stop
+                        // moving in order to improve synchronization.
+                        c.gameObject.GetComponent<PlayerController>().Hit(Ball.Instance.gameObject, Vector3.zero, Vector3.zero, 1000);
+                    }
+                }
+            }
+        }
 
         void Synchronize(double timestamp, Vector3 position, Quaternion rotation, Vector3 velocity)
         {

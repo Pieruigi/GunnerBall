@@ -184,8 +184,9 @@ namespace Zoca
                     if(Ball.Instance)
                         Ball.Instance.ResetBall();
 
-                    PlayerController.LocalPlayer.GetComponent<PlayerController>().MoveDisabled = true;
-                    PlayerController.LocalPlayer.GetComponent<PlayerController>().ShootDisabled = true;
+                    //PlayerController.LocalPlayer.GetComponent<PlayerController>().MoveDisabled = true;
+                    //PlayerController.LocalPlayer.GetComponent<PlayerController>().ShootDisabled = true;
+                    PlayerController.Local.StartPaused = true;
                     PlayerController.LocalPlayer.GetComponent<PlayerController>().ResetPlayer();
 
                     // Set target time
@@ -195,10 +196,11 @@ namespace Zoca
                    
                     // To be sure get the time elapsed from the properties
                     timeElapsed = (float)RoomCustomPropertyUtility.GetCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchTimeElapsed);
-                    
+
                     // Set player
-                    PlayerController.LocalPlayer.GetComponent<PlayerController>().MoveDisabled = false;
-                    PlayerController.LocalPlayer.GetComponent<PlayerController>().ShootDisabled = false;
+                    //PlayerController.LocalPlayer.GetComponent<PlayerController>().MoveDisabled = false;
+                    //PlayerController.LocalPlayer.GetComponent<PlayerController>().ShootDisabled = false;
+                    PlayerController.Local.StartPaused = false;
                     break;
                 case (int)MatchState.Goaled:
 
@@ -206,13 +208,15 @@ namespace Zoca
                     redTeamScore = (byte)RoomCustomPropertyUtility.GetCurrentRoomCustomProperty(RoomCustomPropertyKey.RedTeamScore);
                     blueTeamScore = (byte)RoomCustomPropertyUtility.GetCurrentRoomCustomProperty(RoomCustomPropertyKey.BlueTeamScore);
 
-                    PlayerController.LocalPlayer.GetComponent<PlayerController>().ShootDisabled = false;
+                    //PlayerController.LocalPlayer.GetComponent<PlayerController>().ShootDisabled = false;
+                    PlayerController.Local.GoalPaused = false;
                     // Set target time
                     targetTime = stateTimestamp + Constants.GoalDelay;
                     break;
                 case (int)MatchState.Completed:
-                    PlayerController.LocalPlayer.GetComponent<PlayerController>().MoveDisabled = false;
-                    PlayerController.LocalPlayer.GetComponent<PlayerController>().ShootDisabled = false;
+                    //PlayerController.LocalPlayer.GetComponent<PlayerController>().MoveDisabled = false;
+                    //PlayerController.LocalPlayer.GetComponent<PlayerController>().ShootDisabled = false;
+                    PlayerController.Local.StartPaused = false;
                     break;
             }
 

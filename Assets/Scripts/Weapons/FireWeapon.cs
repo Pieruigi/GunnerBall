@@ -131,17 +131,31 @@ namespace Zoca
             ownerCollider.enabled = true;
             if (hit)
             {
-                //hitCollider = info.collider;
+                IHittable hittable = info.collider.GetComponent<IHittable>();
 
-                if (Tag.Ball.Equals(info.collider.tag))
+                if(hittable != null)
                 {
                     parameters = new object[4];
-                    parameters[0] = info.collider.GetComponent<Ball>().photonView.ViewID;
+                    //parameters[0] = info.collider.GetComponent<Ball>().photonView.ViewID;
+                    parameters[0] = (hittable as MonoBehaviourPun).photonView.ViewID;
                     parameters[1] = info.point;
                     parameters[2] = info.normal;
                     parameters[3] = PhotonNetwork.Time;
-                    
+
+                    //if (Tag.Ball.Equals(info.collider.tag))
+                    //{
+                        
+                    //}
+                    //else
+                    //{
+                    //    if (Tag.Player.Equals(info.collider.tag))
+                    //    {
+
+                    //    }
+                    //}
                 }
+
+                
 
                 
             }
@@ -198,7 +212,11 @@ namespace Zoca
                 IHittable hittable = photonView.gameObject.GetComponent<IHittable>();
                 if (hittable != null)
                 {
-                    hittable.Hit(owner.gameObject, hitPoint, hitNormal, power);
+                    bool useDamage = false;
+                    if (!Tag.Ball.Equals((hittable as MonoBehaviour).tag))
+                        useDamage = true;
+                    
+                    hittable.Hit(owner.gameObject, hitPoint, hitNormal, useDamage ? damage : power);
                 }
             }
    

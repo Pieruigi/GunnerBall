@@ -62,36 +62,44 @@ namespace Zoca
         bool jumping = false;
         float ySpeed = 0;
 
-        bool moveDisabled = false;
-        public bool MoveDisabled
+        // Freezing system
+        bool freezed = false;
+        bool startPaused = false;
+        public bool StartPaused
         {
-            get { return moveDisabled; }
-            set 
-            { 
-                moveDisabled = value; 
-                if (value) 
-                { 
-                    moving = false; 
-                    input = Vector2.zero; 
-                } 
-            }
+            get { return startPaused; }
+            set { startPaused = value; }
         }
-        bool lookDisabled = false;
-        public bool LookDisabled
+
+        bool goalPaused = false;
+        public bool GoalPaused
         {
-            get { return lookDisabled; }
-            set { lookDisabled = value; }
-        }
-        bool shootDisabled = false;
-        public bool ShootDisabled
-        {
-            get { return shootDisabled; }
-            set { shootDisabled = value; if (value) shooting = false; }
+            get { return goalPaused; }
+            set { goalPaused = value; }
         }
 
         [SerializeField]
-        GameObject damageable;
+        float freezingCooldown = 4;
+        float currentFreezingCooldown;
 
+        [SerializeField]
+        float healthMax = 150;
+        public float HealthMax
+        {
+            get { return healthMax; }
+        }
+
+        [SerializeField]
+        float health = 100;
+        public float Health
+        {
+            get { return health; }
+        }
+
+        float healthDefault;
+
+        [SerializeField]
+        GameObject damageable;
 
         GameObject damageableDefault;
 
@@ -108,6 +116,8 @@ namespace Zoca
 
             // Store default health damageable
             damageableDefault = damageable;
+
+            healthDefault = health;
             
             if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
             {
@@ -157,6 +167,12 @@ namespace Zoca
                 //
                 // Look around
                 Vector2 lookAngles = lookInput * lookSensitivity * Time.deltaTime;
+
+                if (freezed)
+                {
+                    lookAngles = Vector3.zero;
+                }
+
                 // Set yaw
                 transform.eulerAngles += Vector3.up * lookAngles.x;
                 // Set camera pitch
@@ -167,14 +183,29 @@ namespace Zoca
                 Vector3 dir = transform.forward * input.y + transform.right * input.x;
                 // Target velocity is the max velocity we can reach
                 targetVelocity = dir.normalized * maxSpeed;
+
+                // Stop moving if paused 
+                if (freezed || startPaused)
+                {
+                    velocity = Vector3.zero;
+                    targetVelocity = Vector3.zero;
+                }
+
                 // The current velocity takes into account some acceleration
                 velocity = Vector3.MoveTowards(velocity, targetVelocity, Time.deltaTime * acceleration);
+
+
 
                 // Are jou jumping?
                 if (jumping)
                 {
                     jumping = false;
                     ySpeed = jumpSpeed;
+                }
+
+                if (freezed || startPaused || jumping)
+                { 
+                    ySpeed = 0; 
                 }
 
                 // Gravity
@@ -201,34 +232,62 @@ namespace Zoca
 
                 if (shooting)
                 {
-                    object[] parameters;
-                    //Collider hitCollider;
-                    // Returns true if the weapon is ready to shoot, otherwise returns false
-                    if (fireWeapon.TryShoot(out parameters))
+                    if (!startPaused && !freezed && !goalPaused)
                     {
-                        if(parameters != null)
-                        {
-                            Debug.LogFormat("PlayerController - Shoot parameters length: {0}", parameters.Length);
-                            for (int i = 0; i < parameters.Length; i++)
-                                Debug.LogFormat("PlayerController - Shoot parameter[{0}]: {1}", i, parameters[i]);
-                        }
-                        
 
-                        // Call rpc on all the clients, even the local one.
-                        // By calling it via server we can balance lag.
-                        if (!PhotonNetwork.OfflineMode)
+                        object[] parameters;
+                        //Collider hitCollider;
+                        // Returns true if the weapon is ready to shoot, otherwise returns false
+                        if (fireWeapon.TryShoot(out parameters))
                         {
-                            photonView.RPC("RpcShoot", RpcTarget.AllViaServer, parameters as object);
-                        }
-                        else
-                        {
-                            // In offline mode we call the weapon.Shoot() directly
-                            fireWeapon.Shoot(parameters);
+                            if (parameters != null)
+                            {
+                                Debug.LogFormat("PlayerController - Shoot parameters length: {0}", parameters.Length);
+                                for (int i = 0; i < parameters.Length; i++)
+                                    Debug.LogFormat("PlayerController - Shoot parameter[{0}]: {1}", i, parameters[i]);
+                            }
+
+
+                            // Call rpc on all the clients, even the local one.
+                            // By calling it via server we can balance lag.
+                            if (!PhotonNetwork.OfflineMode)
+                            {
+                                photonView.RPC("RpcShoot", RpcTarget.AllViaServer, parameters as object);
+                            }
+                            else
+                            {
+                                // In offline mode we call the weapon.Shoot() directly
+                                fireWeapon.Shoot(parameters);
+                            }
                         }
                     }
+
+ 
                 }
 
+                // Check if the player has been freezed and eventually recover it
+                if (freezed)
+                {
+                    currentFreezingCooldown -= Time.deltaTime;
 
+                    if (currentFreezingCooldown > 0)
+                        return;
+
+                    // Heal
+                    freezed = false;
+                    health = healthDefault;
+                }
+                else
+                {
+                    if (health == 0)
+                    {
+                        Debug.LogFormat("PlayerController - Health is empty, freezing player...");
+                        currentFreezingCooldown = freezingCooldown;
+                        freezed = true;
+                        //moving = false;
+                        //input = Vector2.zero;
+                    }
+                }
             }
             else
             {
@@ -236,10 +295,6 @@ namespace Zoca
                 transform.position = Vector3.Lerp(transform.position, networkPosition, Time.deltaTime * lerpSpeed);
                 transform.rotation = Quaternion.Lerp(transform.rotation, networkRotation, Time.deltaTime * lerpSpeed);
             }
-
-
-
-
 
         }
 
@@ -256,18 +311,68 @@ namespace Zoca
             }
         }
 
-#region input_system_callbacks
+        public void Hit(GameObject owner, Vector3 hitPoint, Vector3 hitNormal, float hitDamage)
+        {
+            
+            if (!photonView.IsMine && !PhotonNetwork.OfflineMode) // Remote players
+            {
+                // Stop remote players and eventually apply some fx
+                networkPosition = transform.position;
+                networkRotation = transform.rotation;
+                
+            }
+            else // Local player
+            {
+                
+                if (freezed)
+                    return;
+
+                health = Mathf.Max(0, health - hitDamage);
+            }
+            
+           
+        }
+
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+
+            if (stream.IsWriting) // Local player
+            {
+
+                stream.SendNext(PhotonNetwork.Time);
+                stream.SendNext(transform.position);
+                stream.SendNext(transform.rotation);
+                stream.SendNext(velocity);
+                stream.SendNext((byte)health);
+            }
+            else // Remote player
+            {
+
+                double time = (double)stream.ReceiveNext();
+                networkPosition = (Vector3)stream.ReceiveNext();
+                networkRotation = (Quaternion)stream.ReceiveNext();
+                velocity = (Vector3)stream.ReceiveNext();
+                health = (byte)stream.ReceiveNext();
+
+                // Taking lag into account
+                float lag = (float)(PhotonNetwork.Time - time);
+                networkPosition += velocity * lag;
+
+
+
+            }
+        }
+
+        #region input_system_callbacks
         public void OnMove(InputAction.CallbackContext context)
         {
             if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
                 return;
 
-            if (moveDisabled)
-                return;
-                
-
+           
             if (context.performed)
             {
+                Debug.LogFormat("PlayerController - Moving...................");
                 if (!moving)
                 {
                     moving = true;
@@ -303,9 +408,7 @@ namespace Zoca
             if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
                 return;
 
-            if (lookDisabled)
-                return;
-
+           
             lookInput = context.ReadValue<Vector2>();
                 
             //Debug.LogFormat("PlayerController - Look input: {0}", lookInput);
@@ -316,14 +419,13 @@ namespace Zoca
             if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
                 return;
 
-            if (moveDisabled)
-                return;
-
+          
             // Jump
             if (cc.isGrounded)
             {
                 jumping = true;
-                
+
+              
             }
         }
 
@@ -332,9 +434,7 @@ namespace Zoca
             if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
                 return;
 
-            if (shootDisabled)
-                return;
-
+           
             if (context.performed)
             {
                 if (!shooting)
@@ -361,8 +461,24 @@ namespace Zoca
         }
 
 
+        #endregion
+
+        #region private
+        //private void OnCollisionEnter(Collision collision)
+        //{
+        //    if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
+        //        return;
+
+        //    if (Tag.Ball.Equals(collision.transform.tag))
+        //    {
+        //        // Apply a lot of damage
+        //        Hit(collision.gameObject, Vector3.zero, Vector3.zero, 1000);
+        //    }
+        //}
+        
 
         #endregion
+
 
         #region rpc
 
@@ -375,56 +491,13 @@ namespace Zoca
                 for (int i = 0; i < parameters.Length; i++)
                     Debug.LogFormat("PlayerController - RpcShoot parameter[{0}]: {1}", i, parameters[i]);
             }
-            
+
 
             fireWeapon.Shoot(parameters);
         }
 
-#endregion
-
-        #region private
-
-
         #endregion
 
-        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-        {
-
-            if (stream.IsWriting) // Local player
-            {
-
-                stream.SendNext(PhotonNetwork.Time);
-                stream.SendNext(transform.position);
-                stream.SendNext(transform.rotation);
-                stream.SendNext(velocity);
-
-            }
-            else // Remote player
-            {
-
-                double time = (double)stream.ReceiveNext();
-                networkPosition = (Vector3)stream.ReceiveNext();
-                networkRotation = (Quaternion)stream.ReceiveNext();
-                velocity = (Vector3)stream.ReceiveNext();
-
-                // Taking lag into account
-                float lag = (float)(PhotonNetwork.Time - time);
-                networkPosition += velocity * lag;
-
-            }
-        }
-
-        public void Hit(GameObject owner, Vector3 hitPoint, Vector3 hitNormal, float hitDamage)
-        {
-            // Apply damage to the current damageable
-            IDamageable iDamageable = damageable.GetComponent<IDamageable>();
-            iDamageable.ApplyDamage(hitDamage);
-
-            if (iDamageable.IsDestroyed())
-            {
-                Debug.LogFormat("PlayerController - Health is empy, freezing player...");
-            }
-        }
     }
 
 }
