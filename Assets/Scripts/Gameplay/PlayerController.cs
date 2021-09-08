@@ -358,9 +358,9 @@ namespace Zoca
             
             if (!photonView.IsMine && !PhotonNetwork.OfflineMode) // Remote players
             {
-                // Stop remote players and eventually apply some fx
-                networkPosition = transform.position;
-                networkRotation = transform.rotation;
+                //// Stop remote players and eventually apply some fx
+                //networkPosition = transform.position;
+                //networkRotation = transform.rotation;
                 
             }
             else // Local player
