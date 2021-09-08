@@ -211,15 +211,15 @@ namespace Zoca
                 Vector3 dir = transform.forward * input.y + transform.right * input.x;
                 // Target velocity is the max velocity we can reach
                 float speed = maxSpeed;
-                if (!cc.isGrounded)
-                {
-                    speed *= flyingMultiplier;
-                }
-                else
-                {
+                //if (!cc.isGrounded)
+                //{
+                //    speed *= flyingMultiplier;
+                //}
+                //else
+                //{
                     if (sprinting && stamina > 0)
                         speed *= sprintMultiplier;
-                }
+                //}
                 //targetVelocity = dir.normalized * ((sprinting && stamina > 0) ? sprintSpeed : maxSpeed);
                 targetVelocity = dir.normalized * speed;
                 CheckStamina();
@@ -366,7 +366,7 @@ namespace Zoca
             else // Local player
             {
                 
-                if (freezed)
+                if (freezed || goalPaused || startPaused)
                     return;
 
                 // You get invincibility for a while after recovering from freezing

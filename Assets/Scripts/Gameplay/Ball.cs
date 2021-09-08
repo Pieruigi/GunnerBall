@@ -192,7 +192,7 @@ namespace Zoca
         /// <param name="collision"></param>
         private void OnCollisionEnter(Collision collision)
         {
-            Debug.LogFormat("Ball - Collision detected: {0}", collision.gameObject);
+            //Debug.LogFormat("Ball - Collision detected: {0}", collision.gameObject);
             SkipLastMasterClientSync();
 
             //// Check if the ball hit the local player, and in that case apply damage

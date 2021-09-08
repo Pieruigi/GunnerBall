@@ -187,6 +187,7 @@ namespace Zoca
                     //PlayerController.LocalPlayer.GetComponent<PlayerController>().MoveDisabled = true;
                     //PlayerController.LocalPlayer.GetComponent<PlayerController>().ShootDisabled = true;
                     PlayerController.Local.StartPaused = true;
+                    PlayerController.Local.GoalPaused = false;
                     PlayerController.LocalPlayer.GetComponent<PlayerController>().ResetPlayer();
 
                     // Set target time
@@ -209,14 +210,14 @@ namespace Zoca
                     blueTeamScore = (byte)RoomCustomPropertyUtility.GetCurrentRoomCustomProperty(RoomCustomPropertyKey.BlueTeamScore);
 
                     //PlayerController.LocalPlayer.GetComponent<PlayerController>().ShootDisabled = false;
-                    PlayerController.Local.GoalPaused = false;
+                    PlayerController.Local.GoalPaused = true;
                     // Set target time
                     targetTime = stateTimestamp + Constants.GoalDelay;
                     break;
                 case (int)MatchState.Completed:
                     //PlayerController.LocalPlayer.GetComponent<PlayerController>().MoveDisabled = false;
                     //PlayerController.LocalPlayer.GetComponent<PlayerController>().ShootDisabled = false;
-                    PlayerController.Local.StartPaused = false;
+                    PlayerController.Local.GoalPaused = true;
                     break;
             }
 
