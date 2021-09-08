@@ -104,16 +104,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxSpeed: 20
   acceleration: 80
-  sprintMultiplier: 2
-  jumpSpeed: 30
-  stamina: 100
-  playerCollider: {fileID: 0}
-  playerCamera: {fileID: 2001519252888002671}
-  fireWeapon: {fileID: 8869336742984168590}
+  sprintMultiplier: 4
+  jumpSpeed: 15
+  flyingMultiplier: 0.2
   freezingCooldown: 4
   healthMax: 150
   health: 100
-  damageable: {fileID: 0}
+  stamina: 100
+  playerCamera: {fileID: 2001519252888002671}
+  fireWeapon: {fileID: 8869336742984168590}
 --- !u!114 &5356899110363376709
 MonoBehaviour:
   m_ObjectHideFlags: 0

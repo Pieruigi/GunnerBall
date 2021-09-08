@@ -26,29 +26,10 @@ namespace Zoca
         float sprintMultiplier = 2;
 
         [SerializeField]
-        float jumpSpeed = 30f;
+        float jumpSpeed = 15f;
 
         [SerializeField]
-        float stamina = 100; // Used for sprint and jump
-
-        [SerializeField]
-        Collider playerCollider;
-
-        [Header("Camera")]
-        [SerializeField]
-        PlayerCamera playerCamera;
-        public PlayerCamera PlayerCamera
-        {
-            get { return playerCamera; }
-        }
-
-        [Header("Equipment")]
-        [SerializeField]
-        FireWeapon fireWeapon;
-        public FireWeapon FireWeapon
-        {
-            get { return fireWeapon; }
-        }
+        float flyingMultiplier = 0.2f;
 
         CharacterController cc;
 
@@ -75,6 +56,7 @@ namespace Zoca
         bool sprinting = false;
         float sprintSpeed;
         float jumpStamina = 20;
+        
 
         // Freezing system
         bool freezed = false;
@@ -112,16 +94,40 @@ namespace Zoca
 
         float healthDefault;
 
-        
+        [SerializeField]
+        float stamina = 100; // Used for sprint and jump
+        public float Stamina
+        {
+            get { return stamina; }
+        }
+
         float staminaDefault;
+        public float StaminaMax
+        {
+            get { return staminaDefault; }
+        }
+
         float staminaRechargeDelay = 2;
         float staminaRechargeSpeed = 30;
+        float staminaChargeSpeed = 20;
         DateTime staminaLast;
 
+        [Header("Camera")]
         [SerializeField]
-        GameObject damageable;
+        PlayerCamera playerCamera;
+        public PlayerCamera PlayerCamera
+        {
+            get { return playerCamera; }
+        }
 
-        GameObject damageableDefault;
+        [Header("Equipment")]
+        [SerializeField]
+        FireWeapon fireWeapon;
+        public FireWeapon FireWeapon
+        {
+            get { return fireWeapon; }
+        }
+
 
         Vector3 startPosition;
         Quaternion startRotation;
@@ -134,8 +140,7 @@ namespace Zoca
             // Set the fireweapon owner
             fireWeapon.SetOwner(this);
 
-            // Store default health damageable
-            damageableDefault = damageable;
+
 
             healthDefault = health;
             sprintSpeed = maxSpeed * sprintMultiplier;
@@ -204,7 +209,18 @@ namespace Zoca
                 // Get direction along player forward axis
                 Vector3 dir = transform.forward * input.y + transform.right * input.x;
                 // Target velocity is the max velocity we can reach
-                targetVelocity = dir.normalized * ((sprinting && stamina > 0) ? sprintSpeed : maxSpeed);
+                float speed = maxSpeed;
+                if (!cc.isGrounded)
+                {
+                    speed *= flyingMultiplier;
+                }
+                else
+                {
+                    if (sprinting && stamina > 0)
+                        speed *= sprintMultiplier;
+                }
+                //targetVelocity = dir.normalized * ((sprinting && stamina > 0) ? sprintSpeed : maxSpeed);
+                targetVelocity = dir.normalized * speed;
                 CheckStamina();
 
                 // Stop moving if paused 
@@ -220,13 +236,13 @@ namespace Zoca
 
 
                 // Are jou jumping?
-                if (jumping)
-                {
-                    jumping = false;
-                    ySpeed = jumpSpeed;
-                }
+                //if (jumping)
+                //{
+                //    jumping = false;
+                //    ySpeed = jumpSpeed;
+                //}
 
-                if (freezed || startPaused || jumping)
+                if (freezed || startPaused/* || jumping*/)
                 { 
                     ySpeed = 0; 
                 }
@@ -235,12 +251,16 @@ namespace Zoca
                 if (!cc.isGrounded)
                 {
                     ySpeed += Physics.gravity.y * Time.deltaTime;
+                    Debug.LogFormat("PlayerController - Not grounded; ySpeed; {0}", ySpeed);
                 }
                 else
                 {
                     // When player hit the ground we must reset vertical speed if any
                     if (ySpeed < 0)
                         ySpeed = 0;
+
+                    jumping = false;
+                    
                 }
 
                 // Set the vertical speed
@@ -439,10 +459,15 @@ namespace Zoca
 
         public void OnJump(InputAction.CallbackContext context)
         {
+            return;
+
             if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
                 return;
 
             if (stamina < jumpStamina)
+                return;
+
+            if (jumping)
                 return;
 
             // Jump
@@ -451,6 +476,7 @@ namespace Zoca
                 jumping = true;
                 stamina -= jumpStamina;
                 staminaLast = DateTime.UtcNow;
+                ySpeed = jumpSpeed;
             }
         }
 
@@ -527,7 +553,7 @@ namespace Zoca
             if (sprinting)
             {
                 if(stamina > 0)
-                    stamina = Mathf.Max(0, stamina - Time.deltaTime);
+                    stamina = Mathf.Max(0, stamina - Time.deltaTime * staminaChargeSpeed);
 
                 staminaLast = DateTime.UtcNow;
             }
