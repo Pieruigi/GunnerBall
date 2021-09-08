@@ -60,6 +60,7 @@ namespace Zoca
 
         // Freezing system
         bool freezed = false;
+        DateTime freezedLast;
         bool startPaused = false;
         public bool StartPaused
         {
@@ -235,13 +236,6 @@ namespace Zoca
                 
 
 
-                // Are jou jumping?
-                //if (jumping)
-                //{
-                //    jumping = false;
-                //    ySpeed = jumpSpeed;
-                //}
-
                 if (freezed || startPaused/* || jumping*/)
                 { 
                     ySpeed = 0; 
@@ -251,23 +245,28 @@ namespace Zoca
                 if (!cc.isGrounded)
                 {
                     ySpeed += Physics.gravity.y * Time.deltaTime;
-                    Debug.LogFormat("PlayerController - Not grounded; ySpeed; {0}", ySpeed);
+                    //Debug.LogFormat("PlayerController - Not grounded; ySpeed; {0}", ySpeed);
                 }
                 else
                 {
-                    // When player hit the ground we must reset vertical speed if any
+                    // When player hits the ground we must reset vertical speed
                     if (ySpeed < 0)
                         ySpeed = 0;
 
                     jumping = false;
-                    
+                    //Debug.LogFormat("PlayerController - Grounded; ySpeed; {0}", ySpeed);
                 }
 
                 // Set the vertical speed
                 velocity.y = ySpeed;
 
                 // Move the character controller
-                cc.Move(velocity * Time.deltaTime);
+                if(velocity != Vector3.zero)
+                {
+                    //Debug.LogFormat("PlayerController - Velocity.Y:{0}", velocity.y);
+                    cc.Move(velocity * Time.deltaTime);
+                }
+                    
 
                 //
                 // Check shooting
@@ -319,6 +318,7 @@ namespace Zoca
                     // Heal
                     freezed = false;
                     health = healthDefault;
+                    freezedLast = DateTime.UtcNow;
                 }
                 else
                 {
@@ -327,8 +327,7 @@ namespace Zoca
                         Debug.LogFormat("PlayerController - Health is empty, freezing player...");
                         currentFreezingCooldown = freezingCooldown;
                         freezed = true;
-                        //moving = false;
-                        //input = Vector2.zero;
+                
                     }
                 }
             }
@@ -368,6 +367,10 @@ namespace Zoca
             {
                 
                 if (freezed)
+                    return;
+
+                // You get invincibility for a while after recovering from freezing
+                if ((DateTime.UtcNow - freezedLast).TotalSeconds < 1)
                     return;
 
                 health = Mathf.Max(0, health - hitDamage);
