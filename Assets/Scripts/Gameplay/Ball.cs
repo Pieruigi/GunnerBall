@@ -60,8 +60,8 @@ namespace Zoca
         private void FixedUpdate()
         {
             // If the player move towards the ball on collision might not be triggered, 
-            // I guess because we are using character controller; so we check for collision
-            // with all the players here.
+            // I guess because we are using character controller; so we check for 
+            // collision with all the players here.
             CheckPlayersCollision();
 
             if (PhotonNetwork.IsMasterClient)
@@ -195,16 +195,7 @@ namespace Zoca
             //Debug.LogFormat("Ball - Collision detected: {0}", collision.gameObject);
             SkipLastMasterClientSync();
 
-            //// Check if the ball hit the local player, and in that case apply damage
-            //if (Tag.Player.Equals(collision.gameObject.tag))
-            //{
-            //    if(collision.gameObject.GetComponent<PlayerController>() == PlayerController.Local)
-            //    {
-            //        // Apply a lot of damage
-            //        PlayerController.Local.Hit(gameObject, Vector3.zero, Vector3.zero, 1000);
-            //    }
-                
-            //}
+           
 
         }
 
@@ -232,6 +223,7 @@ namespace Zoca
         {
             // Skip old synchs
             double oldNetworkTime = networkTime;
+            Vector3 oldVelocity = rb.velocity;
             networkTime = timestamp;
             if (oldNetworkTime > networkTime)
             {
@@ -278,10 +270,47 @@ namespace Zoca
             networkDisplacement = expectedPosition - rb.position;
             rb.velocity = expectedVelocity;
 
-            lerpSpeed = networkDisplacement.magnitude / 0.075f;
+            coll.enabled = false;
+            Ray ray = new Ray(rb.position, networkDisplacement.normalized);
+            if(Physics.SphereCast(ray, (coll as SphereCollider).radius, networkDisplacement.magnitude))
+            {
+           
+                SkipLastMasterClientSync();
+                rb.velocity = oldVelocity;
+            }
+            
+            coll.enabled = true;
 
+            //lerpSpeed = networkDisplacement.magnitude / 0.075f;
+            lerpSpeed = 10f;
 
         }
+
+        IEnumerator HitByPlayerDelayed(Vector3 newVelocity, double timestamp)
+        {
+            // Try to apply the new velocity at the same time using constant delay
+            float delay = 0.1f;
+            float lag = (float)(PhotonNetwork.Time - timestamp);
+            if (delay >= lag)
+                yield return new WaitForSeconds(delay - lag);
+
+            // Apply new velocity
+            rb.velocity = newVelocity;
+
+            // Skip the current sync or anyother one coming 
+            SkipLastMasterClientSync();
+        }
+
+        #region rpc
+
+        [PunRPC]
+        public void RpcHitByPlayer(Vector3 newVelocity, double timestamp)
+        {
+            StartCoroutine(HitByPlayerDelayed(newVelocity, timestamp));
+        }
+
+        #endregion
+
 
     }
 

@@ -129,6 +129,7 @@ namespace Zoca
             get { return fireWeapon; }
         }
 
+        float ballPowerOnHit = 20;
 
         Vector3 startPosition;
         Quaternion startRotation;
@@ -374,6 +375,15 @@ namespace Zoca
                     return;
 
                 health = Mathf.Max(0, health - hitDamage);
+
+                // If the ball hit the player we let the ball bounce away.
+                if (Tag.Ball.Equals(owner.tag))
+                {
+                    Vector3 bounce = owner.transform.position - transform.position;
+                    bounce = bounce.normalized * ballPowerOnHit;
+                    Debug.LogFormat("PlayerController - Ball bouncing, newVelocity: {0}", bounce);
+                    Ball.Instance.photonView.RPC("RpcHitByPlayer", RpcTarget.AllViaServer, bounce, PhotonNetwork.Time);
+                }
             }
             
            
@@ -590,6 +600,8 @@ namespace Zoca
 
             fireWeapon.Shoot(parameters);
         }
+
+        
 
         #endregion
 
