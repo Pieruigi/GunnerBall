@@ -59,6 +59,9 @@ namespace Zoca
         Collider ownerCollider;
         int activeCoolerCount;
         float coolerCooldownElapsed;
+        float distanceAdjustment;
+
+        float actualDistance;
 
         private void Awake()
         {
@@ -69,7 +72,12 @@ namespace Zoca
         // Start is called before the first frame update
         void Start()
         {
+            if (!owner.photonView.IsMine && !PhotonNetwork.OfflineMode)
+                return;
 
+            
+
+          
         }
 
         // Update is called once per frame
@@ -95,6 +103,7 @@ namespace Zoca
 
 
         /// <summary>
+        /// Local player only.
         /// Returns true if it can shoot and some values are sent as param ( origin, speed etc );
         /// otherwise return false.
         /// </summary>
@@ -104,7 +113,11 @@ namespace Zoca
         {
             //Debug.Log("FireWeapon - TryShoot().");
             parameters = null;
-            
+
+            // Local player only
+            if (!owner.photonView.IsMine && !PhotonNetwork.OfflineMode)
+                return false;
+
             // Not ready yet
             if (cooldownElapsed > 0)
                 return false;
@@ -127,7 +140,7 @@ namespace Zoca
             Ray ray = new Ray(origin, direction);
             RaycastHit info;
             ownerCollider.enabled = false;
-            bool hit = Physics.Raycast(ray, out info, distance);
+            bool hit = Physics.Raycast(ray, out info, distance + owner.PlayerCamera.DistanceAdjustment);
             ownerCollider.enabled = true;
             if (hit)
             {
@@ -142,29 +155,14 @@ namespace Zoca
                     parameters[2] = info.normal;
                     parameters[3] = PhotonNetwork.Time;
 
-                    //if (Tag.Ball.Equals(info.collider.tag))
-                    //{
-                        
-                    //}
-                    //else
-                    //{
-                    //    if (Tag.Player.Equals(info.collider.tag))
-                    //    {
-
-                    //    }
-                    //}
                 }
-
-                
-
-                
             }
             
             return true;
         }
 
 
-        //}
+
 
         public void SetOwner(PlayerController owner)
         {

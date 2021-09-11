@@ -52,7 +52,7 @@ namespace Zoca.UI
             Ray ray = new Ray(origin, direction);
             RaycastHit info;
             localPlayerCollider.enabled = false;
-            bool hit = Physics.Raycast(ray, out info, localPlayerController.FireWeapon.Distance);
+            bool hit = Physics.Raycast(ray, out info, localPlayerController.FireWeapon.Distance + PlayerController.Local.PlayerCamera.DistanceAdjustment);
             localPlayerCollider.enabled = true;
 
             Color c = Color.red;

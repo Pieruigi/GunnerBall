@@ -536,6 +536,17 @@ namespace Zoca
             }
         }
 
+        public void OnSwitchCamera(InputAction.CallbackContext context)
+        {
+            if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
+                return;
+
+            if (context.started && !playerCamera.IsSwitching())
+            {
+                playerCamera.Switch();
+            }
+        }
+
         public void OnPause(InputAction.CallbackContext context)
         {
             if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
@@ -545,6 +556,7 @@ namespace Zoca
                 GameManager.Instance.Pause();
         }
 
+        
 
         #endregion
 
