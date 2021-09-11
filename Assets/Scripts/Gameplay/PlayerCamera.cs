@@ -14,6 +14,10 @@ namespace Zoca
         [SerializeField]
         Transform thirdPersonTarget;
 
+        // Player controller should pass this array
+        [SerializeField]
+        Renderer[] renderers;
+
         float maxPitch = 30;
         float minPitch = -60;
 
@@ -34,6 +38,9 @@ namespace Zoca
             get { return distanceAdjustment; }
         }
 
+        List<Material> originalMaterials;
+        List<Material> transparentMaterials;
+
         private void Awake()
         {
             currentPitch = transform.localEulerAngles.x;
@@ -43,6 +50,25 @@ namespace Zoca
 
             // Calculate the switch speed
             switchSpeed = Vector3.Distance(firstPersonTarget.position, thirdPersonTarget.position) / switchTime;
+
+            // Store original and create transparent materials
+            originalMaterials = new List<Material>();
+            transparentMaterials = new List<Material>();
+            foreach(Renderer renderer in renderers)
+            {
+                foreach (Material mat in renderer.materials)
+                {
+                    originalMaterials.Add(mat);
+                    Material tMat = new Material(mat);
+                    tMat.SetFloat("_Surface", 1);
+                    transparentMaterials.Add(tMat);
+
+                    
+                }
+                
+            }
+
+
         }
 
         // Start is called before the first frame update
@@ -95,6 +121,7 @@ namespace Zoca
                 {
                     switching = false;
                     UpdateDistanceAdjustment();
+                    //SetMaterials(originalMaterials);
                 }
                     
             }
@@ -121,6 +148,11 @@ namespace Zoca
             switching = true;
             switchElapsed = 0;
             thirdPerson = !thirdPerson;
+
+            // Change material to transparent
+            StartCoroutine(DoTransparentEffect());
+            //SetMaterials(transparentMaterials);
+
         }
 
         public bool IsSwitching()
@@ -191,6 +223,55 @@ namespace Zoca
             eulers.y = playerController.transform.eulerAngles.y;
             eulers.z = playerController.transform.eulerAngles.z;
             return Quaternion.Euler(eulers);
+        }
+
+        void SetMaterials(List<Material> newMaterials)
+        {
+            
+            int startIdx = 0;
+            foreach (Renderer rend in renderers)
+            {
+                // The number of materials of the current renderer
+                int count = rend.materials.Length;
+
+                // Create a new material array
+                Material[] mats = new Material[count];
+
+                // Fill the array
+                for(int i=0; i<count; i++)
+                {
+                    mats[i] = newMaterials[i + startIdx];
+                }
+
+                // Set materials
+                rend.materials = mats;
+                rend.UpdateGIMaterials();
+
+                startIdx += count;
+            }
+        }
+
+        IEnumerator DoTransparentEffect()
+        {
+            SetMaterials(transparentMaterials);
+            float time = switchTime / 2;
+            float elapsed = 0;
+
+            
+            while(elapsed < time)
+            {
+                elapsed += Time.deltaTime;
+
+                foreach(Material mat in transparentMaterials)
+                {
+                    Color c = mat.color;
+                    c.a = Mathf.Lerp(1, 0, elapsed / time);
+                    mat.color = c;
+                }
+
+                yield return null;
+            }
+            
         }
 
         #endregion

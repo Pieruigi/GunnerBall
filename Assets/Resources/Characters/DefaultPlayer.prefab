@@ -556,6 +556,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   firstPersonTarget: {fileID: 6463914892295196605}
   thirdPersonTarget: {fileID: 1278949675560896232}
+  renderers:
+  - {fileID: 1994006719985823804}
 --- !u!1001 &707472008435149998
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -616,5 +618,10 @@ PrefabInstance:
 --- !u!4 &1034644248855726917 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: b25756e87dc5eb4499ca679d4086d01e, type: 3}
+  m_PrefabInstance: {fileID: 707472008435149998}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &1994006719985823804 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 1332309605642935442, guid: b25756e87dc5eb4499ca679d4086d01e, type: 3}
   m_PrefabInstance: {fileID: 707472008435149998}
   m_PrefabAsset: {fileID: 0}
