@@ -7,16 +7,16 @@ namespace Zoca
     public class StrafeController : MonoBehaviour
     {
         [SerializeField]
-        Transform[] legs;
-
+        Transform root;
+      
         [SerializeField]
-        Transform spine;
+        Transform[] spines;
 
         [SerializeField]
         float maxAngle = 60f;
 
         [SerializeField]
-        float spineAngleMultiplyer = .3f;
+        float spineAngleMultiplyer = .2f;
 
         PlayerController playerController;
 
@@ -67,21 +67,24 @@ namespace Zoca
             // Get the current angle
             currentAngle = Mathf.MoveTowards(currentAngle, targetAngle, 360 * Time.deltaTime);
             
-            // Rotate legs
+            
             Vector3 eulers;
-            foreach (Transform node in legs)
-            {
-                //node.Rotate(Vector3.up, currentAngle, Space.Self);
-                eulers = node.transform.localEulerAngles;
+            
+            // Rotate the root node
+            eulers = root.localEulerAngles;
+            eulers.y = currentAngle;
+            root.localEulerAngles = eulers;
 
-                eulers.y = currentAngle;
-                node.transform.localEulerAngles = eulers;
+            float delta = -currentAngle * spineAngleMultiplyer;
+
+            // Rotate spines
+            for (int i=0; i<spines.Length; i++)
+            {
+                eulers = spines[i].transform.localEulerAngles;
+                eulers.y = delta;
+                spines[i].transform.localEulerAngles = eulers;
             }
 
-            // Rotate spine
-            eulers = spine.transform.localEulerAngles;
-            eulers.y = currentAngle * spineAngleMultiplyer;
-            spine.transform.localEulerAngles = eulers;
 
         }
     }
