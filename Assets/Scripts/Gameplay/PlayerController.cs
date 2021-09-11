@@ -34,6 +34,7 @@ namespace Zoca
         CharacterController cc;
 
         bool moving = false;
+        
         bool shooting = false;
         Vector2 input;
         Vector2 lookInput;
@@ -44,6 +45,10 @@ namespace Zoca
         }
       
         Vector3 velocity; // The current character controller velocity
+        public Vector3 Velocity
+        {
+            get { return velocity; }
+        }
         Vector3 targetVelocity; // The target velocity ( dir * MAX_VEL )
         Vector3 networkPosition; // Position received from this controller's owner
         Quaternion networkRotation; // Position received from this controller's owner
@@ -340,6 +345,13 @@ namespace Zoca
             }
 
         }
+
+        public bool IsMoving()
+        {
+            return moving;
+        }
+
+        
 
         public void ResetPlayer()
         {
