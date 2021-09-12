@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 2933440513119446716}
   - component: {fileID: 8603690223840455249}
   - component: {fileID: 3897829664946961761}
+  - component: {fileID: 4989537266413133277}
   m_Layer: 0
   m_Name: DefaultPlayer
   m_TagString: Player
@@ -280,6 +281,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 5356899110363376708}
   - {fileID: 8603690223840455249}
+  - {fileID: 3897829664946961761}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -336,6 +338,19 @@ MonoBehaviour:
   - {fileID: 920309284642979009}
   maxAngle: 70
   spineAngleMultiplyer: 0.2
+--- !u!114 &4989537266413133277
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 707472009685262571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20530824581deb648b111a0845f1285d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 6393958782922101055}
 --- !u!1 &5996109494263300688
 GameObject:
   m_ObjectHideFlags: 0

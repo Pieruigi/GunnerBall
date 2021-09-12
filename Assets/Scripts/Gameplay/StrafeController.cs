@@ -50,10 +50,10 @@ namespace Zoca
             // Local player only
             if (playerController.photonView.IsMine || PhotonNetwork.OfflineMode)
             {
-                if (playerController.IsMoving())
+                float y = playerController.MovementInput.y;
+                float x = playerController.MovementInput.x;
+                if (x != 0 || y != 0)
                 {
-                    float y = playerController.MovementInput.y;
-                    float x = playerController.MovementInput.x;
                     // Set the target angle
                     targetAngle = Mathf.Lerp(0, maxAngle, 1.0f - Mathf.Abs(y)) * Mathf.Sign(x) * Mathf.Sign(y);
                 }

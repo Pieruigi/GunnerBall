@@ -18,12 +18,20 @@ namespace Zoca
         [Header("Physics")]
         [SerializeField]
         float maxSpeed = 5f;
+        public float MaxSpeed
+        {
+            get { return maxSpeed; }
+        }
 
         [SerializeField]
         float acceleration = 10f;
 
         [SerializeField]
         float sprintMultiplier = 2;
+        public float SprintMultiplier
+        {
+            get { return sprintMultiplier; }
+        }
 
         [SerializeField]
         float jumpSpeed = 15f;
@@ -139,20 +147,13 @@ namespace Zoca
             get { return fireWeapon; }
         }
 
-        [Header("Animations")]
-        [SerializeField]
-        Animator animator;
 
         float ballPowerOnHit = 20;
 
         Vector3 startPosition;
         Quaternion startRotation;
 
-        #region animation_fields
-        float animSpeedNormalized;
-        float animSpeedMax;
-        string animSpeedParam = "Speed";
-        #endregion
+       
 
         private void Awake()
         {
@@ -168,9 +169,7 @@ namespace Zoca
             sprintSpeed = maxSpeed * sprintMultiplier;
             staminaDefault = stamina;
 
-            // Animation fields
-            animSpeedMax = maxSpeed * sprintMultiplier;
-            animSpeedNormalized = 0;
+           
             
             if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
             {
@@ -292,12 +291,9 @@ namespace Zoca
                     cc.Move(velocity * Time.deltaTime);
                 }
 
-                // Set animation
-                animSpeedNormalized = velocity.magnitude / animSpeedMax;
-                float animSign = Vector3.Dot(velocity.normalized, transform.forward);
-                animSign = animSign >= -0.1f ? 1 : -1;
+                
 
-                //animator.SetFloat(animSpeedParam, animSign * animSpeedNormalized);
+
 
                 //
                 // Check shooting
@@ -369,11 +365,6 @@ namespace Zoca
                 transform.rotation = Quaternion.Lerp(transform.rotation, networkRotation, Time.deltaTime * lerpSpeed);
             }
 
-        }
-
-        public bool IsMoving()
-        {
-            return moving;
         }
 
         
