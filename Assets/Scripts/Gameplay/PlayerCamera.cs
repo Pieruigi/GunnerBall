@@ -26,7 +26,7 @@ namespace Zoca
         PlayerController playerController;
         Material playerMaterial;
 
-        bool thirdPerson = false;
+        bool thirdPerson = true;
         bool switching = false;
         float switchTime = 1f;
         float switchElapsed = 0;

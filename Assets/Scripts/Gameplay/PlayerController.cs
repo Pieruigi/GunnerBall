@@ -37,6 +37,11 @@ namespace Zoca
         
         bool shooting = false;
         Vector2 input;
+        public Vector2 MovementInput
+        {
+            get { return input; }
+        }
+
         Vector2 lookInput;
         float lookSensitivity = 50f;
         public float LookSensitivity
@@ -134,10 +139,20 @@ namespace Zoca
             get { return fireWeapon; }
         }
 
+        [Header("Animations")]
+        [SerializeField]
+        Animator animator;
+
         float ballPowerOnHit = 20;
 
         Vector3 startPosition;
         Quaternion startRotation;
+
+        #region animation_fields
+        float animSpeedNormalized;
+        float animSpeedMax;
+        string animSpeedParam = "Speed";
+        #endregion
 
         private void Awake()
         {
@@ -152,6 +167,10 @@ namespace Zoca
             healthDefault = health;
             sprintSpeed = maxSpeed * sprintMultiplier;
             staminaDefault = stamina;
+
+            // Animation fields
+            animSpeedMax = maxSpeed * sprintMultiplier;
+            animSpeedNormalized = 0;
             
             if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
             {
@@ -272,7 +291,13 @@ namespace Zoca
                     //Debug.LogFormat("PlayerController - Velocity.Y:{0}", velocity.y);
                     cc.Move(velocity * Time.deltaTime);
                 }
-                    
+
+                // Set animation
+                animSpeedNormalized = velocity.magnitude / animSpeedMax;
+                float animSign = Vector3.Dot(velocity.normalized, transform.forward);
+                animSign = animSign >= -0.1f ? 1 : -1;
+
+                //animator.SetFloat(animSpeedParam, animSign * animSpeedNormalized);
 
                 //
                 // Check shooting
@@ -548,16 +573,16 @@ namespace Zoca
             }
         }
 
-        public void OnSwitchCamera(InputAction.CallbackContext context)
-        {
-            if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
-                return;
+        //public void OnSwitchCamera(InputAction.CallbackContext context)
+        //{
+        //    if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
+        //        return;
 
-            if (context.started && !playerCamera.IsSwitching())
-            {
-                playerCamera.Switch();
-            }
-        }
+        //    if (context.started && !playerCamera.IsSwitching())
+        //    {
+        //        playerCamera.Switch();
+        //    }
+        //}
 
         public void OnPause(InputAction.CallbackContext context)
         {

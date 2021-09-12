@@ -1,10 +1,11 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Zoca
 {
-    public class StrafeController : MonoBehaviour
+    public class StrafeController : MonoBehaviour, IPunObservable
     {
         [SerializeField]
         Transform root;
@@ -22,7 +23,9 @@ namespace Zoca
 
         float targetAngle;
         float currentAngle;
-        
+
+        Vector3 oldPosition;
+
         private void Awake()
         {
             playerController = GetComponent<PlayerController>();
@@ -42,31 +45,28 @@ namespace Zoca
 
         private void LateUpdate()
         {
-
-
-
             // When moving straight forward Dot(fwd, dir) = 1; instead
             // when strafing Dot(fwd, dir) = 0.
-            Vector3 velocity = Vector3.zero;
-            if (playerController.IsMoving())
+            // Local player only
+            if (playerController.photonView.IsMine || PhotonNetwork.OfflineMode)
             {
-                velocity = playerController.Velocity;
-                velocity.y = 0; // To be sure
-                float dot = Vector3.Dot(transform.forward, velocity.normalized);
-                float dotRight = Vector3.Dot(transform.right, velocity.normalized);
-                Debug.Log("Dot:" + dot);
-                // Set the target angle
-                targetAngle = Mathf.Lerp(0, maxAngle, 1.0f - Mathf.Abs(dot)) * Mathf.Sign(dotRight);
+                if (playerController.IsMoving())
+                {
+                    float y = playerController.MovementInput.y;
+                    float x = playerController.MovementInput.x;
+                    // Set the target angle
+                    targetAngle = Mathf.Lerp(0, maxAngle, 1.0f - Mathf.Abs(y)) * Mathf.Sign(x) * Mathf.Sign(y);
+                }
+                else
+                {
+                    // Reset the target angle
+                    targetAngle = 0;
+                }
             }
-            else
-            {
-                // Reset the target angle
-                targetAngle = 0;
-            }
-           
+            
+            // For both local and remote player
             // Get the current angle
             currentAngle = Mathf.MoveTowards(currentAngle, targetAngle, 360 * Time.deltaTime);
-            
             
             Vector3 eulers;
             
@@ -85,7 +85,19 @@ namespace Zoca
                 spines[i].transform.localEulerAngles = eulers;
             }
 
+            
+        }
 
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            if (stream.IsWriting)
+            {
+                stream.SendNext(targetAngle);
+            }
+            else
+            {
+                targetAngle = (float)stream.ReceiveNext();
+            }
         }
     }
 
