@@ -24,7 +24,6 @@ namespace Zoca
         float targetAngle;
         float currentAngle;
 
-        Vector3 oldPosition;
 
         private void Awake()
         {

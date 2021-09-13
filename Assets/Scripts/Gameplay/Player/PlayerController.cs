@@ -66,12 +66,13 @@ namespace Zoca
         Vector3 networkPosition; // Position received from this controller's owner
         Quaternion networkRotation; // Position received from this controller's owner
         float lerpSpeed = 10f; // Interpolation speed to adjust network transform
-
+        
         
 
         bool jumping = false;
         float ySpeed = 0;
         bool sprinting = false;
+        bool sprintInput = false;
         float sprintSpeed;
         float jumpStamina = 20;
         
@@ -209,15 +210,14 @@ namespace Zoca
         // Update is called once per frame
         void Update()
         {
+            
 
             if (photonView.IsMine || PhotonNetwork.OfflineMode)
             {
                 
-
-                //
-                // Check movement
-                //
-                // Look around
+                /**
+                 * Look around
+                 */
                 Vector2 lookAngles = lookInput * lookSensitivity * Time.deltaTime;
 
                 if (freezed)
@@ -230,8 +230,10 @@ namespace Zoca
                 // Set camera pitch
                 playerCamera.Pitch(-lookAngles.y);
 
-                // Move character controller
-                // Get direction along player forward axis
+                /**
+                 * Move around
+                 */
+                // Get the direction along the player forward axis
                 Vector3 dir = transform.forward * input.y + transform.right * input.x;
                 // Target velocity is the max velocity we can reach
                 float speed = maxSpeed;
@@ -241,12 +243,22 @@ namespace Zoca
                 //}
                 //else
                 //{
-                    if (sprinting && stamina > 0)
-                        speed *= sprintMultiplier;
+                // You can only sprint if you are moving straight forward:
+                sprinting = sprintInput;
+                if (input.y <= 0 || input.x != 0)
+                    sprinting = false;
+
+                // Check stamina and try to adjust speed
+                if (sprinting && stamina > 0)
+                    speed *= sprintMultiplier;
                 //}
+
+                // Here we consume and refill stamina
+                CheckStamina();
+
                 //targetVelocity = dir.normalized * ((sprinting && stamina > 0) ? sprintSpeed : maxSpeed);
                 targetVelocity = dir.normalized * speed;
-                CheckStamina();
+                
 
                 // Stop moving if paused 
                 if (freezed || startPaused)
@@ -360,9 +372,12 @@ namespace Zoca
             }
             else
             {
+                
                 // Remote player, lerp networked position
                 transform.position = Vector3.Lerp(transform.position, networkPosition, Time.deltaTime * lerpSpeed);
                 transform.rotation = Quaternion.Lerp(transform.rotation, networkRotation, Time.deltaTime * lerpSpeed);
+
+                
             }
 
         }
@@ -426,7 +441,7 @@ namespace Zoca
                 stream.SendNext(PhotonNetwork.Time);
                 stream.SendNext(transform.position);
                 stream.SendNext(transform.rotation);
-                stream.SendNext(velocity);
+                stream.SendNext(velocity); // Synch for better behaviour
                 stream.SendNext((byte)health);
             }
             else // Remote player
@@ -528,16 +543,17 @@ namespace Zoca
 
             if (context.performed)
             {
-                if (!sprinting)
+                if (!sprintInput && input.x == 0 && input.y > 0)
                 {
-                    sprinting = true;
+                    //sprinting = true;
+                    sprintInput = true;
                 }
             }
             else
             {
-                if (sprinting)
+                if (sprintInput)
                 {
-                    sprinting = false;
+                    sprintInput = false;
                 }
             }
         }

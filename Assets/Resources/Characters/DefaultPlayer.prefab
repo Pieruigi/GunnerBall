@@ -18,6 +18,8 @@ GameObject:
   - component: {fileID: 8603690223840455249}
   - component: {fileID: 3897829664946961761}
   - component: {fileID: 4989537266413133277}
+  - component: {fileID: 2886370455947469542}
+  - component: {fileID: 4738291052780308881}
   m_Layer: 0
   m_Name: DefaultPlayer
   m_TagString: Player
@@ -117,7 +119,6 @@ MonoBehaviour:
   stamina: 100
   playerCamera: {fileID: 2001519252888002671}
   fireWeapon: {fileID: 8869336742984168590}
-  animator: {fileID: 6393958782922101055}
 --- !u!114 &5356899110363376709
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -282,6 +283,8 @@ MonoBehaviour:
   - {fileID: 5356899110363376708}
   - {fileID: 8603690223840455249}
   - {fileID: 3897829664946961761}
+  - {fileID: 4989537266413133277}
+  - {fileID: 2886370455947469542}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -350,7 +353,59 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20530824581deb648b111a0845f1285d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animator: {fileID: 6393958782922101055}
+  animator: {fileID: 4738291052780308881}
+--- !u!114 &2886370455947469542
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 707472009685262571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b8c4a61274f60b4ea5fb4299cfdbf14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowLayerWeightsInspector: 1
+  ShowParameterInspector: 1
+  m_SynchronizeParameters:
+  - Type: 1
+    SynchronizeType: 1
+    Name: Speed
+  - Type: 4
+    SynchronizeType: 0
+    Name: Run
+  - Type: 4
+    SynchronizeType: 0
+    Name: Sprint
+  - Type: 4
+    SynchronizeType: 0
+    Name: RunBack
+  - Type: 4
+    SynchronizeType: 0
+    Name: Idle
+  m_SynchronizeLayers:
+  - SynchronizeType: 1
+    LayerIndex: 0
+--- !u!95 &4738291052780308881
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 707472009685262571}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: b25756e87dc5eb4499ca679d4086d01e, type: 3}
+  m_Controller: {fileID: 9100000, guid: dd5b687200687d646ac33bde02b7e511, type: 2}
+  m_CullingMode: 1
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &5996109494263300688
 GameObject:
   m_ObjectHideFlags: 0
@@ -689,18 +744,9 @@ PrefabInstance:
       propertyPath: m_ApplyRootMotion
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5866666021909216657, guid: b25756e87dc5eb4499ca679d4086d01e, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: b25756e87dc5eb4499ca679d4086d01e, type: 3}
---- !u!4 &1034644248855726917 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: b25756e87dc5eb4499ca679d4086d01e, type: 3}
-  m_PrefabInstance: {fileID: 707472008435149998}
-  m_PrefabAsset: {fileID: 0}
---- !u!95 &6393958782922101055 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: b25756e87dc5eb4499ca679d4086d01e, type: 3}
-  m_PrefabInstance: {fileID: 707472008435149998}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4759066458917186513 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5465940246521907071, guid: b25756e87dc5eb4499ca679d4086d01e, type: 3}
@@ -724,5 +770,10 @@ Transform:
 --- !u!137 &1994006719985823804 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 1332309605642935442, guid: b25756e87dc5eb4499ca679d4086d01e, type: 3}
+  m_PrefabInstance: {fileID: 707472008435149998}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1034644248855726917 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: b25756e87dc5eb4499ca679d4086d01e, type: 3}
   m_PrefabInstance: {fileID: 707472008435149998}
   m_PrefabAsset: {fileID: 0}
