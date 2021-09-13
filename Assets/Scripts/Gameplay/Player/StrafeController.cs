@@ -6,7 +6,10 @@ using UnityEngine;
 
 namespace Zoca
 {
-    public class StrafeController : MonoBehaviour, IPunObservable
+    public class StrafeController : MonoBehaviour
+#if !SYNC_MOVE_INPUT
+        , IPunObservable
+#endif
     {
         [SerializeField]
         Transform root;
@@ -90,9 +93,10 @@ namespace Zoca
             
         }
 
+#if !SYNC_MOVE_INPUT
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
-#if !SYNC_MOVE_INPUT
+
             if (stream.IsWriting)
             {
                 stream.SendNext(targetAngle);
@@ -101,8 +105,9 @@ namespace Zoca
             {
                 targetAngle = (float)stream.ReceiveNext();
             }
-#endif
+
         }
+#endif
     }
 
 }

@@ -64,13 +64,18 @@ namespace Zoca
             get { return velocity; }
         }
         Vector3 targetVelocity; // The target velocity ( dir * MAX_VEL )
-        Vector3 networkPosition; // Position received from this controller's owner
-        Quaternion networkRotation; // Position received from this controller's owner
+      
         float lerpSpeed = 10f; // Interpolation speed to adjust network transform
-#if SYNC_MOVE_INPUT
-        Vector2 networkMoveInput;
-#endif        
 
+
+        float maxPitch = 30;
+        float minPitch = -60;
+
+        float currentPitch;
+        public float CurrentPitch
+        {
+            get { return currentPitch; }
+        }
 
         bool jumping = false;
         float ySpeed = 0;
@@ -157,7 +162,15 @@ namespace Zoca
         Vector3 startPosition;
         Quaternion startRotation;
 
-       
+        #region networked_fields
+        float networkPitch;
+        Vector3 networkPosition; // Position received from this controller's owner
+        Quaternion networkRotation; // Position received from this controller's owner
+#if SYNC_MOVE_INPUT
+        Vector2 networkMoveInput;
+#endif
+        #endregion
+
 
         private void Awake()
         {
@@ -231,7 +244,11 @@ namespace Zoca
                 // Set yaw
                 transform.eulerAngles += Vector3.up * lookAngles.x;
                 // Set camera pitch
-                playerCamera.Pitch(-lookAngles.y);
+                playerCamera.SetPitch(currentPitch);
+
+
+                currentPitch -= lookAngles.y;
+                currentPitch = Mathf.Clamp(currentPitch, minPitch, maxPitch);
 
                 /**
                  * Move around
@@ -375,11 +392,14 @@ namespace Zoca
             }
             else
             {
-                
+
                 // Remote player, lerp networked position
                 transform.position = Vector3.Lerp(transform.position, networkPosition, Time.deltaTime * lerpSpeed);
                 transform.rotation = Quaternion.Lerp(transform.rotation, networkRotation, Time.deltaTime * lerpSpeed);
-
+                currentPitch = Mathf.Lerp(currentPitch, networkPitch, Time.deltaTime * lerpSpeed);
+                //transform.position = Vector3.MoveTowards(transform.position, networkPosition, Time.deltaTime * lerpSpeed * 5f);
+                //transform.rotation =  Quaternion.RotateTowards(transform.rotation, networkRotation, Time.deltaTime * lerpSpeed * 60f);
+                //currentPitch = Mathf.MoveTowards(currentPitch, networkPitch, 360 * Time.deltaTime);
 #if SYNC_MOVE_INPUT
                 // Remote player, lerp input
                 moveInput = Vector2.MoveTowards(moveInput, networkMoveInput, Time.deltaTime * 5);
@@ -449,7 +469,7 @@ namespace Zoca
                 stream.SendNext(transform.rotation);
                 stream.SendNext(velocity); // Synch for better behaviour
                 stream.SendNext((byte)health);
-
+                stream.SendNext(currentPitch);
 #if SYNC_MOVE_INPUT
                 // For animator
                 stream.SendNext(moveInput);
@@ -463,7 +483,7 @@ namespace Zoca
                 networkRotation = (Quaternion)stream.ReceiveNext();
                 velocity = (Vector3)stream.ReceiveNext();
                 health = (byte)stream.ReceiveNext();
-
+                networkPitch = (float)stream.ReceiveNext();
                 // Taking lag into account
                 float lag = (float)(PhotonNetwork.Time - time);
                 networkPosition += velocity * lag;

@@ -22,6 +22,10 @@ namespace Zoca
         float minPitch = -60;
 
         float currentPitch;
+        public float CurrentPitch
+        {
+            get { return currentPitch; }
+        }
 
         PlayerController playerController;
         Material playerMaterial;
@@ -133,11 +137,9 @@ namespace Zoca
             this.playerController = playerController;
         }
 
-        public void Pitch(float deltaAngle)
+        public void SetPitch(float pitch)
         {
-            currentPitch += deltaAngle;
-            currentPitch = Mathf.Clamp(currentPitch, minPitch, maxPitch);
-
+            currentPitch = pitch;
             Vector3 angles = transform.localEulerAngles;
             angles.x = currentPitch;
             transform.localEulerAngles = angles;
