@@ -1,3 +1,4 @@
+//#define SYNC_MOVE_INPUT
 using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
@@ -44,13 +45,13 @@ namespace Zoca
         private void LateUpdate()
         {
             
-
-
             // Set animation
             animSpeedTarget = playerController.Velocity.magnitude / animSpeedMax;
             //float animSign = Vector3.Dot(velocity.normalized, transform.forward);
 
+#if !SYNC_MOVE_INPUT
             if (playerController.photonView.IsMine || PhotonNetwork.OfflineMode)
+#endif
             {
                 animSpeedSign = playerController.MovementInput.y >= 0 ? 1 : -1;
             }
@@ -71,6 +72,7 @@ namespace Zoca
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
+#if !SYNC_MOVE_INPUT
             if (stream.IsWriting)
             {
                 stream.SendNext((byte)animSpeedSign);
@@ -81,6 +83,7 @@ namespace Zoca
                 if (animSpeedSign == 255)
                     animSpeedSign = -1;
             }
+#endif
         }
     }
 

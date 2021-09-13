@@ -1,3 +1,4 @@
+//#define SYNC_MOVE_INPUT
 using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
@@ -47,7 +48,9 @@ namespace Zoca
             // When moving straight forward Dot(fwd, dir) = 1; instead
             // when strafing Dot(fwd, dir) = 0.
             // Local player only
+#if !SYNC_MOVE_INPUT
             if (playerController.photonView.IsMine || PhotonNetwork.OfflineMode)
+#endif
             {
                 float y = playerController.MovementInput.y;
                 float x = playerController.MovementInput.x;
@@ -89,6 +92,7 @@ namespace Zoca
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
+#if !SYNC_MOVE_INPUT
             if (stream.IsWriting)
             {
                 stream.SendNext(targetAngle);
@@ -97,6 +101,7 @@ namespace Zoca
             {
                 targetAngle = (float)stream.ReceiveNext();
             }
+#endif
         }
     }
 

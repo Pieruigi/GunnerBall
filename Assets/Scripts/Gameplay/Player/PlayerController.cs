@@ -1,4 +1,5 @@
-#define PEER_SHOT
+//#define PEER_SHOT -- NO LONGER USED
+//#define SYNC_MOVE_INPUT
 using Photon.Pun;
 using System;
 using System.Collections;
@@ -44,10 +45,10 @@ namespace Zoca
         bool moving = false;
         
         bool shooting = false;
-        Vector2 input;
+        Vector2 moveInput;
         public Vector2 MovementInput
         {
-            get { return input; }
+            get { return moveInput; }
         }
 
         Vector2 lookInput;
@@ -66,8 +67,10 @@ namespace Zoca
         Vector3 networkPosition; // Position received from this controller's owner
         Quaternion networkRotation; // Position received from this controller's owner
         float lerpSpeed = 10f; // Interpolation speed to adjust network transform
-        
-        
+#if SYNC_MOVE_INPUT
+        Vector2 networkMoveInput;
+#endif        
+
 
         bool jumping = false;
         float ySpeed = 0;
@@ -234,7 +237,7 @@ namespace Zoca
                  * Move around
                  */
                 // Get the direction along the player forward axis
-                Vector3 dir = transform.forward * input.y + transform.right * input.x;
+                Vector3 dir = transform.forward * moveInput.y + transform.right * moveInput.x;
                 // Target velocity is the max velocity we can reach
                 float speed = maxSpeed;
                 //if (!cc.isGrounded)
@@ -245,7 +248,7 @@ namespace Zoca
                 //{
                 // You can only sprint if you are moving straight forward:
                 sprinting = sprintInput;
-                if (input.y <= 0 || input.x != 0)
+                if (moveInput.y <= 0 || moveInput.x != 0)
                     sprinting = false;
 
                 // Check stamina and try to adjust speed
@@ -377,7 +380,10 @@ namespace Zoca
                 transform.position = Vector3.Lerp(transform.position, networkPosition, Time.deltaTime * lerpSpeed);
                 transform.rotation = Quaternion.Lerp(transform.rotation, networkRotation, Time.deltaTime * lerpSpeed);
 
-                
+#if SYNC_MOVE_INPUT
+                // Remote player, lerp input
+                moveInput = Vector2.MoveTowards(moveInput, networkMoveInput, Time.deltaTime * 5);
+#endif
             }
 
         }
@@ -443,6 +449,11 @@ namespace Zoca
                 stream.SendNext(transform.rotation);
                 stream.SendNext(velocity); // Synch for better behaviour
                 stream.SendNext((byte)health);
+
+#if SYNC_MOVE_INPUT
+                // For animator
+                stream.SendNext(moveInput);
+#endif
             }
             else // Remote player
             {
@@ -457,7 +468,10 @@ namespace Zoca
                 float lag = (float)(PhotonNetwork.Time - time);
                 networkPosition += velocity * lag;
 
-
+#if SYNC_MOVE_INPUT
+                // For animator
+                networkMoveInput = (Vector2)stream.ReceiveNext();
+#endif
 
             }
         }
@@ -482,7 +496,7 @@ namespace Zoca
                     //Debug.LogFormat("Player starts moving");
                 }
 
-                input = context.ReadValue<Vector2>();
+                moveInput = context.ReadValue<Vector2>();
                 
             }
             else
@@ -497,7 +511,7 @@ namespace Zoca
                     //Debug.LogFormat("Player stops moving");
                 }
 
-                input = Vector2.zero;
+                moveInput = Vector2.zero;
             }
 
         }
@@ -543,7 +557,7 @@ namespace Zoca
 
             if (context.performed)
             {
-                if (!sprintInput && input.x == 0 && input.y > 0)
+                if (!sprintInput && moveInput.x == 0 && moveInput.y > 0)
                 {
                     //sprinting = true;
                     sprintInput = true;
