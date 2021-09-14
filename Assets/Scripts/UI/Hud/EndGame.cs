@@ -16,19 +16,13 @@ namespace Zoca.UI
         [SerializeField]
         Text redScoreText;
 
-        
-
-        Transform panel;
-
+       
         string winnerString;
 
         // Start is called before the first frame update
         void Start()
         {
-            Match.Instance.OnStateChanged += HandleOnStateChanged;
-
-            panel = transform.GetChild(0);
-            panel.gameObject.SetActive(false);
+           
         }
 
         // Update is called once per frame
@@ -42,39 +36,36 @@ namespace Zoca.UI
             GameManager.Instance.LeaveRoom();
         }
 
-        void HandleOnStateChanged()
+        private void OnEnable()
         {
-            if(Match.Instance.State == (int)MatchState.Completed)
+            // Get scores
+            int blueScore = Match.Instance.BlueTeamScore;
+            int redScore = Match.Instance.RedTeamScore;
+
+            // Set winner text
+            if (blueScore == redScore)
             {
-                panel.gameObject.SetActive(true);
-
-                // Get scores
-                int blueScore = Match.Instance.BlueTeamScore;
-                int redScore = Match.Instance.RedTeamScore;
-
-                // Set winner text
-                if (blueScore == redScore)
+                winnerString = "Draw";
+            }
+            else
+            {
+                if (blueScore > redScore)
                 {
-                    winnerString = "Draw";
+                    winnerString = "Blue Team Wins";
                 }
                 else
                 {
-                    if(blueScore > redScore)
-                    {
-                        winnerString = "Blue Team Wins";
-                    }
-                    else
-                    {
-                        winnerString = "Red Team Wins";
-                    }
+                    winnerString = "Red Team Wins";
                 }
-
-                // Fill text fields
-                winnerText.text = winnerString;
-                blueScoreText.text = blueScore.ToString();
-                redScoreText.text = redScore.ToString();
             }
+
+            // Fill text fields
+            winnerText.text = winnerString;
+            blueScoreText.text = blueScore.ToString();
+            redScoreText.text = redScore.ToString();
         }
+
+       
     }
 
 }

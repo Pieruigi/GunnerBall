@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using Zoca.Interfaces;
 
@@ -12,6 +13,8 @@ namespace Zoca
 {
     public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable, IHittable
     {
+        public UnityAction OnLeaveRoomRequest;
+
         public static GameObject LocalPlayer { get; private set; }
 
         public static PlayerController Local { get; private set; }
@@ -631,7 +634,7 @@ namespace Zoca
                 return;
 
             if (context.started)
-                GameManager.Instance.Pause();
+                OnLeaveRoomRequest?.Invoke();
         }
 
 

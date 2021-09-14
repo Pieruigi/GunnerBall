@@ -106,11 +106,11 @@ namespace Zoca
             animSpeedTarget *= animSpeedSign;
             animSpeed = Mathf.MoveTowards(animSpeed, animSpeedTarget, 5 * Time.deltaTime);
 
-            if (!playerController.photonView.IsMine)
-            {
-                Debug.LogFormat("AnimatorController - AnimSign: {0}", animSpeedSign);
-                Debug.LogFormat("AnimatorController - AnimSpeed: {0}", animSpeed);
-            }
+            //if (!playerController.photonView.IsMine)
+            //{
+            //    Debug.LogFormat("AnimatorController - AnimSign: {0}", animSpeedSign);
+            //    Debug.LogFormat("AnimatorController - AnimSpeed: {0}", animSpeed);
+            //}
 
 
             animator.SetFloat(animSpeedParam, animSpeed);
