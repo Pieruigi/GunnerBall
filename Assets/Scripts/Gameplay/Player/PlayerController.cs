@@ -634,11 +634,16 @@ namespace Zoca
                 GameManager.Instance.Pause();
         }
 
-        
+
 
         #endregion
 
         #region private
+        private void OnDestroy()
+        {
+            Destroy(playerCamera);
+        }
+
         //private void OnCollisionEnter(Collision collision)
         //{
         //    if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
@@ -650,7 +655,7 @@ namespace Zoca
         //        Hit(collision.gameObject, Vector3.zero, Vector3.zero, 1000);
         //    }
         //}
-        
+
         void CheckStamina()
         {
             if (sprinting)

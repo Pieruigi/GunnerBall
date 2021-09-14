@@ -50,6 +50,15 @@ namespace Zoca
             
         }
 
+        public void LeaveRoom()
+        {
+            if (inGame)
+            {
+                PhotonNetwork.LeaveRoom();
+            }
+
+        }
+
         public void Resume()
         {
             
@@ -71,7 +80,7 @@ namespace Zoca
 
 
         /// <summary>
-        /// This is called whene another player enters the room; 
+        /// Called when another player enters the room; 
         /// </summary>
         /// <param name="newPlayer"></param>
         public override void OnPlayerEnteredRoom(Player newPlayer)
@@ -98,7 +107,9 @@ namespace Zoca
                         RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.BlueTeamScore, (byte)0);
                         RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.RedTeamScore, (byte)0);
                         RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
-                        
+
+                        // Close the room to avoid other players to join
+                        PhotonNetwork.CurrentRoom.IsOpen = false;
 
                         //PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.StartTime] = (float)PhotonNetwork.Time;
                         //PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.MatchState] = MatchState.Starting;
@@ -116,6 +127,10 @@ namespace Zoca
             }
         }
 
+        /// <summary>
+        /// Called when another player leaves
+        /// </summary>
+        /// <param name="otherPlayer"></param>
         public override void OnPlayerLeftRoom(Player otherPlayer)
         {
             Debug.LogFormat("PUN - Player [ID:{0}] left room [Name:{1}].", otherPlayer.UserId, PhotonNetwork.CurrentRoom.Name);
@@ -140,6 +155,10 @@ namespace Zoca
             LoadArena();
         }
 #endif
+
+        /// <summary>
+        /// Called when the local player leaves the room
+        /// </summary>
         public override void OnLeftRoom()
         {
             Debug.LogFormat("PUN - Left room.");

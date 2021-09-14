@@ -13,7 +13,7 @@ namespace Zoca
         #region join_parameters
         int expectedMaxPlayers = 2;
         string roomName = null;
-        float matchLength = 300;
+        float matchLength = 13;//00;
         #endregion
 
         bool connecting = false;
@@ -132,6 +132,9 @@ namespace Zoca
             }
         }
 
+        /// <summary>
+        /// Called on the client who enters the room ( local player ).
+        /// </summary>
         public override void OnJoinedRoom()
         {
             Debug.LogFormat("PUN - Room joined [Name:{0}].", PhotonNetwork.CurrentRoom.Name);
