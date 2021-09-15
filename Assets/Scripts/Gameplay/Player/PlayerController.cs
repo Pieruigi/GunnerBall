@@ -83,6 +83,10 @@ namespace Zoca
         bool jumping = false;
         float ySpeed = 0;
         bool sprinting = false;
+        public bool Sprinting
+        {
+            get { return sprinting; }
+        }
         bool sprintInput = false;
         float sprintSpeed;
         float jumpStamina = 20;
@@ -268,12 +272,26 @@ namespace Zoca
                 //{
                 // You can only sprint if you are moving straight forward:
                 sprinting = sprintInput;
-                if (moveInput.y <= 0 || moveInput.x != 0)
+                if (moveInput.y <= 0 /*|| moveInput.x != 0*/)
                     sprinting = false;
+
+                // If player is sprinting we remove the x input
+                if (sprinting)
+                {
+                    moveInput.x = 0;
+                }
 
                 // Check stamina and try to adjust speed
                 if (sprinting && stamina > 0)
+                {
                     speed *= sprintMultiplier;
+                }
+                else
+                {
+                    if(stamina == 0)
+                        sprinting = false; // If stamina is zero we stop sprinting
+                }
+                    
                 //}
 
                 // Here we consume and refill stamina
@@ -580,7 +598,7 @@ namespace Zoca
 
             if (context.performed)
             {
-                if (!sprintInput && moveInput.x == 0 && moveInput.y > 0)
+                if (!sprintInput /*&& moveInput.x == 0*/ && moveInput.y > 0)
                 {
                     //sprinting = true;
                     sprintInput = true;
@@ -600,6 +618,13 @@ namespace Zoca
             if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
                 return;
 
+            // You can't shoot if you are sprinting
+            if (sprinting)
+            {
+                shooting = false;
+                return;
+            }
+                
            
             if (context.performed)
             {

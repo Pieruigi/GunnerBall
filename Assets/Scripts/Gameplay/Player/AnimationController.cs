@@ -127,7 +127,7 @@ namespace Zoca
             {
                 float y = playerController.MovementInput.y;
                 float x = playerController.MovementInput.x;
-                if (x != 0 || y != 0)
+                if ((x != 0 || y != 0) && !playerController.Sprinting)
                 {
                     // Set the target angle
                     targetStrafeAngle = Mathf.Lerp(0, strafeAngleMax, 1.0f - Mathf.Abs(y)) * Mathf.Sign(x) * Mathf.Sign(y);

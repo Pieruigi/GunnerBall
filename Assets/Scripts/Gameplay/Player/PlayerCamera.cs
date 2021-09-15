@@ -47,6 +47,10 @@ namespace Zoca
 
         Collider playerCollider;
 
+        Vector3 thirdPersonPositionOnSprint;
+        Vector3 thirdPersonPositionDefault;
+        float onSprintLerpSpeed = 5;
+
         private void Awake()
         {
             currentPitch = transform.localEulerAngles.x;
@@ -56,6 +60,12 @@ namespace Zoca
 
             // Calculate the switch speed
             switchSpeed = Vector3.Distance(firstPersonTarget.position, thirdPersonTarget.position) / switchTime;
+
+            // Set the camera target position on sprint
+            thirdPersonPositionOnSprint = thirdPersonTarget.localPosition + thirdPersonTarget.transform.forward * 4;
+
+            // Store the default position
+            thirdPersonPositionDefault = thirdPersonTarget.localPosition;
 
             // Store original and create transparent materials
             originalMaterials = new List<Material>();
@@ -86,6 +96,7 @@ namespace Zoca
         // Update is called once per frame
         void LateUpdate()
         {
+            
 
             // If camera is not switching between first and third person modes we
             // can update position and rotation...
@@ -93,6 +104,7 @@ namespace Zoca
             {
                 if (thirdPerson)
                 {
+                    CheckPlayerSprint();
                     UpdateThirdPerson();
                 }
                 else
@@ -204,6 +216,20 @@ namespace Zoca
             transform.rotation = GetFirstPersonTargetRotation();
         }
 
+        void CheckPlayerSprint()
+        {
+            if (playerController.Sprinting)
+            {
+                // Move camera target to the sprint target position
+                thirdPersonTarget.localPosition = Vector3.MoveTowards(thirdPersonTarget.localPosition, thirdPersonPositionOnSprint, onSprintLerpSpeed * Time.deltaTime);
+            }
+            else
+            {
+                // Move the camera target to the default position
+                thirdPersonTarget.localPosition = Vector3.MoveTowards(thirdPersonTarget.localPosition, thirdPersonPositionDefault, onSprintLerpSpeed * Time.deltaTime);
+            }
+        }
+
         void UpdateThirdPerson()
         {
             // Adjust position
@@ -300,7 +326,7 @@ namespace Zoca
             if(Physics.Raycast(ray, out info, fromPlayerToCamera.magnitude))
             {
                 // Clipping, replace camera
-                Vector3 newPos = info.point - fromPlayerToCamera.normalized * 0.75f;
+                Vector3 newPos = info.point - fromPlayerToCamera.normalized * 1.0f;
                 newPos.y = thirdPersonTarget.position.y;
                 transform.position = newPos;
                 
