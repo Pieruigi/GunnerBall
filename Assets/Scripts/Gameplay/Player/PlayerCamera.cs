@@ -300,7 +300,7 @@ namespace Zoca
             if(Physics.Raycast(ray, out info, fromPlayerToCamera.magnitude))
             {
                 // Clipping, replace camera
-                Vector3 newPos = info.point;
+                Vector3 newPos = info.point - fromPlayerToCamera.normalized * 0.75f;
                 newPos.y = thirdPersonTarget.position.y;
                 transform.position = newPos;
                 
