@@ -31,11 +31,6 @@ namespace Zoca.UI
 
         }
 
-        public void Leave()
-        {
-            GameManager.Instance.LeaveRoom();
-        }
-
         private void OnEnable()
         {
             // Get scores

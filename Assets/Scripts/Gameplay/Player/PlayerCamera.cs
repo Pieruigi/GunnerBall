@@ -45,6 +45,8 @@ namespace Zoca
         List<Material> originalMaterials;
         List<Material> transparentMaterials;
 
+        Collider playerCollider;
+
         private void Awake()
         {
             currentPitch = transform.localEulerAngles.x;
@@ -129,12 +131,15 @@ namespace Zoca
                 }
                     
             }
-            
+
+            // Clip camera
+            DoClipping();
         }
 
         public void SetPlayerController(PlayerController playerController)
         {
             this.playerController = playerController;
+            playerCollider = playerController.GetComponent<Collider>();
         }
 
         public void SetPitch(float pitch)
@@ -276,6 +281,34 @@ namespace Zoca
             
         }
 
+        void DoClipping()
+        {
+            // Cast a ray from the player to the camera and set the camera to the 
+            // collision point if any
+            // Calculate the origin
+            Vector3 origin = playerController.transform.position;
+            origin.y = thirdPersonTarget.position.y;
+            // The direction
+            Vector3 fromPlayerToCamera = transform.position - origin; 
+            // The ray
+            Ray ray = new Ray(origin, fromPlayerToCamera.normalized);
+
+            // Disable player collision
+            playerCollider.enabled = false;
+            // Cast a ray
+            RaycastHit info;
+            if(Physics.Raycast(ray, out info, fromPlayerToCamera.magnitude))
+            {
+                // Clipping, replace camera
+                Vector3 newPos = info.point;
+                newPos.y = thirdPersonTarget.position.y;
+                transform.position = newPos;
+                
+            }
+
+            // Enable player collider 
+            playerCollider.enabled = true;
+        }
         #endregion
     }
 

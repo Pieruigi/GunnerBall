@@ -36,6 +36,8 @@ namespace Zoca
                 rb = GetComponent<Rigidbody>();
                 coll = GetComponent<Collider>();
                 radius = ((SphereCollider)coll).radius;
+
+                
             }
             else
             {

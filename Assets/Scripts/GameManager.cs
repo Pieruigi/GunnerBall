@@ -5,14 +5,22 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.SceneManagement;
+using Zoca.UI;
+using UnityEngine.Events;
 
 namespace Zoca
 {
     public class GameManager : MonoBehaviourPunCallbacks
     {
+   
+
         public static GameManager Instance { get; private set; }
 
         bool inGame = false;
+        public bool InGame
+        {
+            get { return inGame; }
+        }
 
         private void Awake()
         {
@@ -52,6 +60,7 @@ namespace Zoca
             
         }
 
+        
         public void LeaveRoom()
         {
             if (inGame)

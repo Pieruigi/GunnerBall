@@ -1,15 +1,20 @@
+using Photon.Pun;
+using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Zoca.UI
 {
-    public class UIManager : MonoBehaviour
+    public class UIManager : MonoBehaviourPunCallbacks
     {
         public static UIManager Instance { get; private set; }
 
         [SerializeField]
         GameObject endGameUI;
+
+        [SerializeField]
+        GameObject opponentLeftUI;
 
         bool leavingRoom = false;
        
@@ -50,6 +55,9 @@ namespace Zoca.UI
                 PlayerController.Local.OnLeaveRoomRequest -= LeaveGame;
         }
 
+        /// <summary>
+        /// Called by the player during the match
+        /// </summary>
         public void LeaveGame()
         {
             if (leavingRoom)
@@ -77,6 +85,21 @@ namespace Zoca.UI
             
         }
 
+        void OpenPlayerLeftUI()
+        {
+            // Does nothing if already hidden
+            MessageBox.Hide();
+
+            // Close any ui
+            CloseAll();
+
+            // Open end game ui
+            opponentLeftUI.SetActive(true);
+
+            // Show cursor
+            ShowCursor(true);
+        }
+
         void OpenEndGameUI()
         {
             // Does nothing if already hidden
@@ -95,6 +118,7 @@ namespace Zoca.UI
         void CloseAll()
         {
             endGameUI.SetActive(false);
+            opponentLeftUI.SetActive(false);
         }
 
         void ShowCursor(bool show)
@@ -123,6 +147,22 @@ namespace Zoca.UI
             // Hide the cursor and do nothing
             ShowCursor(false);
 
+        }
+
+        /// <summary>
+        /// Called when another player leaves
+        /// </summary>
+        /// <param name="otherPlayer"></param>
+        public override void OnPlayerLeftRoom(Player otherPlayer)
+        {
+            Debug.LogFormat("PUN - Player [ID:{0}] left room [Name:{1}].", otherPlayer.UserId, PhotonNetwork.CurrentRoom.Name);
+
+            // If the game started we must tell the other player that the opponent
+            // left and the game is closed
+            if (GameManager.Instance.InGame)
+            {
+                OpenPlayerLeftUI();
+            }
         }
         #endregion
     }
