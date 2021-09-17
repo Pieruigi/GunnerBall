@@ -248,15 +248,20 @@ namespace Zoca
                     lookAngles = Vector3.zero;
                 }
 
+                if (sprinting)
+                {
+                    // Reduce the yaw 
+                    lookAngles.x *= 0.05f;
+                }
+
                 // Set yaw
                 transform.eulerAngles += Vector3.up * lookAngles.x;
+
                 // Set camera pitch
-                playerCamera.SetPitch(currentPitch);
-
-
                 currentPitch -= lookAngles.y;
                 currentPitch = Mathf.Clamp(currentPitch, minPitch, maxPitch);
-
+                playerCamera.SetPitch(currentPitch);
+           
                 /**
                  * Move around
                  */

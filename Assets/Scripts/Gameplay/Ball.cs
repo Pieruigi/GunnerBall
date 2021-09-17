@@ -110,6 +110,7 @@ namespace Zoca
 
             // We want to keep some energy if ball is coming towards us
             float vComp = Vector3.Dot(rb.velocity, hitNormal);
+            vComp = 0; ///////////// Test
             if(vComp > 0)
             {
                 velocity += -0.75f * vComp * hitNormal;
