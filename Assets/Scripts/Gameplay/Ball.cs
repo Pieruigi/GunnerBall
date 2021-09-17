@@ -149,6 +149,7 @@ namespace Zoca
         public void ResetBall()
         {
             rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
             rb.position = LevelManager.Instance.BallSpawnPoint.position;
             rb.rotation = LevelManager.Instance.BallSpawnPoint.rotation;
 
@@ -162,6 +163,8 @@ namespace Zoca
         {
             coll.enabled = false;
             GetComponentInChildren<Renderer>().enabled = false;
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
         }
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
