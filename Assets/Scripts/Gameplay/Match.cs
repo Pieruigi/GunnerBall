@@ -105,7 +105,7 @@ namespace Zoca
         void Update()
         {
             // All clients can execute this method
-            PerformState();
+            ExecuteState();
 
             if(PhotonNetwork.IsMasterClient)
                 CheckState();
@@ -148,7 +148,11 @@ namespace Zoca
             RaiseStateChangedEvent();
         }
         
-        
+        /// <summary>
+        /// You must wait for this call back in order to switch state, even if you are
+        /// the master client.
+        /// </summary>
+        /// <param name="photonEvent"></param>
         public void OnEvent(EventData photonEvent)
         {
             byte eventCode = photonEvent.Code;
@@ -170,8 +174,7 @@ namespace Zoca
 
         /// <summary>
         /// Executed from all clients.
-        /// This method is called by the RaiseStateChangeEvent() for each client in the 
-        /// room.
+        /// This method is called by OnEvent() for each client in the room.
         /// </summary>
         void UpdateState()
         {
@@ -211,6 +214,10 @@ namespace Zoca
 
                     //PlayerController.LocalPlayer.GetComponent<PlayerController>().ShootDisabled = false;
                     PlayerController.Local.GoalPaused = true;
+
+                    // Destroy the ball
+                    Ball.Instance.Explode();
+
                     // Set target time
                     targetTime = stateTimestamp + Constants.GoalDelay;
                     break;
@@ -225,9 +232,9 @@ namespace Zoca
         }
 
         /// <summary>
-        /// All clients can execute this method
+        /// All clients must execute this method
         /// </summary>
-        void PerformState()
+        void ExecuteState()
         {
             switch (state)
             {
@@ -241,8 +248,12 @@ namespace Zoca
         }
 
         /// <summary>
-        /// Only the master client check for a state change.
-        /// The others have all the info to become master client themselves.
+        /// Only the master client checks for state change.
+        /// Anyway the master client doesn't change its state instantly, instead
+        /// it stores the new data on the room custom properties, raises an event and 
+        /// waits for the OnEvent() to be called, just like any other client.
+        /// Setting data on the room custom properties give us the chance to switch
+        /// the master client if needed.
         /// </summary>
         void CheckState()
         {
