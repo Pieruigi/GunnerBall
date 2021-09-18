@@ -104,6 +104,8 @@ namespace Zoca
 
         public void Hit(GameObject hitOwner, Vector3 hitPoint, Vector3 hitNormal, float hitPower) 
         {
+            Debug.LogFormat("Ball - hit");
+
             // We want the ball to get moved on all the clients in order
             // to have a very smooth movement
             // Momentum:
