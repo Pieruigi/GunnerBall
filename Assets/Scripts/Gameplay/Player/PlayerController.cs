@@ -164,7 +164,7 @@ namespace Zoca
         }
 
 
-        float ballPowerOnHit = 20;
+        float ballPowerOnHit = 2.8f;
 
         Vector3 startPosition;
         Quaternion startRotation;

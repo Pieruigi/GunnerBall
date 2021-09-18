@@ -62,7 +62,7 @@ namespace Zoca
             switchSpeed = Vector3.Distance(firstPersonTarget.position, thirdPersonTarget.position) / switchTime;
 
             // Set the camera target position on sprint
-            thirdPersonPositionOnSprint = thirdPersonTarget.localPosition + thirdPersonTarget.transform.forward * 4;
+            thirdPersonPositionOnSprint = thirdPersonTarget.localPosition + thirdPersonTarget.transform.forward * 0.57f;
 
             // Store the default position
             thirdPersonPositionDefault = thirdPersonTarget.localPosition;
@@ -326,7 +326,7 @@ namespace Zoca
             if(Physics.Raycast(ray, out info, fromPlayerToCamera.magnitude))
             {
                 // Clipping, replace camera
-                Vector3 newPos = info.point - fromPlayerToCamera.normalized * 1.0f;
+                Vector3 newPos = info.point - fromPlayerToCamera.normalized * .14f;
                 newPos.y = thirdPersonTarget.position.y;
                 transform.position = newPos;
                 

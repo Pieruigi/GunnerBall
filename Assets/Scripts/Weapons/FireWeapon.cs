@@ -183,7 +183,7 @@ namespace Zoca
 
         IEnumerator ShootDelayed(object[] parameters)
         {
-            Debug.LogFormat("FireWeapon - Shooting: params.Length:{0}", parameters.Length);
+            //Debug.LogFormat("FireWeapon - Shooting: params.Length:{0}", parameters.Length);
 
             // We can add some fx here
 
