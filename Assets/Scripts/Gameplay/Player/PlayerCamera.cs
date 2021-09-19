@@ -49,7 +49,7 @@ namespace Zoca
 
         Vector3 thirdPersonPositionOnSprint;
         Vector3 thirdPersonPositionDefault;
-        float onSprintLerpSpeed = 5;
+        float onSprintLerpSpeed = 0.8f;
 
         private void Awake()
         {
@@ -326,7 +326,7 @@ namespace Zoca
             if(Physics.Raycast(ray, out info, fromPlayerToCamera.magnitude))
             {
                 // Clipping, replace camera
-                Vector3 newPos = info.point - fromPlayerToCamera.normalized * .14f;
+                Vector3 newPos = info.point - fromPlayerToCamera.normalized * .2f;
                 newPos.y = thirdPersonTarget.position.y;
                 transform.position = newPos;
                 
