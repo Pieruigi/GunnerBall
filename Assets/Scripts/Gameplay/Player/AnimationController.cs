@@ -85,7 +85,7 @@ namespace Zoca
         {
             AnimateStrafe();
             AnimateMotion();
-            AnimateAim();
+            //AnimateAim();
         }
 
         #region private_animation_methods
@@ -166,8 +166,8 @@ namespace Zoca
         {
             currentPitch = playerController.CurrentPitch;
 
-            //leftShoulder.RotateAround(leftShoulder.position, transform.right, currentPitch);
-            //rightShoulder.RotateAround(rightShoulder.position, transform.right, currentPitch);
+            leftShoulder.RotateAround(leftShoulder.position, transform.right, currentPitch);
+            rightShoulder.RotateAround(rightShoulder.position, transform.right, currentPitch);
         }
 
         #endregion
