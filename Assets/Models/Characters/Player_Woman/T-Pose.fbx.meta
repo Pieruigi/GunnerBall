@@ -3,7 +3,27 @@ guid: a12f84b3e8aebaa47abe0a27d4ee219f
 ModelImporter:
   serializedVersion: 21100
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Girl body_mat
+    second: {fileID: 5346948262918908660, guid: 793874fdb671e644b84d36ac4347c515, type: 3}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: face_mat
+    second: {fileID: 7351042822183193757, guid: 793874fdb671e644b84d36ac4347c515, type: 3}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: glass visor
+    second: {fileID: 2100000, guid: d936cf69ea4b9a64585ea4dca640131e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: hair_glasses_mat
+    second: {fileID: 2100000, guid: 608f99051df117549ba2b0af5bebfd73, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
