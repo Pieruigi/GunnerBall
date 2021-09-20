@@ -338,10 +338,9 @@ MonoBehaviour:
   - {fileID: 8266200082404082135}
   leftShoulder: {fileID: 6995625410247819974}
   rightShoulder: {fileID: 8566169322791817}
+  head: {fileID: 3909108520916501717}
   strafeAngleMax: 70
   spineStrafeAngleMultiplyer: 0.2
-  aimAngleMax: 0
-  aimAngleMin: 0
 --- !u!1 &5996109494263300688
 GameObject:
   m_ObjectHideFlags: 0
@@ -729,15 +728,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 72b1fda76c79ffd4393d3b81ab76c44d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.009
+      value: -0.0091
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 72b1fda76c79ffd4393d3b81ab76c44d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.0966
+      value: 0.0927
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 72b1fda76c79ffd4393d3b81ab76c44d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.0406
+      value: 0.0403
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 72b1fda76c79ffd4393d3b81ab76c44d, type: 3}
       propertyPath: m_LocalRotation.w
@@ -864,6 +863,11 @@ Transform:
 --- !u!4 &6995625410247819974 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -5538751756592888872, guid: a12f84b3e8aebaa47abe0a27d4ee219f, type: 3}
+  m_PrefabInstance: {fileID: 5924224315358789918}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &3909108520916501717 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7208261743932278219, guid: a12f84b3e8aebaa47abe0a27d4ee219f, type: 3}
   m_PrefabInstance: {fileID: 5924224315358789918}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &8566169322791817 stripped
