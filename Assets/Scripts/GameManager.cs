@@ -231,7 +231,7 @@ namespace Zoca
                         {
                             // For now we only have one ball ( id=0 ) in resources
                             GameObject ballPrefab = Resources.LoadAll<Ball>(ResourceFolder.Ball)[0].gameObject;
-                            PhotonNetwork.InstantiateRoomObject(System.IO.Path.Combine(ResourceFolder.Ball, ballPrefab.name), LevelManager.Instance.BallSpawnPoint.position, Quaternion.identity); ;
+                            PhotonNetwork.InstantiateRoomObject(System.IO.Path.Combine(ResourceFolder.Ball, ballPrefab.name), LevelManager.Instance.BallSpawnPoint.position, Quaternion.identity); 
                             Debug.LogFormat("GameManager - Scene manager: {0}; Ball created:{1}", LevelManager.Instance, Ball.Instance);
                         }
                         

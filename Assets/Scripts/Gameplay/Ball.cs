@@ -104,9 +104,9 @@ namespace Zoca
 
         public void Hit(GameObject hitOwner, Vector3 hitPoint, Vector3 hitNormal, float hitPower) 
         {
-            //Debug.LogFormat("Ball - hit");
+            Debug.LogFormat("Ball - hit");
 
-            // We want the ball to get moved on all the clients in order
+            // We want the ball to move on all the clients in order
             // to have a very smooth movement
             // Momentum:
             // V1i: bullet initial velocity
@@ -210,12 +210,13 @@ namespace Zoca
 
         /// <summary>
         /// In case of collision the old network sync gets skipped.
-        /// Immagine the master client sends a sync just before a collision happen; meanwhile the
-        /// collision happens on the client and the ball moves accordingly; but the client 
-        /// receives the sync ( or is already managing it lerping position ) and moves the ball 
-        /// back again, because that sync has been computed before any collision.
-        /// The next sync will take into account collision, moving the ball forward again ( that
-        /// boring elastic movement you see without this code ).
+        /// Immagine the master client sends a sync just before a collision happens; 
+        /// meanwhile the collision also happens on the client and the ball gets moved
+        /// accordingly; but the client receives the sync ( or is already managing it 
+        /// lerping old position ) and moves the ball back again, because that sync 
+        /// has been computed before any collision. 
+        /// The next sync will take finally into account the collision, moving the ball 
+        /// forward again giving it a boring elastic movement.
         /// For the same reason we also reset the displacement.
         /// </summary>
         /// <param name="collision"></param>
@@ -223,9 +224,6 @@ namespace Zoca
         {
             //Debug.LogFormat("Ball - Collision detected: {0}", collision.gameObject);
             SkipLastMasterClientSync();
-
-           
-
         }
 
 

@@ -1,5 +1,6 @@
 using Photon.Pun;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using Zoca.Interfaces;
 
@@ -162,13 +163,23 @@ namespace Zoca
             ownerCollider.enabled = true;
             if (hit)
             {
+                
                 IHittable hittable = info.collider.GetComponent<IHittable>();
 
                 if(hittable != null)
                 {
                     parameters = new object[4];
-                    //parameters[0] = info.collider.GetComponent<Ball>().photonView.ViewID;
-                    parameters[0] = (hittable as MonoBehaviourPun).photonView.ViewID;
+                    if (!PhotonNetwork.OfflineMode)
+                    {
+                        
+                        //parameters[0] = info.collider.GetComponent<Ball>().photonView.ViewID;
+                        parameters[0] = (hittable as MonoBehaviourPun).photonView.ViewID;
+                    }
+                    else
+                    {
+                        parameters[0] = (hittable as MonoBehaviourPun).GetInstanceID();
+                        //parameters[0] = (hittable as MonoBehaviourPun);
+                    }
                     parameters[1] = info.point;
                     parameters[2] = info.normal;
                     parameters[3] = PhotonNetwork.Time;
@@ -212,10 +223,21 @@ namespace Zoca
 
 
             // Get params
-            PhotonView photonView = PhotonNetwork.GetPhotonView((int)parameters[0]);
+            GameObject hitObject = null;
+
+            if (!PhotonNetwork.OfflineMode)
+            {
+                hitObject = PhotonNetwork.GetPhotonView((int)parameters[0]).gameObject;
+            }
+            else
+            {
+                hitObject = new List<MonoBehaviourPun>(GameObject.FindObjectsOfType<MonoBehaviourPun>()).Find(m => m.GetInstanceID() == (int)parameters[0]).gameObject;
+            }
             Vector3 hitPoint = (Vector3)parameters[1];
             Vector3 hitNormal = (Vector3)parameters[2];
             double timestamp = (double)parameters[3];
+
+            Debug.LogFormat("Delaying...");
 
             // Check the time passed
             float lag = (float)(PhotonNetwork.Time - timestamp);
@@ -225,20 +247,22 @@ namespace Zoca
             //    yield break; // It took to much time
 
             // Shoot
-            if(photonView != null)
-            {
-                IHittable hittable = photonView.gameObject.GetComponent<IHittable>();
-                if (hittable != null)
+            Debug.LogFormat("Ok, shooting to:" + hitObject);
+           
+                if (hitObject != null)
                 {
-                    bool useDamage = false;
-                    if (!Tag.Ball.Equals((hittable as MonoBehaviour).tag))
-                        useDamage = true;
-                    
-                    hittable.Hit(owner.gameObject, hitPoint, hitNormal, useDamage ? damage : power);
-                }
-            }
-   
 
+                    IHittable hittable = hitObject.GetComponent<IHittable>();
+                    if (hittable != null)
+                    {
+                        bool useDamage = false;
+                        if (!Tag.Ball.Equals((hittable as MonoBehaviour).tag))
+                            useDamage = true;
+
+                        hittable.Hit(owner.gameObject, hitPoint, hitNormal, useDamage ? damage : power);
+                    }
+                }
+           
         }
 
 
