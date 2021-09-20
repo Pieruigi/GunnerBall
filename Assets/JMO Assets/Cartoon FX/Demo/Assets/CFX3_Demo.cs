@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine.InputSystem;
 
+
 // Script handling the Demo scene of CartoonFX 3 particles.
 
 public class CFX3_Demo : MonoBehaviour
@@ -65,6 +66,23 @@ public class CFX3_Demo : MonoBehaviour
 		//}
 	}
 
+	public void OnChangeParticle(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+			Vector2 input = context.ReadValue<Vector2>();
+
+			if (input.x > 0)
+				nextParticle();
+			else
+				if (input.x < 0)
+				prevParticle();
+		}
+		
+
+		
+    }
+    
 	public void OnShoot()
 	{
 		Debug.Log("MouseDown:");
