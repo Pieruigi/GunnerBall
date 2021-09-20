@@ -20,6 +20,10 @@ namespace Zoca
             player.SetCustomProperties(player.CustomProperties);
         }
 
+        public static void SynchronizeLocalPlayerCustomProperties()
+        {
+            SynchronizePlayerCustomProperties(PhotonNetwork.LocalPlayer);
+        }
 
         public static void AddOrUpdatePlayerCustomProperty(Player player, string key, object value)
         {
@@ -34,19 +38,20 @@ namespace Zoca
             AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, key, value);
         }
 
-        public static bool TryGetPlayerCustomProperty<T>(Player player, string key, ref T value)
+        public static object GetPlayerCustomProperty(Player player, string key)
         {
             if (!player.CustomProperties.ContainsKey(key))
-                return false;
+                return null;
 
-            value = (T)player.CustomProperties[key];
-            return true;
+            return player.CustomProperties[key];
         }
 
-        public static bool TryGetLocalPlayerCustomProperty<T>(string key, ref T value)
+        public static object GetLocalPlayerCustomProperty(string key)
         {
-            return TryGetPlayerCustomProperty<T>(PhotonNetwork.LocalPlayer, key, ref value);
+            return GetPlayerCustomProperty(PhotonNetwork.LocalPlayer, key);
         }
+
+
     }
 
 }

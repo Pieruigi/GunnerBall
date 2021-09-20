@@ -75,25 +75,25 @@ namespace Zoca
             return GetRoomCustomProperty(PhotonNetwork.CurrentRoom, key);
         }
 
-        public static bool TryGetRoomCustomProperty<T>(Room room, string key, ref T value)
-        {
-            if (room == null)
-            {
-                Debug.LogWarningFormat("RoomCustomPropertyUtility - No room available, Room:{0}", room);
-                return false;
-            }
+        //public static bool TryGetRoomCustomProperty<T>(Room room, string key, ref T value)
+        //{
+        //    if (room == null)
+        //    {
+        //        Debug.LogWarningFormat("RoomCustomPropertyUtility - No room available, Room:{0}", room);
+        //        return false;
+        //    }
 
-            if (!room.CustomProperties.ContainsKey(key))
-                return false;
+        //    if (!room.CustomProperties.ContainsKey(key))
+        //        return false;
 
-            value = (T)room.CustomProperties[key];
-            return true;
-        }
+        //    value = (T)room.CustomProperties[key];
+        //    return true;
+        //}
 
-        public static bool TryGetCurrentRoomCustomProperty<T>(string key, ref T value)
-        {
-            return TryGetRoomCustomProperty<T>(PhotonNetwork.CurrentRoom, key, ref value);
-        }
+        //public static bool TryGetCurrentRoomCustomProperty<T>(string key, ref T value)
+        //{
+        //    return TryGetRoomCustomProperty<T>(PhotonNetwork.CurrentRoom, key, ref value);
+        //}
 
     }
 

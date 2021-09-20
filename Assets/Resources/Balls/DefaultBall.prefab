@@ -160,6 +160,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36a80752e5ed651458ea0db5b9e4a70d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  blueMaterial: {fileID: 2100000, guid: f010c75fea7d09d48a4e7393efe62b0c, type: 2}
+  redMaterial: {fileID: 2100000, guid: 8e1c4f8e0de4195438a34fe98a12c6ab, type: 2}
+  materialId: 4
 --- !u!114 &982007784201712991
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -251,6 +254,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 17d29e5b7bb4d614db492b7fdfa53479, type: 3}
+      propertyPath: m_Materials.Array.data[4]
+      value: 
+      objectReference: {fileID: 2100000, guid: 6f6f0ac9a129c87428c5b59485ad87bc, type: 2}
     - target: {fileID: 919132149155446097, guid: 17d29e5b7bb4d614db492b7fdfa53479, type: 3}
       propertyPath: m_Name
       value: Ball_Sci_fi

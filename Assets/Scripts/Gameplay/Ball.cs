@@ -14,6 +14,19 @@ namespace Zoca
 
         public static Ball Instance { get; private set; }
 
+        [SerializeField]
+        Material blueMaterial;
+
+        [SerializeField]
+        Material redMaterial;
+
+        [SerializeField]
+        int materialId;
+
+        Material defaultEmission;
+        Renderer rend;
+        
+
         Rigidbody rb;
         float drag = 0;
 
@@ -37,7 +50,8 @@ namespace Zoca
                 coll = GetComponent<Collider>();
                 radius = ((SphereCollider)coll).radius;
 
-                
+                rend = GetComponentInChildren<Renderer>();
+                defaultEmission = rend.materials[materialId];
             }
             else
             {
@@ -104,7 +118,31 @@ namespace Zoca
 
         public void Hit(GameObject hitOwner, Vector3 hitPoint, Vector3 hitNormal, float hitPower) 
         {
-            Debug.LogFormat("Ball - hit");
+            Debug.LogFormat("Ball - hit by:" + hitOwner);
+
+            // Change the ball emission color depending on the team the player
+            // who hit the ball belongs to.
+            Team ownerTeam = (Team)PlayerCustomPropertyUtility.GetPlayerCustomProperty(hitOwner.GetComponent<PhotonView>().Owner, PlayerCustomPropertyKey.TeamColor);
+            // Get the material by team
+            Material tmp = null;
+            switch (ownerTeam)
+            {
+                case Team.Red:
+                        tmp = redMaterial;
+                    break;
+                case Team.Blue:
+                        tmp = blueMaterial;
+                    break;
+            }
+            // If the current material is not the right one then change it
+            if (rend.materials[materialId] != tmp)
+            {
+                Material[] mats = rend.materials;
+                mats[materialId] = tmp;
+                rend.materials = mats;
+            }
+            
+
 
             // We want the ball to move on all the clients in order
             // to have a very smooth movement

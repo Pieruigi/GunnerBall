@@ -191,11 +191,11 @@ namespace Zoca
                     
                     if (!PlayerController.LocalPlayer) // Local player is null
                     {
-                        int cId = 0;
-                        if (!PlayerCustomPropertyUtility.TryGetPlayerCustomProperty<int>(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.CharacterId, ref cId))
-                        {
-                            Debug.LogErrorFormat("GameManager - Empty property for local player: [{0}]", PlayerCustomPropertyKey.CharacterId);
-                        }
+                        int cId = (int)PlayerCustomPropertyUtility.GetLocalPlayerCustomProperty(PlayerCustomPropertyKey.CharacterId);
+                        //if (!PlayerCustomPropertyUtility.TryGetPlayerCustomProperty<int>(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.CharacterId, ref cId))
+                        //{
+                        //    Debug.LogErrorFormat("GameManager - Empty property for local player: [{0}]", PlayerCustomPropertyKey.CharacterId);
+                        //}
                         Debug.LogFormat("Loading local player character [CharacterId:{0}].", cId);
                         GameObject playerPrefab = Resources.LoadAll<PlayerController>(ResourceFolder.Character)[(int)cId].gameObject;
                         Debug.LogFormat("Character found: {0}", playerPrefab.name);
@@ -203,11 +203,11 @@ namespace Zoca
 
                         // Spawn the networked local player ( only support 1vs1 at the moment )
                         // Get the player team
-                        Team team = Team.Blue;
-                        if (!PlayerCustomPropertyUtility.TryGetPlayerCustomProperty<Team>(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.TeamColor, ref team))
-                        {
-                            Debug.LogErrorFormat("PlayerController - property is empty: {0}", PlayerCustomPropertyKey.TeamColor);
-                        }
+                        Team team = (Team)PlayerCustomPropertyUtility.GetLocalPlayerCustomProperty(PlayerCustomPropertyKey.TeamColor);
+                        //if (!PlayerCustomPropertyUtility.TryGetPlayerCustomProperty<Team>(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.TeamColor, ref team))
+                        //{
+                        //    Debug.LogErrorFormat("PlayerController - property is empty: {0}", PlayerCustomPropertyKey.TeamColor);
+                        //}
 
                         // Get the spawn point depending on the team the player belongs to
                         Transform spawnPoint = null;
