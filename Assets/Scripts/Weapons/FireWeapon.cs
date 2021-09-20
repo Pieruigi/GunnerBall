@@ -29,10 +29,10 @@ namespace Zoca
         }
 
         [SerializeField]
-        float distance = 10;
-        public float Distance
+        float fireRange = 8.6f;
+        public float FireRange
         {
-            get { return distance; }
+            get { return fireRange; }
         }
 
         [SerializeField]
@@ -65,8 +65,26 @@ namespace Zoca
 
         private void Awake()
         {
+            ///// ONLY FOR TEST
+            ///
+            ///////////////////
+#if UNITY_EDITOR
+            power = TestPlayerStats.WeaponFirePower;
+            damage = TestPlayerStats.WeaponDamage;
+            fireRate = TestPlayerStats.WeaponFireRate;
+            fireRange = TestPlayerStats.WeaponFireRange;
+            
+
+#endif
+
+            ///////////////////
+
+
             cooldown = 1f / fireRate;
             activeCoolerCount = coolerCount;
+
+
+
         }
 
         // Start is called before the first frame update
@@ -140,7 +158,7 @@ namespace Zoca
             Ray ray = new Ray(origin, direction);
             RaycastHit info;
             ownerCollider.enabled = false;
-            bool hit = Physics.Raycast(ray, out info, distance + owner.PlayerCamera.DistanceAdjustment);
+            bool hit = Physics.Raycast(ray, out info, fireRange + owner.PlayerCamera.DistanceAdjustment);
             ownerCollider.enabled = true;
             if (hit)
             {

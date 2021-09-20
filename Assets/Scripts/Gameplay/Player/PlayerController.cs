@@ -204,6 +204,21 @@ namespace Zoca
             }
             else
             {
+                ///// ONLY FOR TEST
+                ///
+                ///////////////////
+#if UNITY_EDITOR
+                maxSpeed = TestPlayerStats.PlayerMaxSpeed;
+                sprintMultiplier = TestPlayerStats.PlayerSprintMultiplier;
+                health = TestPlayerStats.PlayerHealth;
+                healthMax = TestPlayerStats.PlayerHealthMax;
+                freezingCooldown = TestPlayerStats.PlayerFreezingTime;
+
+#endif
+
+                ///////////////////
+
+
                 // This is the local player
                 LocalPlayer = gameObject;
 
@@ -218,6 +233,9 @@ namespace Zoca
 
                 // Avoid to destroy the player 
                 DontDestroyOnLoad(gameObject);
+
+
+
             }
         }
 
@@ -237,7 +255,17 @@ namespace Zoca
 
             if (photonView.IsMine || PhotonNetwork.OfflineMode)
             {
-                
+
+                // Check for sprinting input
+                if (sprintInput && stamina > 0)
+                {
+                    sprinting = true;
+                }
+                else
+                {
+                    sprinting = false;
+                }
+
                 /**
                  * Look around
                  */
@@ -261,41 +289,34 @@ namespace Zoca
                 currentPitch -= lookAngles.y;
                 currentPitch = Mathf.Clamp(currentPitch, minPitch, maxPitch);
                 playerCamera.SetPitch(currentPitch);
-           
+
                 /**
                  * Move around
                  */
-                // Get the direction along the player forward axis
-                Vector3 dir = transform.forward * moveInput.y + transform.right * moveInput.x;
-                // Target velocity is the max velocity we can reach
+                
+                // If the player is sprinting we remove the x input and set y = 1
+                Vector3 dir = Vector3.zero;
                 float speed = maxSpeed;
+                if (sprinting)
+                {
+                    // You can only sprint straight forward
+                    dir = transform.forward;
+                    speed *= sprintMultiplier;
+                }
+                else
+                {
+                    // You can move along y and x axis
+                    dir = transform.forward * moveInput.y + transform.right * moveInput.x;
+                }
+                
+                // Target velocity is the max velocity we can reach
+                
                 //if (!cc.isGrounded)
                 //{
                 //    speed *= flyingMultiplier;
                 //}
                 //else
                 //{
-                // You can only sprint if you are moving straight forward:
-                sprinting = sprintInput;
-                if (moveInput.y <= 0 /*|| moveInput.x != 0*/)
-                    sprinting = false;
-
-                // If player is sprinting we remove the x input
-                if (sprinting)
-                {
-                    moveInput.x = 0;
-                }
-
-                // Check stamina and try to adjust speed
-                if (sprinting && stamina > 0)
-                {
-                    speed *= sprintMultiplier;
-                }
-                else
-                {
-                    if(stamina == 0)
-                        sprinting = false; // If stamina is zero we stop sprinting
-                }
                     
                 //}
 
@@ -603,7 +624,7 @@ namespace Zoca
 
             if (context.performed)
             {
-                if (!sprintInput /*&& moveInput.x == 0*/ && moveInput.y > 0)
+                if (!sprintInput /*&& moveInput.x == 0 && moveInput.y > 0 */)
                 {
                     //sprinting = true;
                     sprintInput = true;
