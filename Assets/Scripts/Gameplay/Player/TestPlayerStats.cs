@@ -11,10 +11,10 @@ public class TestPlayerStats : MonoBehaviour
     public static float PlayerHealthMax = 100f;
     public static float PlayerHealth = 100f;
 
-    public static float WeaponFirePower = 11.5f;
+    public static float WeaponFirePower = 15f;
     public static float WeaponDamage = 50;
-    public static float WeaponFireRate = 0.33f;
-    public static float WeaponFireRange = 8.6f;
+    public static float WeaponFireRate = 1f;
+    public static float WeaponFireRange = 9f;
 
     [Header("Player")]
     [SerializeField]
