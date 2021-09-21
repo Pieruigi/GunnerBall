@@ -37,6 +37,9 @@ namespace Zoca.UI
 
         void CheckDot()
         {
+            if (PlayerController.Local == null)
+                return;
+
             dotElapsed += Time.deltaTime;
             if (dotElapsed < dotTime)
                 return;
