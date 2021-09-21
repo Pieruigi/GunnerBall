@@ -60,7 +60,8 @@ namespace Zoca
         {
             get { return lookSensitivity; }
         }
-      
+       
+
         Vector3 velocity; // The current character controller velocity
         public Vector3 Velocity
         {
@@ -193,8 +194,8 @@ namespace Zoca
             sprintSpeed = maxSpeed * sprintMultiplier;
             staminaDefault = stamina;
 
-           
             
+
             if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
             {
                 // This is not the local player

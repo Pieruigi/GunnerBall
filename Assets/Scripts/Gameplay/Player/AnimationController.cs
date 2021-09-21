@@ -65,18 +65,26 @@ namespace Zoca
         float pitchMultiplier = 0.7f;
         #endregion
 
+        #region turn_around
+        int animTurnDirection = 0;
+        string animTurnDirectionParam = "TurnDirection";
+        float oldEulerY = 0;
+        string animTurnSpeedParam = "TurnSpeed";
+        
+        #endregion
+
         private void Awake()
         {
             playerController = GetComponent<PlayerController>();
             animSpeedMax = playerController.MaxSpeed * playerController.SprintMultiplier;
 
-           
+            
         }
 
         // Start is called before the first frame update
         void Start()
         {
-
+            oldEulerY = transform.eulerAngles.y;
         }
 
         // Update is called once per frame
@@ -87,12 +95,54 @@ namespace Zoca
 
         private void LateUpdate()
         {
+            AnimateTurnAround();
             AnimateStrafe();
             AnimateMotion();
             AnimateAim();
         }
 
         #region private_animation_methods
+        void AnimateTurnAround()
+        {
+            
+            if(playerController.Velocity.magnitude == 0)
+            {
+                
+                // Start rotating around
+                float turnAngle = transform.eulerAngles.y - oldEulerY;
+                float turnSpeed = turnAngle / Time.deltaTime;
+                turnSpeed /= 100f;
+                Debug.LogFormat("AnimationController - TurnSpeed: {0}", turnSpeed);
+                // Set the animation speed
+                animator.SetFloat(animTurnSpeedParam, turnSpeed);
+                Debug.LogFormat("AnimateTurnAround - turn angle: {0}", turnAngle);
+                int animValue = animator.GetInteger(animTurnDirectionParam);
+                if (turnAngle > 0 && animValue != 1)
+                {
+                    animator.SetInteger(animTurnDirectionParam, 1);
+                }
+                else
+                {
+                    if(turnAngle < 0 && animValue != -1)
+                    {
+                        animator.SetInteger(animTurnDirectionParam, -1);
+                    }
+                    else
+                    {
+                        if(turnAngle == 0 && animValue != 0)
+                        {
+                            animator.SetInteger(animTurnDirectionParam, 0);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                animator.SetInteger(animTurnDirectionParam, 0);
+            }
+            oldEulerY = transform.eulerAngles.y;
+        }
+
         void AnimateMotion()
         {
             // Set animation
