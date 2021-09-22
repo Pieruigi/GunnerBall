@@ -32,6 +32,9 @@ namespace Zoca
         [SerializeField]
         ParticleSystem electricParticle;
 
+        [SerializeField]
+        GameObject explosionPrefab;
+
         Material defaultEmission;
         Renderer rend;
         
@@ -210,6 +213,9 @@ namespace Zoca
             GetComponentInChildren<Renderer>().enabled = false;
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
+
+            // Apply fx
+            GameObject.Instantiate(explosionPrefab, transform.position, Quaternion.identity);
         }
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
