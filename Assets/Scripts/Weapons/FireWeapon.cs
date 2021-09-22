@@ -13,11 +13,12 @@ namespace Zoca
     /// </summary>
     public class FireWeapon : MonoBehaviour
     {
+        [Header("Stats")]
         [SerializeField]
         float power = 5f;
 
-        [SerializeField]
-        float speed = 60;
+        //[SerializeField]
+        //float speed = 60;
 
         [SerializeField]
         float damage = 10;
@@ -36,11 +37,15 @@ namespace Zoca
             get { return fireRange; }
         }
 
+        [Header("Fx")]
         [SerializeField]
-        int coolerCount = 3;
+        ParticleSystem shootParticle;
 
-        [SerializeField]
-        int coolerCooldown = 4;
+        //[SerializeField]
+        //int coolerCount = 3;
+
+        //[SerializeField]
+        //int coolerCooldown = 4;
 
         float shootDelay = 0.1f;
 
@@ -58,8 +63,8 @@ namespace Zoca
 
         PlayerController owner;
         Collider ownerCollider;
-        int activeCoolerCount;
-        float coolerCooldownElapsed;
+        //int activeCoolerCount;
+        //float coolerCooldownElapsed;
         float distanceAdjustment;
 
         float actualDistance;
@@ -82,7 +87,7 @@ namespace Zoca
 
 
             cooldown = 1f / fireRate;
-            activeCoolerCount = coolerCount;
+            //activeCoolerCount = coolerCount;
 
 
 
@@ -109,22 +114,22 @@ namespace Zoca
             }
 
             // Reload coolers
-            if(activeCoolerCount < coolerCount)
-            {
-                coolerCooldownElapsed -= Time.deltaTime;
-                if(coolerCooldownElapsed < 0)
-                {
-                    activeCoolerCount++;
-                    coolerCooldownElapsed = coolerCooldown;
-                }
-            }
+            //if(activeCoolerCount < coolerCount)
+            //{
+            //    coolerCooldownElapsed -= Time.deltaTime;
+            //    if(coolerCooldownElapsed < 0)
+            //    {
+            //        activeCoolerCount++;
+            //        coolerCooldownElapsed = coolerCooldown;
+            //    }
+            //}
         }
 
 
         /// <summary>
         /// Local player only.
-        /// Returns true if it can shoot and some values are sent as param ( origin, speed etc );
-        /// otherwise return false.
+        /// Returns true if he can shoot and some values are sent back as params 
+        /// ( origin, speed, etc ); otherwise return false.
         /// </summary>
         /// <param name="parameters"></param>
         /// <returns></returns>
@@ -199,7 +204,10 @@ namespace Zoca
             ownerCollider = owner.GetComponent<Collider>();
         }
 
-
+        /// <summary>
+        /// Called on every client
+        /// </summary>
+        /// <param name="parameters"></param>
         public void Shoot(object[] parameters)
         {
             StartCoroutine(ShootDelayed(parameters));
@@ -215,6 +223,7 @@ namespace Zoca
             //Debug.LogFormat("FireWeapon - Shooting: params.Length:{0}", parameters.Length);
 
             // We can add some fx here
+            shootParticle.Play();
 
             if (parameters == null)
             {

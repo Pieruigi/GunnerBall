@@ -162,7 +162,11 @@ namespace Zoca
             //PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.StartTime] = (float)PhotonNetwork.Time;
             //PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.MatchState] = MatchState.Starting;
             //PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.MatchElapsed] = 0f;
-            // The room is full, load the arena
+
+            // Close the room to avoid other players to join our test 
+            PhotonNetwork.CurrentRoom.IsOpen = false;
+
+            // The room is not full but we want to test it
             LoadArena();
         }
 #endif

@@ -23,6 +23,15 @@ namespace Zoca
         [SerializeField]
         int materialId;
 
+        [SerializeField]
+        GameObject hitBlueParticlePrefab;
+
+        [SerializeField]
+        GameObject hitRedParticlePrefab;
+
+        [SerializeField]
+        ParticleSystem electricParticle;
+
         Material defaultEmission;
         Renderer rend;
         
@@ -141,8 +150,13 @@ namespace Zoca
                 mats[materialId] = tmp;
                 rend.materials = mats;
             }
-            
 
+            // Set the hit particle
+            GameObject hitPrefab = ownerTeam == Team.Blue ? hitBlueParticlePrefab : hitRedParticlePrefab;
+            GameObject.Instantiate(hitPrefab, hitPoint, Quaternion.identity);
+
+            // Play particle
+            PlayElectricParticle();
 
             // We want the ball to move on all the clients in order
             // to have a very smooth movement
@@ -175,16 +189,7 @@ namespace Zoca
             SkipLastMasterClientSync();
         }
 
-        void SkipLastMasterClientSync()
-        {
-            if (!photonView.IsMine)
-            {
-                // Update network time to skip any sync that is just arrived
-                networkTime = PhotonNetwork.Time;
-                networkDisplacement = Vector3.zero;
-            }
-
-        }
+        
 
         public void ResetBall()
         {
@@ -244,8 +249,8 @@ namespace Zoca
         }
 
 
-       
 
+        #region private
         /// <summary>
         /// In case of collision the old network sync gets skipped.
         /// Immagine the master client sends a sync just before a collision happens; 
@@ -262,8 +267,21 @@ namespace Zoca
         {
             //Debug.LogFormat("Ball - Collision detected: {0}", collision.gameObject);
             SkipLastMasterClientSync();
+
+            // Play particle
+            PlayElectricParticle();
         }
 
+        void SkipLastMasterClientSync()
+        {
+            if (!photonView.IsMine)
+            {
+                // Update network time to skip any sync that is just arrived
+                networkTime = PhotonNetwork.Time;
+                networkDisplacement = Vector3.zero;
+            }
+
+        }
 
         void CheckPlayersCollision()
         {
@@ -365,6 +383,16 @@ namespace Zoca
             // Skip the current sync or anyother one coming 
             SkipLastMasterClientSync();
         }
+
+        void PlayElectricParticle()
+        {
+            if (electricParticle.isPlaying)
+                return;
+
+            electricParticle.Play();
+        }
+
+        #endregion
 
         #region rpc
 

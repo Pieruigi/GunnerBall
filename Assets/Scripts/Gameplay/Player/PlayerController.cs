@@ -137,17 +137,6 @@ namespace Zoca
             get { return stamina; }
         }
 
-        float staminaDefault;
-        public float StaminaMax
-        {
-            get { return staminaDefault; }
-        }
-
-        float staminaRechargeDelay = 2;
-        float staminaRechargeSpeed = 30;
-        float staminaChargeSpeed = 20;
-        DateTime staminaLast;
-
         [Header("Camera")]
         [SerializeField]
         PlayerCamera playerCamera;
@@ -163,6 +152,23 @@ namespace Zoca
         {
             get { return fireWeapon; }
         }
+
+        [Header("Fx")]
+        [SerializeField]
+        ParticleSystem freezeParticle;
+
+        float staminaDefault;
+        public float StaminaMax
+        {
+            get { return staminaDefault; }
+        }
+
+        float staminaRechargeDelay = 2;
+        float staminaRechargeSpeed = 30;
+        float staminaChargeSpeed = 20;
+        DateTime staminaLast;
+
+       
 
 
         float ballPowerOnHit = 2.8f;
@@ -456,7 +462,20 @@ namespace Zoca
 
         }
 
-        
+        private void LateUpdate()
+        {
+            // Run this for both local and remote players
+            if (freezed)
+            {
+                if (!freezeParticle.isPlaying)
+                    freezeParticle.Play();
+            }
+            else
+            {
+                if (freezeParticle.isPlaying)
+                    freezeParticle.Stop();
+            }
+        }
 
         public void ResetPlayer()
         {
@@ -518,6 +537,7 @@ namespace Zoca
                 stream.SendNext(velocity); // Synch for better behaviour
                 stream.SendNext((byte)health);
                 stream.SendNext(currentPitch);
+
 #if SYNC_MOVE_INPUT
                 // For animator
                 stream.SendNext(moveInput);
@@ -535,6 +555,12 @@ namespace Zoca
                 // Taking lag into account
                 float lag = (float)(PhotonNetwork.Time - time);
                 networkPosition += velocity * lag;
+
+                // Freeze
+                if (health == 0)
+                    freezed = true;
+                else
+                    freezed = false;
 
 #if SYNC_MOVE_INPUT
                 // For animator
@@ -698,6 +724,8 @@ namespace Zoca
         {
             Destroy(playerCamera);
         }
+
+        
 
         //private void OnCollisionEnter(Collision collision)
         //{
