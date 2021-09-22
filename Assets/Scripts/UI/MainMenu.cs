@@ -6,6 +6,12 @@ namespace Zoca.UI
 {
     public class MainMenu : MonoBehaviour
     {
+        private void Awake()
+        {
+            // Set the cursor visible 
+            Cursor.lockState = CursorLockMode.None;
+        }
+
         // Start is called before the first frame update
         void Start()
         {
