@@ -21,14 +21,14 @@ namespace Zoca
         [SerializeField]
         Transform[] spines;
 
-        [SerializeField]
-        Transform leftShoulder;
+        //[SerializeField]
+        //Transform leftShoulder;
 
-        [SerializeField]
-        Transform rightShoulder;
+        //[SerializeField]
+        //Transform rightShoulder;
 
-        [SerializeField]
-        Transform head;
+        //[SerializeField]
+        //Transform head;
 
         [Header("Strafe")]
         [SerializeField]
@@ -95,10 +95,11 @@ namespace Zoca
 
         private void LateUpdate()
         {
-            AnimateTurnAround();
-            AnimateStrafe();
+            
+            //AnimateTurnAround();
+            //AnimateStrafe();
             AnimateMotion();
-            AnimateAim();
+            //AnimateAim();
         }
 
         #region private_animation_methods
@@ -172,6 +173,7 @@ namespace Zoca
 
         void AnimateStrafe()
         {
+        
             // When moving straight forward Dot(fwd, dir) = 1; instead
             // when strafing Dot(fwd, dir) = 0.
             // Local player only
@@ -201,11 +203,12 @@ namespace Zoca
 
             // Rotate the root node
             eulers = root.localEulerAngles;
-            eulers.y = currentStrafeAngle;
+            eulers.y += currentStrafeAngle;
             root.localEulerAngles = eulers;
 
             float delta = -currentStrafeAngle * spineStrafeAngleMultiplyer;
 
+      
             // Rotate spines
             for (int i = 0; i < spines.Length; i++)
             {
@@ -222,9 +225,9 @@ namespace Zoca
 
             float animPitch = currentPitch * pitchMultiplier;
 
-            leftShoulder.RotateAround(leftShoulder.position, transform.right, animPitch);
-            rightShoulder.RotateAround(rightShoulder.position, transform.right, animPitch);
-            head.RotateAround(head.position, transform.right, animPitch);
+            spines[2].RotateAround(spines[2].position, transform.right, animPitch);
+            //rightShoulder.RotateAround(rightShoulder.position, transform.right, animPitch);
+            //head.RotateAround(head.position, transform.right, animPitch);
         }
 
         #endregion
