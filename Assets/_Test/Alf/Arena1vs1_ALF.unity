@@ -24,7 +24,7 @@ RenderSettings:
   m_AmbientEquatorColor: {r: 0.064520724, g: 0.03938234, b: 0.14150941, a: 1}
   m_AmbientGroundColor: {r: 0.084905684, g: 0.010813461, b: 0.03570933, a: 1}
   m_AmbientIntensity: 0.63
-  m_AmbientMode: 3
+  m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0, g: 0, b: 0, a: 1}
   m_SkyboxMaterial: {fileID: 2100000, guid: 0ad59b52802598442b51d1fee4e4fa44, type: 2}
   m_HaloStrength: 1
@@ -248,7 +248,7 @@ Transform:
   - {fileID: 837899791}
   - {fileID: 115770691}
   m_Father: {fileID: 0}
-  m_RootOrder: 22
+  m_RootOrder: 19
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &69790380
 GameObject:
@@ -2540,7 +2540,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!215 &574182654
 ReflectionProbe:
   m_ObjectHideFlags: 0
@@ -2771,8 +2771,8 @@ Transform:
   m_LocalPosition: {x: -18.941757, y: -20.184534, z: 68.0253}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 21
+  m_Father: {fileID: 651878929}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: -90, y: -30, z: 0}
 --- !u!1 &606618607
 GameObject:
@@ -2790,7 +2790,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &606618608
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3222,6 +3222,39 @@ Light:
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+--- !u!1 &651878928
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 651878929}
+  m_Layer: 0
+  m_Name: Directionals
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &651878929
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 651878928}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 784564898}
+  - {fileID: 1428376401}
+  - {fileID: 604160689}
+  m_Father: {fileID: 0}
+  m_RootOrder: 20
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &652155285
 GameObject:
   m_ObjectHideFlags: 0
@@ -4018,12 +4051,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 784564897}
-  m_LocalRotation: {x: -0.5074672, y: -0.26551592, z: 0.81934965, w: 0.02538559}
+  m_LocalRotation: {x: -0.5074672, y: -0.26551595, z: 0.81934965, w: 0.025385592}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 19
+  m_Father: {fileID: 651878929}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -335.837, y: 292.147, z: 160.065}
 --- !u!108 &784564899
 Light:
@@ -4037,7 +4070,7 @@ Light:
   m_Type: 1
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 0.2
+  m_Intensity: 0.4
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -4349,11 +4382,11 @@ Light:
   serializedVersion: 10
   m_Type: 0
   m_Shape: 0
-  m_Color: {r: 1, g: 0.7781244, b: 0.3160377, a: 1}
-  m_Intensity: 116.9
+  m_Color: {r: 1, g: 0.8099382, b: 0.4198113, a: 1}
+  m_Intensity: 166.2
   m_Range: 28
-  m_SpotAngle: 104.311676
-  m_InnerSpotAngle: 85.68409
+  m_SpotAngle: 119.95625
+  m_InnerSpotAngle: 96.11381
   m_CookieSize: 10
   m_Shadows:
     m_Type: 0
@@ -6700,7 +6733,7 @@ Light:
   m_Type: 1
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 0.2
+  m_Intensity: 0.12
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -6761,8 +6794,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 20
+  m_Father: {fileID: 651878929}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 23.851, y: 108.323, z: -23.705}
 --- !u!1 &1429281663
 GameObject:
