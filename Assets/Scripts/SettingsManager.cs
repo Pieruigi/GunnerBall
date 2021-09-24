@@ -13,17 +13,17 @@ namespace Zoca
 
         // The current resolution id
         Resolution resolution;
-        public Resolution Resolution
-        {
-            get { return resolution; }
-        }
+        //public Resolution Resolution
+        //{
+        //    get { return resolution; }
+        //}
 
         // The current screen mode
         int screenMode;
-        public int ScreenMode
-        {
-            get { return screenMode; }
-        }
+        //public int ScreenMode
+        //{
+        //    get { return screenMode; }
+        //}
 
         private void Awake()
         {

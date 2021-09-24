@@ -12,11 +12,18 @@ namespace Zoca.UI
         [SerializeField]
         OptionSelector screenModeOption;
 
+        [SerializeField]
+        OptionSelector refreshRateOption;
+
         #region text fields
         string fullScreenExclusiveModeOption = "FullScreenExclusive";
         string fullScreenModeOption = "FullScreen";
         string fullScreenWindowedModeOption = "FullScreenWindowed";
         string windowedModeOption = "Windowed";
+        #endregion
+
+        #region internal fields
+        string resolutionFormat = "{0} X {1}";
         #endregion
 
         // Start is called before the first frame update
@@ -25,6 +32,7 @@ namespace Zoca.UI
             // Init UI
             InitResolutionOption();
             InitScreenModeOption();
+            InitRefreshRateOption();
         }
 
         // Update is called once per frame
@@ -53,13 +61,56 @@ namespace Zoca.UI
             List<Resolution> resList = new List<Resolution>(Screen.resolutions);
             // Set options
             List<string> options = new List<string>();
+           
+            int currentId = -1;
             foreach(Resolution res in resList)
             {
-                options.Add(string.Format("{0}x{1}x{2}", res.width, res.height, res.refreshRate));
+                // We split resolution from refresh rate
+                if(options.Find(r => r.Equals(string.Format(resolutionFormat, res.width, res.height))) == null)
+                {
+                    options.Add(string.Format(resolutionFormat, res.width, res.height));
+                    
+                    // We check for the current resolution
+                    if (res.width == Screen.currentResolution.width && 
+                        res.height == Screen.currentResolution.height &&
+                        currentId < 0)
+                    {
+                        currentId = options.Count - 1;
+                    }
+                }
+
+                
+                    
             }
             resolutionOption.SetOptions(options);
             // Set current option
-            resolutionOption.SetCurrentOptionId(resList.IndexOf(SettingsManager.Instance.Resolution));
+            resolutionOption.SetCurrentOptionId(currentId);
+        }
+
+        void InitRefreshRateOption()
+        {
+            // Label
+            refreshRateOption.SetLabel("Refresh Rate");
+
+            // Get resolution list
+            List<string> options = new List<string>();
+            int currentId = -1;
+            foreach(Resolution res in Screen.resolutions)
+            {
+                if(options.Find(r=>r.Equals(res.refreshRate.ToString())) == null)
+                {
+                    // Add new option
+                    options.Add(res.refreshRate.ToString());
+
+                    // Check for the current refresh rate
+                    if (res.refreshRate == Screen.currentResolution.refreshRate &&
+                        currentId < 0)
+                        currentId = options.Count - 1;
+                }
+            }
+
+            refreshRateOption.SetOptions(options);
+            refreshRateOption.SetCurrentOptionId(currentId);
         }
 
         void InitScreenModeOption()
