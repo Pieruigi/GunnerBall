@@ -1767,7 +1767,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 42372a4e251e59848869511bd9b3449c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.47193533
+      value: 0.0615579
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 42372a4e251e59848869511bd9b3449c, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1804,6 +1804,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 42372a4e251e59848869511bd9b3449c, type: 3}
       propertyPath: m_Name
       value: Doors_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 3113599650871112504, guid: 42372a4e251e59848869511bd9b3449c, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 3113599650871112504, guid: 42372a4e251e59848869511bd9b3449c, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -2712,7 +2716,7 @@ Light:
   m_RenderMode: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 2147483647
+    m_Bits: 247
   m_RenderingLayerMask: 1
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
@@ -3253,7 +3257,7 @@ Light:
   m_RenderMode: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 2147483647
+    m_Bits: 247
   m_RenderingLayerMask: 1
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
@@ -5500,7 +5504,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5ccc6cc87fbc53f409d344d11b3769ca, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.47193533
+      value: 0.0615579
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5ccc6cc87fbc53f409d344d11b3769ca, type: 3}
       propertyPath: m_LocalPosition.z
@@ -5542,6 +5546,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 2d88e1031c975d84fa067a9125958853, type: 2}
+    - target: {fileID: 8192158106830985392, guid: 5ccc6cc87fbc53f409d344d11b3769ca, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 8192158106830985392, guid: 5ccc6cc87fbc53f409d344d11b3769ca, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 1
