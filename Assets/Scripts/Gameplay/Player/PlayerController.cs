@@ -55,11 +55,11 @@ namespace Zoca
         }
 
         Vector2 lookInput;
-        float lookSensitivity = 50f;
-        public float LookSensitivity
-        {
-            get { return lookSensitivity; }
-        }
+        float lookSensitivityMul = 10f;
+        //public float LookSensitivity
+        //{
+        //    get { return lookSensitivity; }
+        //}
        
 
         Vector3 velocity; // The current character controller velocity
@@ -276,7 +276,7 @@ namespace Zoca
                 /**
                  * Look around
                  */
-                Vector2 lookAngles = lookInput * lookSensitivity * Time.deltaTime;
+                Vector2 lookAngles = lookInput * SettingsManager.Instance.MouseSensitivity * lookSensitivityMul * Time.deltaTime;
 
                 if (freezed)
                 {

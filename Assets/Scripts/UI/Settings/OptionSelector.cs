@@ -2,13 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace Zoca.UI
 {
     public class OptionSelector : MonoBehaviour
     {
-        
+        public UnityAction<int> OnChange;
+
         [SerializeField]
         TMP_Text textLabel;
 
@@ -41,6 +43,11 @@ namespace Zoca.UI
         void Update()
         {
 
+        }
+
+        public string GetOption(int optionId)
+        {
+            return options[optionId];
         }
 
         public void SetLabel(string label)
@@ -86,6 +93,8 @@ namespace Zoca.UI
 
                 // Enable prev button
                 buttonPrev.interactable = true;
+
+                OnChange?.Invoke(currentOptionId);
             }
                 
             // Check for the end of the option list
@@ -109,6 +118,8 @@ namespace Zoca.UI
 
                 // Enable next button
                 buttonNext.interactable = true;
+
+                OnChange?.Invoke(currentOptionId);
             }
 
             // Check for the start of the option list

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Zoca.UI
 {
@@ -15,24 +16,36 @@ namespace Zoca.UI
         [SerializeField]
         OptionSelector refreshRateOption;
 
+
         #region text fields
         string fullScreenExclusiveModeOption = "FullScreenExclusive";
         string fullScreenModeOption = "FullScreen";
         string fullScreenWindowedModeOption = "FullScreenWindowed";
         string windowedModeOption = "Windowed";
+        string resolutionFormat = "{0} X {1}";
         #endregion
 
         #region internal fields
-        string resolutionFormat = "{0} X {1}";
+        int resolutionId = -1;
+        int oldResolutionId = -1;
+        int screenModeId = -1;
+        int oldScreenModeId = -1;
+        int refreshRateId = -1;
+        int oldRefreshRateId = -1;
+
         #endregion
+
+        private void Awake()
+        {
+            resolutionOption.OnChange += delegate(int id) { resolutionId = id; ApplyResolution(); };
+            refreshRateOption.OnChange += delegate (int id) { refreshRateId = id; ApplyResolution(); };
+            screenModeOption.OnChange += delegate (int id) { screenModeId = id; ApplyResolution(); };
+        }
 
         // Start is called before the first frame update
         void Start()
         {
-            // Init UI
-            InitResolutionOption();
-            InitScreenModeOption();
-            InitRefreshRateOption();
+            
         }
 
         // Update is called once per frame
@@ -43,15 +56,35 @@ namespace Zoca.UI
 
         private void OnEnable()
         {
-            
+            // Init UI
+            InitResolutionOption();
+            InitScreenModeOption();
+            InitRefreshRateOption();
         }
 
         private void OnDisable()
         {
+           
+        }
+
+     
+
+        #region private
+
+        void ApplyResolution()
+        {
+            // Get widht and height
+            string option = resolutionOption.GetOption(resolutionId);
+            int width = int.Parse(option.Split('X')[0].Trim());
+            int height = int.Parse(option.Split('X')[1].Trim());
+            int rr = int.Parse(refreshRateOption.GetOption(refreshRateId));
+
+            // Set the new resolution
+            Screen.SetResolution(width, height, (FullScreenMode)screenModeId, rr);
+            
             
         }
 
-        #region private
         void InitResolutionOption()
         {
             // Set label
@@ -61,8 +94,9 @@ namespace Zoca.UI
             List<Resolution> resList = new List<Resolution>(Screen.resolutions);
             // Set options
             List<string> options = new List<string>();
-           
-            int currentId = -1;
+
+            //int currentId = -1;
+            resolutionId = -1;
             foreach(Resolution res in resList)
             {
                 // We split resolution from refresh rate
@@ -73,9 +107,10 @@ namespace Zoca.UI
                     // We check for the current resolution
                     if (res.width == Screen.currentResolution.width && 
                         res.height == Screen.currentResolution.height &&
-                        currentId < 0)
+                        resolutionId < 0)
                     {
-                        currentId = options.Count - 1;
+                        resolutionId = options.Count - 1;
+                        oldResolutionId = resolutionId;
                     }
                 }
 
@@ -84,7 +119,7 @@ namespace Zoca.UI
             }
             resolutionOption.SetOptions(options);
             // Set current option
-            resolutionOption.SetCurrentOptionId(currentId);
+            resolutionOption.SetCurrentOptionId(resolutionId);
         }
 
         void InitRefreshRateOption()
@@ -94,7 +129,8 @@ namespace Zoca.UI
 
             // Get resolution list
             List<string> options = new List<string>();
-            int currentId = -1;
+            //int currentId = -1;
+            refreshRateId = -1;
             foreach(Resolution res in Screen.resolutions)
             {
                 if(options.Find(r=>r.Equals(res.refreshRate.ToString())) == null)
@@ -104,13 +140,17 @@ namespace Zoca.UI
 
                     // Check for the current refresh rate
                     if (res.refreshRate == Screen.currentResolution.refreshRate &&
-                        currentId < 0)
-                        currentId = options.Count - 1;
+                        refreshRateId < 0)
+                    {
+                        refreshRateId = options.Count - 1;
+                        oldRefreshRateId = refreshRateId;
+                    }
+                        
                 }
             }
 
             refreshRateOption.SetOptions(options);
-            refreshRateOption.SetCurrentOptionId(currentId);
+            refreshRateOption.SetCurrentOptionId(refreshRateId);
         }
 
         void InitScreenModeOption()
@@ -128,6 +168,8 @@ namespace Zoca.UI
             screenModeOption.SetOptions(options);
 
             // Set the current mode
+            screenModeId = (int)Screen.fullScreenMode;
+            oldScreenModeId = screenModeId;
             screenModeOption.SetCurrentOptionId((int)Screen.fullScreenMode);
         }
         #endregion
