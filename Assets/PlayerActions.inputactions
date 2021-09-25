@@ -175,6 +175,17 @@
                 },
                 {
                     "name": "",
+                    "id": "a698a663-77b9-44f8-a685-9a0f2f8e8a68",
+                    "path": "<XInputController>/rightShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Xbox Gamepad",
+                    "action": "Sprint",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "7c07fd4e-dabe-4578-aa49-d509bd65b1c6",
                     "path": "<Keyboard>/alt",
                     "interactions": "",
@@ -199,6 +210,17 @@
                 },
                 {
                     "devicePath": "<Keyboard>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
+        },
+        {
+            "name": "Xbox Gamepad",
+            "bindingGroup": "Xbox Gamepad",
+            "devices": [
+                {
+                    "devicePath": "<XInputController>",
                     "isOptional": false,
                     "isOR": false
                 }

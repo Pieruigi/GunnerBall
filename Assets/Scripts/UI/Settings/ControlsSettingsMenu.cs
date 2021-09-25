@@ -19,7 +19,16 @@ namespace Zoca.UI
 
         private void Awake()
         {
-            
+            mouseSensitivityOption.OnChange += delegate (int id) 
+            {
+                // Set the new id
+                mouseSensitivityId = id;
+                // Get value
+                float value = float.Parse(mouseSensitivityOption.GetOption(id));
+                // Set new value
+                SettingsManager.Instance.SetMouseSensitivity(value);
+            };
+
         }
 
         // Start is called before the first frame update

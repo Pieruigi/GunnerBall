@@ -576,6 +576,14 @@ namespace Zoca
             if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
                 return;
 
+            /// TEST ////////////////////////////
+            /// 
+           
+
+            //////////////////////////////////
+
+
+
            
             if (context.performed)
             {

@@ -5568,7 +5568,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 9093571920535305643, guid: a4ffd825594bc75479501b68e778a028, type: 3}
       propertyPath: m_Name
-      value: OptionSelector
+      value: MouseSensitivityOptionSelector
       objectReference: {fileID: 0}
     - target: {fileID: 9093571920535305644, guid: a4ffd825594bc75479501b68e778a028, type: 3}
       propertyPath: m_Pivot.x
@@ -9217,6 +9217,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3943f152fcaa7f439c63fb5d4b81a38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inputActionAsset: {fileID: -944628639613478452, guid: cb66f63b1ea25e04ca90f75567e632fe, type: 3}
 --- !u!4 &2077164590
 Transform:
   m_ObjectHideFlags: 0
