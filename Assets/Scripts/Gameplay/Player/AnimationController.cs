@@ -96,10 +96,10 @@ namespace Zoca
         private void LateUpdate()
         {
             
-            //AnimateTurnAround();
-            //AnimateStrafe();
+            AnimateTurnAround();
+            AnimateStrafe();
             AnimateMotion();
-            //AnimateAim();
+            AnimateAim();
         }
 
         #region private_animation_methods
