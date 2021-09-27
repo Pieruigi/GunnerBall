@@ -81,7 +81,8 @@ namespace Zoca
         /// </summary>
         void LoadArena()
         {
-            PhotonNetwork.LoadLevel("Arena1vs1");
+            string level = "Arena{0}vs{0}";
+            PhotonNetwork.LoadLevel(string.Format(level, PhotonNetwork.CurrentRoom.MaxPlayers/2));
         }
 
         #endregion

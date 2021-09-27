@@ -62,7 +62,7 @@ namespace Zoca
             switchSpeed = Vector3.Distance(firstPersonTarget.position, thirdPersonTarget.position) / switchTime;
 
             // Set the camera target position on sprint
-            thirdPersonPositionOnSprint = thirdPersonTarget.localPosition + thirdPersonTarget.transform.forward * 0.57f;
+            thirdPersonPositionOnSprint = thirdPersonTarget.localPosition + Vector3.forward * 0.57f;
 
             // Store the default position
             thirdPersonPositionDefault = thirdPersonTarget.localPosition;

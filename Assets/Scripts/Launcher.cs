@@ -36,6 +36,13 @@ namespace Zoca
 
         }
 
+        public void QuickMatch(int expectedMaxPlayers)
+        {
+            this.expectedMaxPlayers = expectedMaxPlayers;
+
+            Connect();
+        }
+
         /// <summary>
         /// Connect player and try to launch a quick game
         /// </summary>
@@ -62,9 +69,6 @@ namespace Zoca
         public void Join()
         {
             // We must read the choosen join mode first
-
-            
-
             PhotonNetwork.JoinRandomRoom(null, (byte)expectedMaxPlayers);
         }
 
@@ -140,9 +144,10 @@ namespace Zoca
             Debug.LogFormat("PUN - Room joined [Name:{0}].", PhotonNetwork.CurrentRoom.Name);
 
             // Set the team
-            // The following code only support 1vs1
+            // We fill the blue team with the first players, and the red team with the last ones.
             Debug.LogFormat("PUN - local player actor number: {0}", PhotonNetwork.LocalPlayer.ActorNumber);
-            if (PhotonNetwork.LocalPlayer.ActorNumber == 1)
+            //if (PhotonNetwork.LocalPlayer.ActorNumber == 1)
+            if (PhotonNetwork.LocalPlayer.ActorNumber <= PhotonNetwork.CurrentRoom.MaxPlayers / 2)
             {
                 //PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.TeamColor, Team.Blue);
                 PlayerCustomPropertyUtility.AddOrUpdateLocalPlayerCustomProperty(PlayerCustomPropertyKey.TeamColor, Team.Blue);

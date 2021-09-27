@@ -21,15 +21,6 @@ namespace Zoca
         [SerializeField]
         Transform[] spines;
 
-        //[SerializeField]
-        //Transform leftShoulder;
-
-        //[SerializeField]
-        //Transform rightShoulder;
-
-        //[SerializeField]
-        //Transform head;
-
         [Header("Strafe")]
         [SerializeField]
         float strafeAngleMax = 60f;
@@ -37,13 +28,7 @@ namespace Zoca
         [SerializeField]
         float spineStrafeAngleMultiplyer = .2f;
 
-        [Header("Aim")]
-        //[SerializeField]
-        //float aimAngleMax = 60;
-
-        //[SerializeField]
-        //float aimAngleMin = 60;
-
+        
         PlayerController playerController;
 
 #region motion_fields
@@ -96,7 +81,7 @@ namespace Zoca
         private void LateUpdate()
         {
             
-            //AnimateTurnAround();
+            AnimateTurnAround();
             AnimateStrafe();
             AnimateMotion();
             AnimateAim();
@@ -226,8 +211,7 @@ namespace Zoca
             float animPitch = currentPitch * pitchMultiplier;
 
             spines[2].RotateAround(spines[2].position, transform.right, animPitch);
-            //rightShoulder.RotateAround(rightShoulder.position, transform.right, animPitch);
-            //head.RotateAround(head.position, transform.right, animPitch);
+           
         }
 
         #endregion
