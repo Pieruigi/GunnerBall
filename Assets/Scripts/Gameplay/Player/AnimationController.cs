@@ -96,7 +96,7 @@ namespace Zoca
         private void LateUpdate()
         {
             
-            AnimateTurnAround();
+            //AnimateTurnAround();
             AnimateStrafe();
             AnimateMotion();
             AnimateAim();
