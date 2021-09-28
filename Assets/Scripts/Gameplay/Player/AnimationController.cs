@@ -97,8 +97,8 @@ namespace Zoca
                 // Start rotating around
                 float turnAngle = transform.eulerAngles.y - oldEulerY;
                 float turnSpeed = turnAngle / Time.deltaTime;
-                turnSpeed /= 100f;
-                Debug.LogFormat("AnimationController - TurnSpeed: {0}", turnSpeed);
+                turnSpeed /= 90f; // The anim rotates 90 degrees per second
+                //Debug.LogFormat("AnimationController - TurnSpeed: {0}", turnSpeed);
                 // Set the animation speed
                 animator.SetFloat(animTurnSpeedParam, turnSpeed);
                 Debug.LogFormat("AnimateTurnAround - turn angle: {0}", turnAngle);
@@ -124,6 +124,7 @@ namespace Zoca
             }
             else
             {
+                Debug.Log("Player is moving - vel:" + playerController.Velocity);
                 animator.SetInteger(animTurnDirectionParam, 0);
             }
             oldEulerY = transform.eulerAngles.y;

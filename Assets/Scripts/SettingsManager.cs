@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 namespace Zoca
@@ -14,6 +15,8 @@ namespace Zoca
     /// </summary>
     public class SettingsManager : MonoBehaviour
     {
+        public UnityAction OnResolutionChanged;
+
         public readonly string MouseSensitivityKey = "MouseSensitivity";
 
         public static SettingsManager Instance { get; private set; }

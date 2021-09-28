@@ -81,8 +81,8 @@ namespace Zoca.UI
 
             // Set the new resolution
             Screen.SetResolution(width, height, (FullScreenMode)screenModeId, rr);
-            
-            
+
+            SettingsManager.Instance.OnResolutionChanged?.Invoke();
         }
 
         void InitResolutionOption()
