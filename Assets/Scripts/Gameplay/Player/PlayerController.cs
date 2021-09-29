@@ -185,6 +185,7 @@ namespace Zoca
 #endif
         #endregion
 
+        AnimationController animationController;
 
         private void Awake()
         {
@@ -200,7 +201,7 @@ namespace Zoca
             sprintSpeed = maxSpeed * sprintMultiplier;
             staminaDefault = stamina;
 
-            
+            animationController = GetComponent<AnimationController>();
 
             if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
             {
@@ -414,7 +415,9 @@ namespace Zoca
                                 // In offline mode we call the weapon.Shoot() directly
                                 fireWeapon.Shoot(parameters);
                             }
+
                         }
+                        
                     }
 
  
@@ -782,7 +785,8 @@ namespace Zoca
             //    for (int i = 0; i < parameters.Length; i++)
             //        Debug.LogFormat("PlayerController - RpcShoot parameter[{0}]: {1}", i, parameters[i]);
             //}
-
+            
+            animationController.AnimateShoot(1f);
 
             fireWeapon.Shoot(parameters);
         }

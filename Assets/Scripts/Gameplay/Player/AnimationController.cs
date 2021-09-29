@@ -31,12 +31,17 @@ namespace Zoca
         
         PlayerController playerController;
 
-#region motion_fields
+        #region motion_fields
         float animSpeed;
         float animSpeedTarget;
         float animSpeedMax;
         string animSpeedParam = "Speed";
         int animSpeedSign;
+        #endregion
+
+        #region shoot
+        string shootSpeedParam = "ShootSpeed";
+        string shootParam = "Shoot";
         #endregion
 
         #region strafe_fields
@@ -85,6 +90,12 @@ namespace Zoca
             AnimateStrafe();
             AnimateMotion();
             AnimateAim();
+        }
+
+        public void AnimateShoot(float speed)
+        {
+            animator.SetFloat(shootSpeedParam, speed);
+            animator.SetTrigger(shootParam);
         }
 
         #region private_animation_methods
