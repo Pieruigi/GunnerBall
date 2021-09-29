@@ -395,12 +395,12 @@ namespace Zoca
                         // Returns true if the weapon is ready to shoot, otherwise returns false
                         if (fireWeapon.TryShoot(out parameters))
                         {
-                            if (parameters != null)
-                            {
-                                Debug.LogFormat("PlayerController - Shoot parameters length: {0}", parameters.Length);
-                                for (int i = 0; i < parameters.Length; i++)
-                                    Debug.LogFormat("PlayerController - Shoot parameter[{0}]: {1}", i, parameters[i]);
-                            }
+                            //if (parameters != null)
+                            //{
+                            //    Debug.LogFormat("PlayerController - Shoot parameters length: {0}", parameters.Length);
+                            //    for (int i = 0; i < parameters.Length; i++)
+                            //        Debug.LogFormat("PlayerController - Shoot parameter[{0}]: {1}", i, parameters[i]);
+                            //}
 
 
                             // Call rpc on all the clients, even the local one.
@@ -437,7 +437,7 @@ namespace Zoca
                 {
                     if (health == 0)
                     {
-                        Debug.LogFormat("PlayerController - Health is empty, freezing player...");
+                        //Debug.LogFormat("PlayerController - Health is empty, freezing player...");
                         currentFreezingCooldown = freezingCooldown;
                         freezed = true;
                 
@@ -490,7 +490,7 @@ namespace Zoca
             }
         }
 
-        public void Hit(GameObject owner, Vector3 hitPoint, Vector3 hitNormal, float hitDamage)
+        public void Hit(GameObject owner, Vector3 hitPoint, Vector3 hitNormal, Vector3 hitDirection, float hitDamage)
         {
             
             if (!photonView.IsMine && !PhotonNetwork.OfflineMode) // Remote players
@@ -517,7 +517,7 @@ namespace Zoca
                 {
                     Vector3 bounce = owner.transform.position - transform.position;
                     bounce = bounce.normalized * ballPowerOnHit;
-                    Debug.LogFormat("PlayerController - Ball bouncing, newVelocity: {0}", bounce);
+                    //Debug.LogFormat("PlayerController - Ball bouncing, newVelocity: {0}", bounce);
                     Ball.Instance.photonView.RPC("RpcHitByPlayer", RpcTarget.AllViaServer, bounce, PhotonNetwork.Time);
                 }
             }
@@ -587,7 +587,7 @@ namespace Zoca
            
             if (context.performed)
             {
-                Debug.LogFormat("PlayerController - Moving...................");
+               
                 if (!moving)
                 {
                     moving = true;
@@ -730,7 +730,7 @@ namespace Zoca
         #region private
         private void OnDestroy()
         {
-            Destroy(playerCamera);
+            //Destroy(playerCamera.gameObject);
         }
 
         
@@ -776,12 +776,12 @@ namespace Zoca
         [PunRPC]
         void RpcShoot(object[] parameters, PhotonMessageInfo info)
         {
-            if (parameters != null)
-            {
-                Debug.LogFormat("PlayerController - RpcShoot parameters count: {0}", parameters.Length);
-                for (int i = 0; i < parameters.Length; i++)
-                    Debug.LogFormat("PlayerController - RpcShoot parameter[{0}]: {1}", i, parameters[i]);
-            }
+            //if (parameters != null)
+            //{
+            //    Debug.LogFormat("PlayerController - RpcShoot parameters count: {0}", parameters.Length);
+            //    for (int i = 0; i < parameters.Length; i++)
+            //        Debug.LogFormat("PlayerController - RpcShoot parameter[{0}]: {1}", i, parameters[i]);
+            //}
 
 
             fireWeapon.Shoot(parameters);

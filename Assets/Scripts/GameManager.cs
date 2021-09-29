@@ -1,4 +1,4 @@
-//#define TEST_SINGLE_PLAYER
+#define TEST_SINGLE_PLAYER
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -109,8 +109,8 @@ namespace Zoca
                     Debug.LogFormat("PUN - IsMasterClient: {0}", PhotonNetwork.IsMasterClient);
                     Debug.LogFormat("PUN - Current room max players: {0}", PhotonNetwork.CurrentRoom.MaxPlayers);
                     Debug.LogFormat("PUN - Current room current players: {0}", PhotonNetwork.CurrentRoom.PlayerCount);
-                    //if (PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers)
-                    if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
+                    if (PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers)
+                    //if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
                     {
                         // A match starting time is needed to set countdown
                         RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchStateTimestamp, (float)PhotonNetwork.Time);
@@ -137,7 +137,9 @@ namespace Zoca
                     }
 
                 }
+
             }
+           
         }
 
         /// <summary>
@@ -217,12 +219,17 @@ namespace Zoca
 
                         // Get the spawn point depending on the team the player belongs to
                         Transform spawnPoint = null;
+                        int teamPlayers = PhotonNetwork.CurrentRoom.MaxPlayers / 2;
+                        //int actorNumber = PlayerController.Local.photonView.Owner.ActorNumber;
+                        int actorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
                         if (team == Team.Blue)
                         {
+                            int id = actorNumber % teamPlayers;
                             spawnPoint = LevelManager.Instance.BlueTeamSpawnPoints[0];
                         }
                         else
                         {
+                            int id = actorNumber % (2*teamPlayers);
                             spawnPoint = LevelManager.Instance.RedTeamSpawnPoints[0];
                         }
                         // Spawn
@@ -275,6 +282,13 @@ namespace Zoca
             else
             {
                 inGame = false;
+
+                // The player camera is not destryed leaving the arena, so we must
+                // do it here.
+                Debug.LogFormat("GameManager - Not in game, camera instance: {0}", PlayerCamera.Instance);
+                if (PlayerCamera.Instance)
+                    Destroy(PlayerCamera.Instance.gameObject);
+
             }
             Debug.LogFormat("GameManager - scene loaded [Name:{0}]; inGame:{1}", scene.name, inGame);
         }

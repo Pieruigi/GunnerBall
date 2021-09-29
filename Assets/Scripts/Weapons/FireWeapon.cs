@@ -173,7 +173,7 @@ namespace Zoca
 
                 if(hittable != null)
                 {
-                    parameters = new object[4];
+                    parameters = new object[5];
                     if (!PhotonNetwork.OfflineMode)
                     {
                         
@@ -188,7 +188,7 @@ namespace Zoca
                     parameters[1] = info.point;
                     parameters[2] = info.normal;
                     parameters[3] = PhotonNetwork.Time;
-
+                    parameters[4] = direction;
                 }
             }
             
@@ -245,8 +245,7 @@ namespace Zoca
             Vector3 hitPoint = (Vector3)parameters[1];
             Vector3 hitNormal = (Vector3)parameters[2];
             double timestamp = (double)parameters[3];
-
-            Debug.LogFormat("Delaying...");
+            Vector3 hitDirection = (Vector3)parameters[4];
 
             // Check the time passed
             float lag = (float)(PhotonNetwork.Time - timestamp);
@@ -256,21 +255,19 @@ namespace Zoca
             //    yield break; // It took to much time
 
             // Shoot
-            Debug.LogFormat("Ok, shooting to:" + hitObject);
-           
-                if (hitObject != null)
+            if (hitObject != null)
+            {
+
+                IHittable hittable = hitObject.GetComponent<IHittable>();
+                if (hittable != null)
                 {
+                    bool useDamage = false;
+                    if (!Tag.Ball.Equals((hittable as MonoBehaviour).tag))
+                        useDamage = true;
 
-                    IHittable hittable = hitObject.GetComponent<IHittable>();
-                    if (hittable != null)
-                    {
-                        bool useDamage = false;
-                        if (!Tag.Ball.Equals((hittable as MonoBehaviour).tag))
-                            useDamage = true;
-
-                        hittable.Hit(owner.gameObject, hitPoint, hitNormal, useDamage ? damage : power);
-                    }
+                    hittable.Hit(owner.gameObject, hitPoint, hitNormal, hitDirection, useDamage ? damage : power);
                 }
+            }
            
         }
 

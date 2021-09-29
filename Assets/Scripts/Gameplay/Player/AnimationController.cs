@@ -101,7 +101,7 @@ namespace Zoca
                 //Debug.LogFormat("AnimationController - TurnSpeed: {0}", turnSpeed);
                 // Set the animation speed
                 animator.SetFloat(animTurnSpeedParam, turnSpeed);
-                Debug.LogFormat("AnimateTurnAround - turn angle: {0}", turnAngle);
+                //Debug.LogFormat("AnimateTurnAround - turn angle: {0}", turnAngle);
                 int animValue = animator.GetInteger(animTurnDirectionParam);
                 if (turnAngle > 0 && animValue != 1)
                 {
@@ -124,7 +124,7 @@ namespace Zoca
             }
             else
             {
-                Debug.Log("Player is moving - vel:" + playerController.Velocity);
+                //Debug.Log("Player is moving - vel:" + playerController.Velocity);
                 animator.SetInteger(animTurnDirectionParam, 0);
             }
             oldEulerY = transform.eulerAngles.y;

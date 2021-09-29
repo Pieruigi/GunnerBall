@@ -128,9 +128,9 @@ namespace Zoca
 
         }
 
-        public void Hit(GameObject hitOwner, Vector3 hitPoint, Vector3 hitNormal, float hitPower) 
+        public void Hit(GameObject hitOwner, Vector3 hitPoint, Vector3 hitNormal, Vector3 hitDirection, float hitPower) 
         {
-            Debug.LogFormat("Ball - hit by:" + hitOwner);
+            //Debug.LogFormat("Ball - hit by:" + hitOwner);
 
             // Change the ball emission color depending on the team the player
             // who hit the ball belongs to.
@@ -187,6 +187,10 @@ namespace Zoca
             }
 
             rb.velocity += velocity;
+
+            // Apply torque
+            Vector3 cross = Vector3.Cross(hitNormal, hitDirection);
+            rb.AddRelativeTorque(cross, ForceMode.Impulse);
 
             // Just skip the last sync from the master client
             SkipLastMasterClientSync();
@@ -298,11 +302,11 @@ namespace Zoca
                 {
                     if (Tag.Player.Equals(c.gameObject.tag))
                     {
-                        Debug.LogFormat("PlayerController - Collision with the ball.");
+                        //Debug.LogFormat("PlayerController - Collision with the ball.");
                         // Send hit for each player, but only the local player will take care
                         // of the health; anyway the others can apply some effect or stop
                         // moving in order to improve synchronization.
-                        c.gameObject.GetComponent<PlayerController>().Hit(Ball.Instance.gameObject, Vector3.zero, Vector3.zero, 1000);
+                        c.gameObject.GetComponent<PlayerController>().Hit(Ball.Instance.gameObject, Vector3.zero, Vector3.zero, Vector3.zero, 1000);
                     }
                 }
             }

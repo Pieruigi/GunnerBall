@@ -7,7 +7,8 @@ namespace Zoca
 {
     public class PlayerCamera : MonoBehaviour
     {
-       
+        public static PlayerCamera Instance { get; private set; }
+
         [SerializeField]
         Transform firstPersonTarget;
 
@@ -53,36 +54,45 @@ namespace Zoca
 
         private void Awake()
         {
-            currentPitch = transform.localEulerAngles.x;
-
-            // Move the camera outside
-            transform.parent = null;
-
-            // Calculate the switch speed
-            switchSpeed = Vector3.Distance(firstPersonTarget.position, thirdPersonTarget.position) / switchTime;
-
-            // Set the camera target position on sprint
-            thirdPersonPositionOnSprint = thirdPersonTarget.localPosition + Vector3.forward * 0.57f;
-
-            // Store the default position
-            thirdPersonPositionDefault = thirdPersonTarget.localPosition;
-
-            // Store original and create transparent materials
-            originalMaterials = new List<Material>();
-            transparentMaterials = new List<Material>();
-            foreach(Renderer renderer in renderers)
+            if (!Instance)
             {
-                foreach (Material mat in renderer.materials)
-                {
-                    originalMaterials.Add(mat);
-                    Material tMat = new Material(mat);
-                    tMat.SetFloat("_Surface", 1);
-                    transparentMaterials.Add(tMat);
+                Instance = this;
+                currentPitch = transform.localEulerAngles.x;
 
-                    
+                // Move the camera outside
+                transform.parent = null;
+
+                // Calculate the switch speed
+                switchSpeed = Vector3.Distance(firstPersonTarget.position, thirdPersonTarget.position) / switchTime;
+
+                // Set the camera target position on sprint
+                thirdPersonPositionOnSprint = thirdPersonTarget.localPosition + Vector3.forward * 0.57f;
+
+                // Store the default position
+                thirdPersonPositionDefault = thirdPersonTarget.localPosition;
+
+                // Store original and create transparent materials
+                originalMaterials = new List<Material>();
+                transparentMaterials = new List<Material>();
+                foreach (Renderer renderer in renderers)
+                {
+                    foreach (Material mat in renderer.materials)
+                    {
+                        originalMaterials.Add(mat);
+                        Material tMat = new Material(mat);
+                        tMat.SetFloat("_Surface", 1);
+                        transparentMaterials.Add(tMat);
+
+
+                    }
+
                 }
-                
             }
+            else
+            {
+                Destroy(gameObject);
+            }
+
 
 
         }
@@ -90,13 +100,22 @@ namespace Zoca
         // Start is called before the first frame update
         void Start()
         {
+           
+                
+
             UpdateDistanceAdjustment();
+        }
+
+        private void Update()
+        {
+          
         }
 
         // Update is called once per frame
         void LateUpdate()
         {
-            
+            if (!playerController)
+                return;
 
             // If camera is not switching between first and third person modes we
             // can update position and rotation...
@@ -218,6 +237,8 @@ namespace Zoca
 
         void CheckPlayerSprint()
         {
+            
+
             if (playerController.Sprinting)
             {
                 // Move camera target to the sprint target position

@@ -105,8 +105,8 @@ namespace Zoca.UI
                     options.Add(string.Format(resolutionFormat, res.width, res.height));
                     
                     // We check for the current resolution
-                    if (res.width == Screen.currentResolution.width && 
-                        res.height == Screen.currentResolution.height &&
+                    if (res.width == Screen.width && 
+                        res.height == Screen.height &&
                         resolutionId < 0)
                     {
                         resolutionId = options.Count - 1;
