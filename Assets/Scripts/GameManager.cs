@@ -225,12 +225,12 @@ namespace Zoca
                         if (team == Team.Blue)
                         {
                             int id = actorNumber % teamPlayers;
-                            spawnPoint = LevelManager.Instance.BlueTeamSpawnPoints[0];
+                            spawnPoint = LevelManager.Instance.BlueTeamSpawnPoints[id];
                         }
                         else
                         {
                             int id = actorNumber % (2*teamPlayers);
-                            spawnPoint = LevelManager.Instance.RedTeamSpawnPoints[0];
+                            spawnPoint = LevelManager.Instance.RedTeamSpawnPoints[id];
                         }
                         // Spawn
                         PhotonNetwork.Instantiate(System.IO.Path.Combine(ResourceFolder.Character, playerPrefab.name), spawnPoint.position, spawnPoint.rotation);
