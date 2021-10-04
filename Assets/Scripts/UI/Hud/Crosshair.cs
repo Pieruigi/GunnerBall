@@ -17,6 +17,10 @@ namespace Zoca.UI
         [SerializeField]
         Image loaderImage;
 
+        [SerializeField]
+        Image loaderImageSmall;
+
+
         PlayerController localPlayerController;
         Collider localPlayerCollider;
 
@@ -82,15 +86,16 @@ namespace Zoca.UI
             float r = elapsed / localPlayerController.FireWeapon.Cooldown;
 
             loaderImage.fillAmount = r;
+            loaderImageSmall.fillAmount = r;
 
-            if(r > 0)
-            {
-                loaderImage.color = Color.red;
-            }
-            else
-            {
-                loaderImage.color = Color.green;
-            }
+            //if (r > 0)
+            //{
+            //    loaderImage.color = Color.red;
+            //}
+            //else
+            //{
+            //    loaderImage.color = Color.green;
+            //}
         }
     }
 
