@@ -12,6 +12,9 @@ namespace Zoca.UI
         Image dotImage;
 
         [SerializeField]
+        Image dotImageSmall;
+
+        [SerializeField]
         Image loaderImage;
 
         PlayerController localPlayerController;
@@ -59,14 +62,18 @@ namespace Zoca.UI
             localPlayerCollider.enabled = true;
 
             Color c = Color.red;
+            dotImage.enabled = true;
+            dotImageSmall.enabled = false;
 
             if (hit && info.collider.GetComponent<IHittable>() != null)
             {
                 c = Color.green;
+                dotImageSmall.enabled = true;
+                dotImage.enabled = false;
             }
 
             // Set color
-            dotImage.color = c;
+            //dotImage.color = c;
         }
 
         void CheckLoader()
