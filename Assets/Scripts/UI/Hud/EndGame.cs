@@ -33,6 +33,9 @@ namespace Zoca.UI
 
         private void OnEnable()
         {
+            if (!Match.Instance)
+                return;
+
             // Get scores
             int blueScore = Match.Instance.BlueTeamScore;
             int redScore = Match.Instance.RedTeamScore;

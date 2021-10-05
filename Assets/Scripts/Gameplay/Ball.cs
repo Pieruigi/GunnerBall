@@ -14,6 +14,7 @@ namespace Zoca
 
         public static Ball Instance { get; private set; }
 
+        [Header("Materials")]
         [SerializeField]
         Material blueMaterial;
 
@@ -23,6 +24,7 @@ namespace Zoca
         [SerializeField]
         int materialId;
 
+        [Header("Fx")]
         [SerializeField]
         GameObject hitBlueParticlePrefab;
 
@@ -34,6 +36,12 @@ namespace Zoca
 
         [SerializeField]
         GameObject explosionPrefab;
+
+        [SerializeField]
+        GameObject trailPrefab;
+
+        [SerializeField]
+        AudioSource audioSource;
 
         Material defaultEmission;
         Renderer rend;
@@ -52,6 +60,7 @@ namespace Zoca
 
         Collider coll;
         float radius; // Collider radius
+        BallTrail trail;
 
         private void Awake()
         {
@@ -64,6 +73,10 @@ namespace Zoca
 
                 rend = GetComponentInChildren<Renderer>();
                 defaultEmission = rend.materials[materialId];
+
+                // Create trail
+                if (trailPrefab)
+                    trail = GameObject.Instantiate(trailPrefab).GetComponent<BallTrail>();
             }
             else
             {
@@ -128,6 +141,14 @@ namespace Zoca
 
         }
 
+        /// <summary>
+        /// Called on every client
+        /// </summary>
+        /// <param name="hitOwner"></param>
+        /// <param name="hitPoint"></param>
+        /// <param name="hitNormal"></param>
+        /// <param name="hitDirection"></param>
+        /// <param name="hitPower"></param>
         public void Hit(GameObject hitOwner, Vector3 hitPoint, Vector3 hitNormal, Vector3 hitDirection, float hitPower) 
         {
             //Debug.LogFormat("Ball - hit by:" + hitOwner);
@@ -160,6 +181,9 @@ namespace Zoca
 
             // Play particle
             PlayElectricParticle();
+
+            // Play audio
+            //audioSource.Play();
 
             // We want the ball to move on all the clients in order
             // to have a very smooth movement
@@ -208,6 +232,8 @@ namespace Zoca
             coll.enabled = true;
             GetComponentInChildren<Renderer>().enabled = true;
 
+            trail.ForceStop(false);
+
             SkipLastMasterClientSync();
         }
 
@@ -220,6 +246,10 @@ namespace Zoca
 
             // Apply fx
             GameObject.Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+
+            // Stop other fx
+            electricParticle.Stop();
+            trail.ForceStop(true);
         }
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -280,6 +310,9 @@ namespace Zoca
 
             // Play particle
             PlayElectricParticle();
+
+            // Play audio
+            audioSource.Play();
         }
 
         void SkipLastMasterClientSync()

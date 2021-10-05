@@ -41,6 +41,9 @@ namespace Zoca
         [SerializeField]
         ParticleSystem shootParticle;
 
+        [SerializeField]
+        AudioSource audioSource;
+
         //[SerializeField]
         //int coolerCount = 3;
 
@@ -224,6 +227,9 @@ namespace Zoca
 
             // We can add some fx here
             shootParticle.Play();
+
+            // Audio
+            audioSource.Play();
 
             if (parameters == null)
             {

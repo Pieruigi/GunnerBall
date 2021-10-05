@@ -157,11 +157,15 @@ namespace Zoca
         [SerializeField]
         ParticleSystem freezeParticle;
 
+        [SerializeField]
+        AudioSource freezeAudioSource;
+
         float staminaDefault;
         public float StaminaMax
         {
             get { return staminaDefault; }
         }
+
 
         float staminaRechargeDelay = 2;
         float staminaRechargeSpeed = 30;
@@ -472,11 +476,17 @@ namespace Zoca
             {
                 if (!freezeParticle.isPlaying)
                     freezeParticle.Play();
+
+                if (!freezeAudioSource.isPlaying)
+                    freezeAudioSource.Play();
             }
             else
             {
                 if (freezeParticle.isPlaying)
                     freezeParticle.Stop();
+
+                if (freezeAudioSource.isPlaying)
+                    freezeAudioSource.Stop();
             }
         }
 
