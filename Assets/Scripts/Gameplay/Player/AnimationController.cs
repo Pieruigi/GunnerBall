@@ -60,7 +60,11 @@ namespace Zoca
         string animTurnDirectionParam = "TurnDirection";
         float oldEulerY = 0;
         string animTurnSpeedParam = "TurnSpeed";
-        
+
+        #endregion
+
+        #region freeze
+        string freezeParam = "Freeze";
         #endregion
 
         private void Awake()
@@ -96,6 +100,15 @@ namespace Zoca
         {
             animator.SetFloat(shootSpeedParam, speed);
             animator.SetTrigger(shootParam);
+        }
+
+        public void AnimateFreeze(bool value)
+        {
+            if (animator.GetBool(freezeParam) == value)
+                return;
+
+            animator.SetBool(freezeParam, value);
+            
         }
 
         #region private_animation_methods

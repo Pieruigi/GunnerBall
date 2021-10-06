@@ -40,8 +40,13 @@ namespace Zoca
         [SerializeField]
         GameObject trailPrefab;
 
+        [Header("Audio")]
         [SerializeField]
-        AudioSource audioSource;
+        AudioSource bounceAudioSource;
+
+        [SerializeField]
+        AudioSource explosionAudioSource;
+
 
         Material defaultEmission;
         Renderer rend;
@@ -250,6 +255,9 @@ namespace Zoca
             // Stop other fx
             electricParticle.Stop();
             trail.ForceStop(true);
+
+            // Play sount
+            explosionAudioSource.Play();
         }
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -312,7 +320,7 @@ namespace Zoca
             PlayElectricParticle();
 
             // Play audio
-            audioSource.Play();
+            bounceAudioSource.Play();
         }
 
         void SkipLastMasterClientSync()

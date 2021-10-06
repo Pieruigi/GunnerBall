@@ -479,6 +479,8 @@ namespace Zoca
 
                 if (!freezeAudioSource.isPlaying)
                     freezeAudioSource.Play();
+
+                animationController.AnimateFreeze(true);
             }
             else
             {
@@ -487,6 +489,8 @@ namespace Zoca
 
                 if (freezeAudioSource.isPlaying)
                     freezeAudioSource.Stop();
+
+                animationController.AnimateFreeze(false);
             }
         }
 
