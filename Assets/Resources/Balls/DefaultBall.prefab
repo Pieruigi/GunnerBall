@@ -298,7 +298,8 @@ MonoBehaviour:
   electricParticle: {fileID: 3974423860374280449}
   explosionPrefab: {fileID: 617008857340524867, guid: 917f8074c336eae43a7fc2a73c8a4320, type: 3}
   trailPrefab: {fileID: 2461972300642218429, guid: f509b37922f9a2a41b52efe8227e0aa9, type: 3}
-  audioSource: {fileID: 793895788313886070}
+  bounceAudioSource: {fileID: 793895788313886070}
+  explosionAudioSource: {fileID: 7762929051433280552}
 --- !u!114 &982007784201712991
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -524,6 +525,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 17d29e5b7bb4d614db492b7fdfa53479, type: 3}
       propertyPath: m_Name
       value: Ball_Sci_fi
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 17d29e5b7bb4d614db492b7fdfa53479, type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 17d29e5b7bb4d614db492b7fdfa53479, type: 3}
