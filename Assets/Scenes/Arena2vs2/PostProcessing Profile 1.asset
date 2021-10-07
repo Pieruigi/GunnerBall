@@ -16,33 +16,33 @@ MonoBehaviour:
   m_AdvancedMode: 0
   threshold:
     m_OverrideState: 1
-    m_Value: 0.3
+    m_Value: 0.04
     min: 0
   intensity:
     m_OverrideState: 1
-    m_Value: 3
+    m_Value: 1.12
     min: 0
   scatter:
     m_OverrideState: 1
-    m_Value: 0.55
+    m_Value: 0.856
     min: 0
     max: 1
   clamp:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 65472
     min: 0
   tint:
     m_OverrideState: 1
-    m_Value: {r: 0.9935317, g: 0.69411767, b: 1, a: 1}
+    m_Value: {r: 1, g: 1, b: 1, a: 1}
     hdr: 0
     showAlpha: 0
     showEyeDropper: 1
   highQualityFiltering:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: 1
   skipIterations:
     m_OverrideState: 1
-    m_Value: 3
+    m_Value: 4
     min: 0
     max: 16
   dirtTexture:
@@ -92,7 +92,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d7fd9488000d3734a9e00ee676215985, type: 3}
-  m_Name: PostProcessing Profile
+  m_Name: PostProcessing Profile 1
   m_EditorClassIdentifier: 
   components:
   - {fileID: -1492124240128274152}
