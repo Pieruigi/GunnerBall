@@ -67,13 +67,17 @@ namespace Zoca.UI
 
             Color c = Color.red;
             dotImage.enabled = true;
+            loaderImage.enabled = true;
             dotImageSmall.enabled = false;
+            loaderImageSmall.enabled = false;
 
             if (hit && info.collider.GetComponent<IHittable>() != null)
             {
                 c = Color.green;
                 dotImageSmall.enabled = true;
+                loaderImageSmall.enabled = true;
                 dotImage.enabled = false;
+                loaderImage.enabled = false;
             }
 
             // Set color

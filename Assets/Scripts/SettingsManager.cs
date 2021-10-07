@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
@@ -24,20 +25,9 @@ namespace Zoca
         [SerializeField]
         InputActionAsset inputActionAsset;
 
-        // The current resolution id
-        //Resolution resolution;
-        //public Resolution Resolution
-        //{
-        //    get { return resolution; }
-        //}
-
-        // The current screen mode
-        //int screenMode;
-        //public int ScreenMode
-        //{
-        //    get { return screenMode; }
-        //}
-
+        [SerializeField]
+        AudioMixer audioMixer;
+       
         #region controls
         float mouseSensitivityDefault = 5f;
         float mouseSensitivity;
@@ -47,22 +37,51 @@ namespace Zoca
         }
         #endregion
 
+        #region audio
+        int masterVolume;
+        public int MasterVolume
+        {
+            get { return masterVolume; }
+        }
+        int musicVolume;
+        public int MusicVolume
+        {
+            get { return musicVolume; }
+        }
+        int fxVolume;
+        public int FXVolume
+        {
+            get { return fxVolume; }
+        }
+
+        string masterVolumeParam = "MasterVolume";
+        string musicVolumeParam = "MusicVolume";
+        string fxVolumeParam = "FXVolume";
+        #endregion
+
+  
+
         private void Awake()
         {
             if (!Instance)
             {
                 Instance = this;
 
-                //InitResolution();
-                //InitScreenMode();
+         
                 // Resolution is handled by the engine settings so we don't need
                 // to save it
+
+
+                // Init audio
+                InitAudioSettings();
 
                 // Read settings
                 InitControlsSettings();
 
                 // Input action rebinding if needed
                 InitKeyboardBinding();
+
+             
 
                 DontDestroyOnLoad(gameObject);
             }
@@ -75,7 +94,10 @@ namespace Zoca
         // Start is called before the first frame update
         void Start()
         {
-
+            // Setting mixer
+            audioMixer.SetFloat(masterVolumeParam, VolumeToDecibel(masterVolume));
+            audioMixer.SetFloat(musicVolumeParam, VolumeToDecibel(musicVolume));
+            audioMixer.SetFloat(fxVolumeParam, VolumeToDecibel(fxVolume));
         }
 
         // Update is called once per frame
@@ -83,6 +105,8 @@ namespace Zoca
         {
 
         }
+
+        
 
         #region public setter
         public void SetMouseSensitivity(float value)
@@ -92,28 +116,49 @@ namespace Zoca
             PlayerPrefs.SetString(MouseSensitivityKey, value.ToString());
             PlayerPrefs.Save();
         }
+
+        public void SetMasterVolume(int value)
+        {
+            masterVolume = value;
+            audioMixer.SetFloat(masterVolumeParam, VolumeToDecibel(value));
+            
+            PlayerPrefs.SetString(masterVolumeParam, value.ToString());
+            PlayerPrefs.Save();
+        }
+
+        public void SetMusicVolume(int value)
+        {
+            musicVolume = value;
+            audioMixer.SetFloat(musicVolumeParam, VolumeToDecibel(value));
+
+            PlayerPrefs.SetString(musicVolumeParam, value.ToString());
+            PlayerPrefs.Save();
+        }
+
+        public void SetFxVolume(int value)
+        {
+            fxVolume = value;
+            audioMixer.SetFloat(fxVolumeParam, VolumeToDecibel(value));
+
+            PlayerPrefs.SetString(fxVolumeParam, value.ToString());
+            PlayerPrefs.Save();
+        }
+
         #endregion
 
-        #region private
-        
-
-        //void InitResolution()
-        //{
-        //    for (int i = 0; i < Screen.resolutions.Length; i++)
-        //    {
-        //        // Set current
-        //        if (Screen.resolutions[i].Equals(Screen.currentResolution))
-        //            resolution = Screen.resolutions[i];
-        //    }
-        //}
-
-        //void InitScreenMode()
-        //{
-        //    screenMode = (int)Screen.fullScreenMode;
-        //}
-        #endregion
+       
 
         #region private controls
+
+        void InitAudioSettings()
+        {
+            // Read player prefs and set params
+            masterVolume = int.Parse(PlayerPrefs.GetString(masterVolumeParam, "10"));
+            musicVolume = int.Parse(PlayerPrefs.GetString(musicVolumeParam, "10"));
+            fxVolume = int.Parse(PlayerPrefs.GetString(fxVolumeParam, "10"));
+            
+        }
+
         void InitControlsSettings()
         {
             // Mouse sensitivity
@@ -156,6 +201,18 @@ namespace Zoca
         }
 
         #endregion
+
+
+        #region utility
+        
+        public float VolumeToDecibel(float volume)
+        {
+            float ratio = volume / 10f;
+            return Mathf.Lerp(-80, 0, ratio);
+        }
+
+        #endregion
+
     }
 
 }
