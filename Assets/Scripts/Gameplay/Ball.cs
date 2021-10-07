@@ -1,6 +1,7 @@
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -47,6 +48,9 @@ namespace Zoca
         [SerializeField]
         AudioSource explosionAudioSource;
 
+        [SerializeField]
+        AudioSource rollingAudioSource;
+
 
         Material defaultEmission;
         Renderer rend;
@@ -62,6 +66,10 @@ namespace Zoca
         double networkTime;
         float lerpSpeed = 20;
         //Vector3 expectedPosition;
+        bool grounded = false;
+        DateTime groundedStartTime;
+        float groundedTime = 0.5f;
+        float rollingVolumeDefault;
 
         Collider coll;
         float radius; // Collider radius
@@ -82,6 +90,15 @@ namespace Zoca
                 // Create trail
                 if (trailPrefab)
                     trail = GameObject.Instantiate(trailPrefab).GetComponent<BallTrail>();
+
+                if (rollingAudioSource)
+                {
+                    rollingVolumeDefault = rollingAudioSource.volume;
+                    rollingAudioSource.volume = 0;
+                    // Always playing, we just adjust the volume
+                    rollingAudioSource.Play();
+                }
+                    
             }
             else
             {
@@ -100,6 +117,43 @@ namespace Zoca
         // Update is called once per frame
         void Update()
         {
+            
+            if (rollingAudioSource)
+            {
+                bool rolling = true;
+                float rollingVolume = 0;
+                float rollingMax = 64;
+                // Apply rolling fx
+                // Check if the ball collides with the floor
+                if (grounded && (DateTime.UtcNow - groundedStartTime).TotalSeconds > groundedTime)
+                {
+                    // Check horizontal speed
+                    Vector3 vel = rb.velocity;
+                    vel.y = 0;
+                    //if(vel.sqrMagnitude > 0.01f)
+                    //{
+                    //    rolling = true;
+
+                    //}
+                    
+                    rollingVolume = Mathf.Lerp(0, rollingVolumeDefault, vel.sqrMagnitude / rollingMax);
+                    
+                }
+
+                rollingAudioSource.volume = rollingVolume;
+
+                //if (rolling)
+                //{
+                //    if(!rollingAudioSource.isPlaying)
+                //        rollingAudioSource.Play();
+                //}
+                //else
+                //{
+                //    if (rollingAudioSource.isPlaying)
+                //        rollingAudioSource.Stop();
+                //}
+            }
+            
 
         }
 
@@ -314,6 +368,7 @@ namespace Zoca
         private void OnCollisionEnter(Collision collision)
         {
             //Debug.LogFormat("Ball - Collision detected: {0}", collision.gameObject);
+            // Net code
             SkipLastMasterClientSync();
 
             // Play particle
@@ -321,6 +376,22 @@ namespace Zoca
 
             // Play audio
             bounceAudioSource.Play();
+
+            
+            // If ball collides with the floor then we set grounded on
+            if (Layer.Ground.Equals(LayerMask.LayerToName(collision.gameObject.layer)))
+            {
+                grounded = true;
+                groundedStartTime = DateTime.UtcNow;
+            }
+                
+        }
+
+        private void OnCollisionExit(Collision collision)
+        {
+            // If ball collides with the floor then we set grounded on
+            if (Layer.Ground.Equals(LayerMask.LayerToName(collision.gameObject.layer)))
+                grounded = false;
         }
 
         void SkipLastMasterClientSync()

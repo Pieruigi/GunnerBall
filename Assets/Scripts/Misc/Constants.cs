@@ -19,6 +19,11 @@ namespace Zoca
         public static readonly string Player = "Player";
     }
 
+    public class Layer
+    {
+        public static readonly string Ground = "Floor";
+    }
+
     public class Constants
     {
         public static readonly float StartDelay = 4;
