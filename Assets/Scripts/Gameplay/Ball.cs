@@ -120,9 +120,9 @@ namespace Zoca
             
             if (rollingAudioSource)
             {
-                bool rolling = true;
+                //bool rolling = true;
                 float rollingVolume = 0;
-                float rollingMax = 64;
+                float rollingMax = 36;
                 // Apply rolling fx
                 // Check if the ball collides with the floor
                 if (grounded && (DateTime.UtcNow - groundedStartTime).TotalSeconds > groundedTime)
@@ -130,11 +130,7 @@ namespace Zoca
                     // Check horizontal speed
                     Vector3 vel = rb.velocity;
                     vel.y = 0;
-                    //if(vel.sqrMagnitude > 0.01f)
-                    //{
-                    //    rolling = true;
-
-                    //}
+                   
                     
                     rollingVolume = Mathf.Lerp(0, rollingVolumeDefault, vel.sqrMagnitude / rollingMax);
                     
@@ -142,16 +138,7 @@ namespace Zoca
 
                 rollingAudioSource.volume = rollingVolume;
 
-                //if (rolling)
-                //{
-                //    if(!rollingAudioSource.isPlaying)
-                //        rollingAudioSource.Play();
-                //}
-                //else
-                //{
-                //    if (rollingAudioSource.isPlaying)
-                //        rollingAudioSource.Stop();
-                //}
+               
             }
             
 
@@ -163,7 +150,7 @@ namespace Zoca
             // I guess because we are using character controller; so we check for 
             // collision with all the players here.
             CheckPlayersCollision();
-
+           
             if (PhotonNetwork.IsMasterClient)
                 return;
 
@@ -187,16 +174,15 @@ namespace Zoca
                 rb.MovePosition(rb.position + deltaDisp);
 
                 // Check for collisions
-                coll.enabled = false;
-                if (Physics.CheckSphere(rb.position, radius))
+
+                int mask = ~LayerMask.NameToLayer(Layer.Ball);
+                if (Physics.CheckSphere(rb.position, radius, mask))
                 {
-                    //networkTime = PhotonNetwork.Time;
-                    //networkDisplacement = Vector3.zero;
                     SkipLastMasterClientSync();
                 }
-                coll.enabled = true;
+            
             }
-         
+            
 
         }
 
@@ -339,13 +325,19 @@ namespace Zoca
                 Vector3 position = (Vector3)stream.ReceiveNext();
                 Quaternion rotation = (Quaternion)stream.ReceiveNext();
                 Vector3 velocity = (Vector3)stream.ReceiveNext();
-
+               
                 //Debug.LogFormat("Ball - Sync() ........................");
                 //Debug.LogFormat("Ball - Sync() Timestamp: {0}", timestamp);
                 //Debug.LogFormat("Ball - Sync() Position: {0}", position);
                 //Debug.LogFormat("Ball - Sync() Velocity: {0}", velocity);
                 //Debug.LogFormat("Ball - Sync() completed ........................");
-                Synchronize(timestamp, position, rotation, velocity);
+                //if (Vector3.SqrMagnitude(position - rb.position) > 0.00000001f || Vector3.SqrMagnitude(velocity - rb.velocity) > 0.00000001f)
+                //{
+                    //Debug.LogFormat("Synch: vel:{0}, pos:{1}, rb.vel:{2}, rb.pos:{3}", velocity.y, position.y, rb.velocity.y, rb.position.y);
+                    Synchronize(timestamp, position, rotation, velocity);
+                    
+                //}
+                    
             }
 
         }
@@ -367,7 +359,6 @@ namespace Zoca
         /// <param name="collision"></param>
         private void OnCollisionEnter(Collision collision)
         {
-            //Debug.LogFormat("Ball - Collision detected: {0}", collision.gameObject);
             // Net code
             SkipLastMasterClientSync();
 
@@ -396,6 +387,7 @@ namespace Zoca
 
         void SkipLastMasterClientSync()
         {
+            
             if (!photonView.IsMine)
             {
                 // Update network time to skip any sync that is just arrived
@@ -426,6 +418,7 @@ namespace Zoca
 
         void Synchronize(double timestamp, Vector3 position, Quaternion rotation, Vector3 velocity)
         {
+           
             // Skip old synchs
             double oldNetworkTime = networkTime;
             Vector3 oldVelocity = rb.velocity;
@@ -436,22 +429,7 @@ namespace Zoca
                 return;
             }
 
-            //            // Is it too old? Why I should skip it?
-            //            if(PhotonNetwork.Time > networkTime + 0.165f)
-            //            {
-            //                // Too old, skip
-            //                networkTime = oldNetworkTime;
-            //                return;
-            //            }
-
-            // This should avoid strange bouncing when you shoot the ball
-            // near walls.
-            //if (PhotonNetwork.Time - networkTime < 0.04f)
-            //{
-            //    networkTime = oldNetworkTime;
-            //    return;
-            //}
-
+         
             networkPosition = position;
             networkRotation = rotation;
             networkVelocity = velocity;
@@ -463,30 +441,66 @@ namespace Zoca
             Vector3 expectedPosition = networkPosition;
             Vector3 expectedVelocity = networkVelocity;
 
+
             // Adding gravity and drag
             // Velocity changes in a discrete mode, so we just need to calculate the displacement
             // for each physics tick
             for (int i=0; i<numOfTicks; i++)
             {
-                expectedVelocity = (expectedVelocity + Physics.gravity * Time.fixedDeltaTime) * (1 - rb.drag * Time.fixedDeltaTime); 
+                
+                //if(networkVelocity.y != 0)
+                //{
+                    // The ball is not grounded so we add gravity 
+                    expectedVelocity = (expectedVelocity + Physics.gravity * Time.fixedDeltaTime) * (1 - rb.drag * Time.fixedDeltaTime);
+                //}
+                //else
+                //{
+                //    // The ball is grounded, we don't apply gravity
+                //    expectedVelocity = expectedVelocity  * (1 - rb.drag * Time.fixedDeltaTime);
+
+                //}
+                
                 expectedPosition += expectedVelocity * Time.fixedDeltaTime;
             }
-
+            
             networkDisplacement = expectedPosition - rb.position;
             rb.velocity = expectedVelocity;
-
-            coll.enabled = false;
-            Ray ray = new Ray(rb.position, networkDisplacement.normalized);
-            if(Physics.SphereCast(ray, (coll as SphereCollider).radius, networkDisplacement.magnitude))
-            {
-           
-                SkipLastMasterClientSync();
-                rb.velocity = oldVelocity;
-            }
             
-            coll.enabled = true;
+            //if (networkVelocity.sqrMagnitude > 0)
+            //{
+               
+                // The ball is moving, we must check if is going to hit some collider; in that
+                // case we skip the last sync and reset velocity
+                //coll.enabled = false;
+                Ray ray = new Ray(rb.position, networkDisplacement.normalized);
+                int mask = ~LayerMask.NameToLayer(Layer.Ball);
 
-            //lerpSpeed = networkDisplacement.magnitude / 0.075f;
+                if (Physics.SphereCast(ray, (coll as SphereCollider).radius, networkDisplacement.magnitude, mask))
+                {
+                    SkipLastMasterClientSync();
+
+                    rb.velocity = oldVelocity;
+                    // If the ball was grounded we need to update the y velocity
+                    if (networkVelocity.y == 0)
+                    {
+
+                        rb.position = new Vector3(rb.position.x, networkPosition.y, rb.position.z);
+                        rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+                    }
+
+                }
+
+                //coll.enabled = true;
+            //}
+            //else
+            //{
+               
+            //    // The ball is not moving at all, so we just keep the position
+            //    rb.position = networkPosition;
+            //    networkDisplacement = Vector3.zero;
+            //}
+            
+            
             lerpSpeed = 10f;
 
         }

@@ -22,6 +22,7 @@ namespace Zoca
     public class Layer
     {
         public static readonly string Ground = "Floor";
+        public static readonly string Ball = "Ball";
     }
 
     public class Constants
