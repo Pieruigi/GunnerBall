@@ -1,4 +1,4 @@
-//#define TEST_SINGLE_PLAYER
+#define TEST_SINGLE_PLAYER
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -205,7 +205,7 @@ namespace Zoca
                         //    Debug.LogErrorFormat("GameManager - Empty property for local player: [{0}]", PlayerCustomPropertyKey.CharacterId);
                         //}
                         Debug.LogFormat("Loading local player character [CharacterId:{0}].", cId);
-                        GameObject playerPrefab = Resources.LoadAll<PlayerController>(ResourceFolder.Character)[(int)cId].gameObject;
+                        GameObject playerPrefab = Resources.LoadAll<PlayerController>(ResourceFolder.Characters)[(int)cId].gameObject;
                         Debug.LogFormat("Character found: {0}", playerPrefab.name);
                         Debug.LogFormat("Spawning {0} on photon network...", playerPrefab.name);
 
@@ -233,7 +233,7 @@ namespace Zoca
                             spawnPoint = LevelManager.Instance.RedTeamSpawnPoints[id];
                         }
                         // Spawn
-                        PhotonNetwork.Instantiate(System.IO.Path.Combine(ResourceFolder.Character, playerPrefab.name), spawnPoint.position, spawnPoint.rotation);
+                        PhotonNetwork.Instantiate(System.IO.Path.Combine(ResourceFolder.Characters, playerPrefab.name), spawnPoint.position, spawnPoint.rotation);
                     }
 
                     
@@ -243,8 +243,8 @@ namespace Zoca
                         if (!Ball.Instance)
                         {
                             // For now we only have one ball ( id=0 ) in resources
-                            GameObject ballPrefab = Resources.LoadAll<Ball>(ResourceFolder.Ball)[0].gameObject;
-                            PhotonNetwork.InstantiateRoomObject(System.IO.Path.Combine(ResourceFolder.Ball, ballPrefab.name), LevelManager.Instance.BallSpawnPoint.position, Quaternion.identity); 
+                            GameObject ballPrefab = Resources.LoadAll<Ball>(ResourceFolder.Balls)[0].gameObject;
+                            PhotonNetwork.InstantiateRoomObject(System.IO.Path.Combine(ResourceFolder.Balls, ballPrefab.name), LevelManager.Instance.BallSpawnPoint.position, Quaternion.identity); 
                             Debug.LogFormat("GameManager - Scene manager: {0}; Ball created:{1}", LevelManager.Instance, Ball.Instance);
                         }
                         
@@ -263,7 +263,7 @@ namespace Zoca
                     PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.TeamColor, Team.Blue);
                     PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.CharacterId, 0);
                     // Get character resource
-                    GameObject player = Resources.LoadAll<PlayerController>(ResourceFolder.Character)[0].gameObject;
+                    GameObject player = Resources.LoadAll<PlayerController>(ResourceFolder.Characters)[0].gameObject;
                     Debug.LogFormat("Character found: {0}", player.name);
                     Debug.LogFormat("Spawning {0} on photon network...", player.name);
                     // Create local player
@@ -271,7 +271,7 @@ namespace Zoca
                     Instantiate(player, spawnPoint.position, spawnPoint.rotation);
 
                     // Adding local ball
-                    GameObject ballPrefab = Resources.LoadAll<Ball>(ResourceFolder.Ball)[0].gameObject;
+                    GameObject ballPrefab = Resources.LoadAll<Ball>(ResourceFolder.Balls)[0].gameObject;
                     Instantiate(ballPrefab, LevelManager.Instance.BallSpawnPoint.position, Quaternion.identity); ;
                     Debug.LogFormat("GameManager - Scene manager: {0}", LevelManager.Instance);
                 }

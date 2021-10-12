@@ -9,8 +9,9 @@ namespace Zoca
 
     public class ResourceFolder
     {
-        public static readonly string Character = "Characters";
-        public static readonly string Ball = "Balls";
+        public static readonly string Characters = "Characters";
+        public static readonly string Balls = "Balls";
+        public static readonly string Sprites = "Sprites";
     }
 
     public class Tag

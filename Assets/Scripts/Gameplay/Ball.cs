@@ -36,10 +36,10 @@ namespace Zoca
         ParticleSystem electricParticle;
 
         [SerializeField]
-        GameObject explosionPrefab;
+        ParticleSystem trailParticlePrefab;
 
         [SerializeField]
-        GameObject trailPrefab;
+        GameObject explosionPrefab;
 
         [Header("Audio")]
         [SerializeField]
@@ -73,7 +73,12 @@ namespace Zoca
 
         Collider coll;
         float radius; // Collider radius
-        BallTrail trail;
+
+        #region trail fields
+        float trailMinSpeed = 10;
+        bool trailForcedStop = false;
+        ParticleSystem trailParticle;
+        #endregion
 
         private void Awake()
         {
@@ -87,9 +92,13 @@ namespace Zoca
                 rend = GetComponentInChildren<Renderer>();
                 defaultEmission = rend.materials[materialId];
 
-                // Create trail
-                if (trailPrefab)
-                    trail = GameObject.Instantiate(trailPrefab).GetComponent<BallTrail>();
+                // Reset the trail particle parent
+                if (trailParticlePrefab)
+                {
+                    trailParticle = GameObject.Instantiate(trailParticlePrefab);
+                    trailParticle.transform.parent = null;
+                }
+                    
 
                 if (rollingAudioSource)
                 {
@@ -142,6 +151,27 @@ namespace Zoca
             }
             
 
+        }
+
+        void LateUpdate()
+        {
+            // Trail
+            if (trailParticle)
+            {
+                trailParticle.transform.position = transform.position;
+
+                if (rb.velocity.magnitude < trailMinSpeed)
+                {
+                    if (trailParticle.isPlaying)
+                        trailParticle.Stop();
+                }
+                else
+                {
+                    if (!trailParticle.isPlaying && !trailForcedStop)
+                        trailParticle.Play();
+                }
+            }
+            
         }
 
         private void FixedUpdate()
@@ -277,7 +307,8 @@ namespace Zoca
             coll.enabled = true;
             GetComponentInChildren<Renderer>().enabled = true;
 
-            trail.ForceStop(false);
+            //trail.ForceStop(false);
+            trailForcedStop = false;
 
             SkipLastMasterClientSync();
         }
@@ -294,7 +325,12 @@ namespace Zoca
 
             // Stop other fx
             electricParticle.Stop();
-            trail.ForceStop(true);
+            if (trailParticle)
+            {
+                trailParticle.Stop();
+                trailForcedStop = true;
+            }
+            
 
             // Play sount
             explosionAudioSource.Play();
