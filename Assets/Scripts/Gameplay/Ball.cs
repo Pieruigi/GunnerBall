@@ -104,6 +104,7 @@ namespace Zoca
                 {
                     rollingVolumeDefault = rollingAudioSource.volume;
                     rollingAudioSource.volume = 0;
+                    //rollingAudioSource.pitch = 0;
                     // Always playing, we just adjust the volume
                     rollingAudioSource.Play();
                 }
@@ -146,8 +147,8 @@ namespace Zoca
                 }
 
                 rollingAudioSource.volume = rollingVolume;
+                //rollingAudioSource.pitch = rollingVolume;
 
-               
             }
             
 
@@ -226,13 +227,24 @@ namespace Zoca
         /// <param name="hitPower"></param>
         public void Hit(GameObject hitOwner, Vector3 hitPoint, Vector3 hitNormal, Vector3 hitDirection, float hitPower) 
         {
-            //Debug.LogFormat("Ball - hit by:" + hitOwner);
+            Debug.LogFormat("Ball - hit by:" + hitOwner);
 
             // Change the ball emission color depending on the team the player
             // who hit the ball belongs to.
-            Team ownerTeam = (Team)PlayerCustomPropertyUtility.GetPlayerCustomProperty(hitOwner.GetComponent<PhotonView>().Owner, PlayerCustomPropertyKey.TeamColor);
+            Team ownerTeam;
+            if (PhotonNetwork.OfflineMode)
+            {
+                ownerTeam = Team.Blue;
+            }
+            else
+            {
+                ownerTeam = (Team)PlayerCustomPropertyUtility.GetPlayerCustomProperty(hitOwner.GetComponent<PhotonView>().Owner, PlayerCustomPropertyKey.TeamColor);
+            }
+      
             // Get the material by team
             Material tmp = null;
+            
+            
             switch (ownerTeam)
             {
                 case Team.Red:
