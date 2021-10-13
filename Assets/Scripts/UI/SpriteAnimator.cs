@@ -45,6 +45,8 @@ namespace Zoca.UI
         int currentSpriteIndex = 0;
         int loopCount = 0;
         int dir = 1;
+
+        
         
         private void Awake()
         {
@@ -55,10 +57,7 @@ namespace Zoca.UI
 
             
 
-            if (autoStart)
-            {
-                Play();
-            }
+            
                 
         }
 
@@ -79,6 +78,14 @@ namespace Zoca.UI
             if((DateTime.UtcNow-lastFrameTime).TotalSeconds > time)
             {
                 MoveToNextFrame();
+            }
+        }
+
+        private void OnEnable()
+        {
+            if (autoStart)
+            {
+                Play();
             }
         }
 
