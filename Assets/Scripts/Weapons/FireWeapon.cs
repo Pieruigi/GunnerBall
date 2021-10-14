@@ -166,6 +166,7 @@ namespace Zoca
             // Check for collision
             Ray ray = new Ray(origin, direction);
             RaycastHit info;
+            //int mask = ~LayerMask.NameToLayer(Layer.Player);
             ownerCollider.enabled = false;
             bool hit = Physics.Raycast(ray, out info, fireRange + owner.PlayerCamera.DistanceAdjustment);
             ownerCollider.enabled = true;

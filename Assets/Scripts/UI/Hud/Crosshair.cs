@@ -31,7 +31,7 @@ namespace Zoca.UI
         void Start()
         {
             localPlayerController = PlayerController.Local;
-            localPlayerCollider = localPlayerController.GetComponent<Collider>();
+            localPlayerCollider = localPlayerController.GetComponent<CharacterController>();
         }
 
         // Update is called once per frame
@@ -61,6 +61,7 @@ namespace Zoca.UI
             // Check for collision
             Ray ray = new Ray(origin, direction);
             RaycastHit info;
+            //int mask = ~LayerMask.NameToLayer(Layer.Player);
             localPlayerCollider.enabled = false;
             bool hit = Physics.Raycast(ray, out info, localPlayerController.FireWeapon.FireRange + PlayerController.Local.PlayerCamera.DistanceAdjustment);
             localPlayerCollider.enabled = true;

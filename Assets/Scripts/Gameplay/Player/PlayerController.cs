@@ -20,6 +20,7 @@ namespace Zoca
         public static PlayerController Local { get; private set; }
 
         [Header("Physics")]
+        #region movement
         [SerializeField]
         float maxSpeed = 5f;
         public float MaxSpeed
@@ -46,21 +47,12 @@ namespace Zoca
         CharacterController cc;
 
         bool moving = false;
-        
-        bool shooting = false;
+
         Vector2 moveInput;
         public Vector2 MovementInput
         {
             get { return moveInput; }
         }
-
-        Vector2 lookInput;
-        float lookSensitivityMul = 10f;
-        //public float LookSensitivity
-        //{
-        //    get { return lookSensitivity; }
-        //}
-       
 
         Vector3 velocity; // The current character controller velocity
         public Vector3 Velocity
@@ -68,18 +60,8 @@ namespace Zoca
             get { return velocity; }
         }
         Vector3 targetVelocity; // The target velocity ( dir * MAX_VEL )
-      
+
         float lerpSpeed = 10f; // Interpolation speed to adjust network transform
-
-
-        float maxPitch = 30;
-        float minPitch = -60;
-
-        float currentPitch;
-        public float CurrentPitch
-        {
-            get { return currentPitch; }
-        }
 
         bool jumping = false;
         float ySpeed = 0;
@@ -91,11 +73,50 @@ namespace Zoca
         bool sprintInput = false;
         float sprintSpeed;
         float jumpStamina = 20;
-        
 
-        // Freezing system
-        bool freezed = false;
-        DateTime freezedLast;
+        [SerializeField]
+        float stamina = 100; // Used for sprint and jump
+        public float Stamina
+        {
+            get { return stamina; }
+        }
+
+        float staminaDefault;
+        public float StaminaMax
+        {
+            get { return staminaDefault; }
+        }
+
+
+        float staminaRechargeDelay = 2;
+        float staminaRechargeSpeed = 30;
+        float staminaChargeSpeed = 20;
+        DateTime staminaLast;
+
+        #endregion
+
+       
+
+        #region look
+        Vector2 lookInput;
+        float lookSensitivityMul = 10f;
+        //public float LookSensitivity
+        //{
+        //    get { return lookSensitivity; }
+        //}
+
+        float maxPitch = 30;
+        float minPitch = -60;
+
+        float currentPitch;
+        public float CurrentPitch
+        {
+            get { return currentPitch; }
+        }
+
+        #endregion
+
+        #region manager
         bool startPaused = false;
         public bool StartPaused
         {
@@ -109,10 +130,16 @@ namespace Zoca
             get { return goalPaused; }
             set { goalPaused = value; }
         }
+        #endregion
 
+        #region fight
         [SerializeField]
         float freezingCooldown = 4;
         float currentFreezingCooldown;
+        bool freezed = false;
+        DateTime freezedLast;
+
+        bool shooting = false;
 
         [SerializeField]
         float healthMax = 150;
@@ -130,12 +157,7 @@ namespace Zoca
 
         float healthDefault;
 
-        [SerializeField]
-        float stamina = 100; // Used for sprint and jump
-        public float Stamina
-        {
-            get { return stamina; }
-        }
+        #endregion
 
         [Header("Camera")]
         [SerializeField]
@@ -158,27 +180,26 @@ namespace Zoca
         ParticleSystem freezeParticle;
 
         [SerializeField]
+        ParticleSystem goalAreaBlueParticle;
+
+        [SerializeField]
+        ParticleSystem goalAreaRedParticle;
+
+        [SerializeField]
         AudioSource freezeAudioSource;
 
-        float staminaDefault;
-        public float StaminaMax
-        {
-            get { return staminaDefault; }
-        }
 
-
-        float staminaRechargeDelay = 2;
-        float staminaRechargeSpeed = 30;
-        float staminaChargeSpeed = 20;
-        DateTime staminaLast;
-
-       
-
-
+        #region misc
         float ballPowerOnHit = 2.8f;
 
         Vector3 startPosition;
         Quaternion startRotation;
+
+        bool inGoalArea = false;
+        DateTime goalAreaTime;
+        float goalAreaDamagePerSec = 10;
+        
+        #endregion
 
         #region networked_fields
         float networkPitch;
@@ -427,6 +448,27 @@ namespace Zoca
  
                 }
 
+                // Check if player is in the goal area
+                if (inGoalArea)
+                {
+                    if (freezed)
+                    {
+                        // If the player is freezed just wait
+                        goalAreaTime = DateTime.UtcNow;
+                    }
+                    else
+                    {
+                        // Check if how much time has passed since the last time damage was applied
+                        if ((DateTime.UtcNow - goalAreaTime).TotalSeconds > 1)
+                        {
+                            // Apply damage
+                            health -= goalAreaDamagePerSec;
+                            goalAreaTime = DateTime.UtcNow;
+                        }
+                    }
+                    
+                }
+
                 // Check if the player has been freezed and eventually recover it
                 if (freezed)
                 {
@@ -492,6 +534,38 @@ namespace Zoca
 
                 animationController.AnimateFreeze(false);
             }
+        }
+
+        public void EnterGoalArea(GoalArea goalArea)
+        {
+            if (inGoalArea)
+                return;
+            
+            if(goalArea.Team == (Team)PlayerCustomPropertyUtility.GetPlayerCustomProperty(photonView.Owner, PlayerCustomPropertyKey.TeamColor))
+            {
+                // This player is in its goal area
+                inGoalArea = true;
+                goalAreaTime = DateTime.UtcNow;
+
+                // Play particle system
+                if (goalArea.Team == Team.Blue)
+                    goalAreaRedParticle.Play();
+                else
+                    goalAreaBlueParticle.Play();
+
+            }
+
+        }
+
+        public void ExitGoalArea(GoalArea goalArea)
+        {
+            Debug.Log("Exiting goal area...");
+            inGoalArea = false;
+
+            // Stop particle system
+            goalAreaRedParticle.Stop();
+            goalAreaBlueParticle.Stop();
+
         }
 
         public void ResetPlayer()

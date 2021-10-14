@@ -24,6 +24,7 @@ namespace Zoca
     {
         public static readonly string Ground = "Floor";
         public static readonly string Ball = "Ball";
+        public static readonly string Player = "Player";
     }
 
     public class Constants
