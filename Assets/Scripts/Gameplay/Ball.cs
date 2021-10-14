@@ -227,7 +227,7 @@ namespace Zoca
         /// <param name="hitPower"></param>
         public void Hit(GameObject hitOwner, Vector3 hitPoint, Vector3 hitNormal, Vector3 hitDirection, float hitPower) 
         {
-            Debug.LogFormat("Ball - hit by:" + hitOwner);
+            Debug.LogFormat("Ball - hit power:" + hitPower);
 
             // Change the ball emission color depending on the team the player
             // who hit the ball belongs to.

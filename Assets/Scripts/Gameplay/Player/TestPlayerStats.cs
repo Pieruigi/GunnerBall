@@ -6,12 +6,12 @@ using UnityEngine.UI;
 public class TestPlayerStats : MonoBehaviour
 {
     public static float PlayerMaxSpeed = 6f;
-    public static float PlayerSprintMultiplier = 1.5f;
+    public static float PlayerSprintMultiplier = 2f;
     public static float PlayerFreezingTime = 4;
     public static float PlayerHealthMax = 100f;
     public static float PlayerHealth = 100f;
 
-    public static float WeaponFirePower = 15f;
+    public static float WeaponFirePower = 18;
     public static float WeaponDamage = 50;
     public static float WeaponFireRate = 1f;
     public static float WeaponFireRange = 9f;

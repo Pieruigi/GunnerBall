@@ -79,6 +79,8 @@ namespace Zoca
         void Start()
         {
             oldEulerY = transform.eulerAngles.y;
+
+            
         }
 
         // Update is called once per frame
@@ -89,7 +91,7 @@ namespace Zoca
 
         private void LateUpdate()
         {
-            
+
             AnimateTurnAround();
             AnimateStrafe();
             AnimateMotion();

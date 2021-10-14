@@ -1,3 +1,4 @@
+#define TEST_DISTANCE
 using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
@@ -72,6 +73,10 @@ namespace Zoca
 
         float actualDistance;
 
+#if TEST_DISTANCE
+        GameObject testSphere;
+#endif
+
         private void Awake()
         {
             ///// ONLY FOR TEST
@@ -128,6 +133,28 @@ namespace Zoca
             //}
         }
 
+#if TEST_DISTANCE
+        private void LateUpdate()
+        {
+            TestDistance();
+        }
+
+        void TestDistance()
+        {
+            Vector3 pos = owner.PlayerCamera.transform.position;
+            pos += owner.PlayerCamera.transform.forward * (fireRange + owner.PlayerCamera.DistanceAdjustment);
+            if(testSphere == null)
+            {
+                testSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                Destroy(testSphere.GetComponent<Collider>());
+            }
+                
+
+            testSphere.transform.localScale = Vector3.one * 0.2f;
+            testSphere.transform.position = pos;
+
+        }
+#endif
 
         /// <summary>
         /// Local player only.
