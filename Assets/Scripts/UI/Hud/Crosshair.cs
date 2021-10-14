@@ -9,16 +9,16 @@ namespace Zoca.UI
     public class Crosshair : MonoBehaviour
     {
         [SerializeField]
-        Image dotImage;
+        Image notAimImage;
 
         [SerializeField]
-        Image dotImageSmall;
+        Image aimImage;
 
         [SerializeField]
-        Image loaderImage;
+        Image notAimLoaderImage;
 
         [SerializeField]
-        Image loaderImageSmall;
+        Image aimLoaderImage;
 
 
         PlayerController localPlayerController;
@@ -66,18 +66,18 @@ namespace Zoca.UI
             localPlayerCollider.enabled = true;
 
             Color c = Color.red;
-            dotImage.enabled = true;
-            loaderImage.enabled = true;
-            dotImageSmall.enabled = false;
-            loaderImageSmall.enabled = false;
+            notAimImage.enabled = true;
+            notAimLoaderImage.enabled = true;
+            aimImage.enabled = false;
+            aimLoaderImage.enabled = false;
 
             if (hit && info.collider.GetComponent<IHittable>() != null)
             {
                 c = Color.green;
-                dotImageSmall.enabled = true;
-                loaderImageSmall.enabled = true;
-                dotImage.enabled = false;
-                loaderImage.enabled = false;
+                aimImage.enabled = true;
+                aimLoaderImage.enabled = true;
+                notAimImage.enabled = false;
+                notAimLoaderImage.enabled = false;
             }
 
             // Set color
@@ -89,8 +89,8 @@ namespace Zoca.UI
             float elapsed = Mathf.Max(localPlayerController.FireWeapon.CooldownElapsed, 0f);
             float r = elapsed / localPlayerController.FireWeapon.Cooldown;
 
-            loaderImage.fillAmount = r;
-            loaderImageSmall.fillAmount = r;
+            notAimLoaderImage.fillAmount = r;
+            aimLoaderImage.fillAmount = r;
 
             //if (r > 0)
             //{
