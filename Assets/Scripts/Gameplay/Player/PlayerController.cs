@@ -197,7 +197,7 @@ namespace Zoca
 
         bool inGoalArea = false;
         DateTime goalAreaTime;
-        float goalAreaDamagePerSec = 20;
+        float goalAreaDamagePerSec = 10;
         
         #endregion
 
