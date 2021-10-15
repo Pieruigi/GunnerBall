@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class TestPlayerStats : MonoBehaviour
 {
-    public static float PlayerMaxSpeed = 6f;
+    public static float PlayerMaxSpeed = 9f;
     public static float PlayerSprintMultiplier = 2f;
     public static float PlayerFreezingTime = 4;
     public static float PlayerHealthMax = 100f;
