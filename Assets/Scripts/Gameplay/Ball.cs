@@ -126,6 +126,7 @@ namespace Zoca
         // Start is called before the first frame update
         void Start()
         {
+            
             Launch();
         }
 
@@ -330,7 +331,7 @@ namespace Zoca
             trailForcedStop = false;
             lastHitter = null;
 
-            
+           
             Launch();
 
             SkipLastMasterClientSync();
@@ -444,7 +445,7 @@ namespace Zoca
                 grounded = false;
         }
 
-        void Launch()
+        public void Launch()
         {
             if (!PhotonNetwork.IsMasterClient)
                 return;
@@ -452,6 +453,7 @@ namespace Zoca
             Vector3 vel = Vector3.right * UnityEngine.Random.Range(-9f, 9f);
             vel += Vector3.forward * UnityEngine.Random.Range(-3f, 3f);
             rb.velocity = vel;
+           
         }
 
         void SkipLastMasterClientSync()

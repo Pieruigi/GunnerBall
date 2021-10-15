@@ -205,6 +205,7 @@ namespace Zoca
                     //PlayerController.LocalPlayer.GetComponent<PlayerController>().MoveDisabled = false;
                     //PlayerController.LocalPlayer.GetComponent<PlayerController>().ShootDisabled = false;
                     PlayerController.Local.StartPaused = false;
+                    
                     break;
                 case (int)MatchState.Goaled:
 
