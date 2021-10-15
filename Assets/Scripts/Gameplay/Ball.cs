@@ -126,7 +126,7 @@ namespace Zoca
         // Start is called before the first frame update
         void Start()
         {
-
+            Launch();
         }
 
         // Update is called once per frame
@@ -330,6 +330,9 @@ namespace Zoca
             trailForcedStop = false;
             lastHitter = null;
 
+            
+            Launch();
+
             SkipLastMasterClientSync();
         }
 
@@ -439,6 +442,16 @@ namespace Zoca
             // If ball collides with the floor then we set grounded on
             if (Layer.Ground.Equals(LayerMask.LayerToName(collision.gameObject.layer)))
                 grounded = false;
+        }
+
+        void Launch()
+        {
+            if (!PhotonNetwork.IsMasterClient)
+                return;
+
+            Vector3 vel = Vector3.right * UnityEngine.Random.Range(-9f, 9f);
+            vel += Vector3.forward * UnityEngine.Random.Range(-3f, 3f);
+            rb.velocity = vel;
         }
 
         void SkipLastMasterClientSync()
