@@ -447,6 +447,7 @@ namespace Zoca
 
         public void Launch()
         {
+            
             if (!PhotonNetwork.IsMasterClient)
                 return;
 
@@ -518,25 +519,27 @@ namespace Zoca
             // for each physics tick
             for (int i=0; i<numOfTicks; i++)
             {
-                
-                //if(networkVelocity.y != 0)
-                //{
+
+                if (networkVelocity.y != 0)
+                {
                     // The ball is not grounded so we add gravity 
                     expectedVelocity = (expectedVelocity + Physics.gravity * Time.fixedDeltaTime) * (1 - rb.drag * Time.fixedDeltaTime);
-                //}
-                //else
-                //{
-                //    // The ball is grounded, we don't apply gravity
-                //    expectedVelocity = expectedVelocity  * (1 - rb.drag * Time.fixedDeltaTime);
+                }
+                else
+                {
+                    // The ball is grounded, we don't apply gravity
+                    expectedVelocity = expectedVelocity  * (1 - rb.drag * Time.fixedDeltaTime);
 
-                //}
+                }
                 
                 expectedPosition += expectedVelocity * Time.fixedDeltaTime;
             }
             
             networkDisplacement = expectedPosition - rb.position;
             rb.velocity = expectedVelocity;
-            
+
+            Debug.Log("Expected vel.y:" + expectedVelocity.y);
+
             //if (networkVelocity.sqrMagnitude > 0)
             //{
                
