@@ -1,4 +1,4 @@
-#define TEST_DISTANCE
+//#define TEST_DISTANCE
 using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
@@ -120,9 +120,6 @@ namespace Zoca
             if (!owner.photonView.IsMine && !PhotonNetwork.OfflineMode)
                 return;
 
-            
-
-          
         }
 
         // Update is called once per frame
@@ -168,6 +165,11 @@ namespace Zoca
 
         }
 #endif
+
+        public void IncreaseSuperShotCharge()
+        {
+            superShotCharge = Mathf.Clamp(superShotCharge, superShotCharge + 1, superShotChargeReady);
+        }
 
         public bool IsSuperShotReady()
         {
@@ -254,9 +256,10 @@ namespace Zoca
                     parameters[5] = superShot;
 
                     // If the player is in the enemy goal area then load the super shot
-                    if(!superShot && owner.IsInOpponentGoalArea())
+                    if(!superShot && !owner.IsInGoalArea())
                     {
-                        superShotCharge = Mathf.Clamp(superShotCharge, superShotCharge + 1, superShotChargeReady);
+                        //superShotCharge = Mathf.Clamp(superShotCharge, superShotCharge + 1, superShotChargeReady);
+                        IncreaseSuperShotCharge();
                     }
                     
                 }

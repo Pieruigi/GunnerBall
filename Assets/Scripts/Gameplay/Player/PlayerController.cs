@@ -91,6 +91,7 @@ namespace Zoca
         float staminaRechargeDelay = 2;
         float staminaRechargeSpeed = 30;
         float staminaChargeSpeed = 20;
+       
         DateTime staminaLast;
 
         #endregion
@@ -106,7 +107,7 @@ namespace Zoca
         //}
 
         float maxPitch = 30;
-        float minPitch = -60;
+        float minPitch = -70;
 
         float currentPitch;
         public float CurrentPitch
@@ -515,7 +516,7 @@ namespace Zoca
             }
         }
 
-        public bool IsInOpponentGoalArea()
+        public bool IsInGoalArea()
         {
             return inGoalArea;
         }
@@ -525,7 +526,7 @@ namespace Zoca
             if (inGoalArea)
                 return;
             
-            if(goalArea.Team != (Team)PlayerCustomPropertyUtility.GetPlayerCustomProperty(photonView.Owner, PlayerCustomPropertyKey.TeamColor))
+            if(goalArea.Team == (Team)PlayerCustomPropertyUtility.GetPlayerCustomProperty(photonView.Owner, PlayerCustomPropertyKey.TeamColor))
             {
                 // This player is in its goal area
                 inGoalArea = true;
@@ -539,7 +540,7 @@ namespace Zoca
         {
             if (!inGoalArea)
                 return;
-            if (goalArea.Team != (Team)PlayerCustomPropertyUtility.GetPlayerCustomProperty(photonView.Owner, PlayerCustomPropertyKey.TeamColor))
+            if (goalArea.Team == (Team)PlayerCustomPropertyUtility.GetPlayerCustomProperty(photonView.Owner, PlayerCustomPropertyKey.TeamColor))
             {
                 inGoalArea = false;
             }

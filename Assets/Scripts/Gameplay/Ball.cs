@@ -70,6 +70,11 @@ namespace Zoca
         DateTime groundedStartTime;
         float groundedTime = 0.5f;
         float rollingVolumeDefault;
+        GameObject lastHitter = null;
+        public GameObject LastHitter
+        {
+            get { return lastHitter; }
+        }
 
         Collider coll;
         float radius; // Collider radius
@@ -229,6 +234,8 @@ namespace Zoca
         {
             Debug.LogFormat("Ball - hit power:" + hitPower);
 
+            lastHitter = hitOwner;
+
             // Change the ball emission color depending on the team the player
             // who hit the ball belongs to.
             Team ownerTeam;
@@ -321,6 +328,7 @@ namespace Zoca
 
             //trail.ForceStop(false);
             trailForcedStop = false;
+            lastHitter = null;
 
             SkipLastMasterClientSync();
         }

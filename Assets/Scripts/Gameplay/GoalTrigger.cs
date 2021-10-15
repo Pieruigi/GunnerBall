@@ -49,6 +49,20 @@ namespace Zoca
                 }
             }
 
+            Ball ball = other.GetComponent<Ball>();
+            if (ball.LastHitter != null)
+            {
+                PlayerController hitter = ball.LastHitter.GetComponent<PlayerController>();
+                if(hitter.photonView.Owner == PhotonNetwork.LocalPlayer)
+                {
+                    if(team != (Team)PlayerCustomPropertyUtility.GetLocalPlayerCustomProperty(PlayerCustomPropertyKey.TeamColor))
+                    {
+                        PlayerController.Local.FireWeapon.IncreaseSuperShotCharge();
+                        PlayerController.Local.FireWeapon.IncreaseSuperShotCharge();
+                    }
+                        
+                }
+            }
 
         }
     }

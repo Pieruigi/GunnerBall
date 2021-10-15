@@ -19,8 +19,8 @@ namespace Zoca
         [SerializeField]
         Renderer[] renderers;
 
-        float maxPitch = 30;
-        float minPitch = -60;
+        //float maxPitch = 30;
+        //float minPitch = -60;
 
         float currentPitch;
         public float CurrentPitch

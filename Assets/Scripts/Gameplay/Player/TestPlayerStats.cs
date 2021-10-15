@@ -11,7 +11,7 @@ public class TestPlayerStats : MonoBehaviour
     public static float PlayerHealthMax = 100f;
     public static float PlayerHealth = 100f;
 
-    public static float WeaponFirePower = 21;
+    public static float WeaponFirePower = 24;
     public static float WeaponDamage = 50;
     public static float WeaponFireRate = 1f;
     public static float WeaponFireRange = 10f;
