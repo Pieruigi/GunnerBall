@@ -342,7 +342,7 @@ namespace Zoca
                     if (!Tag.Ball.Equals((hittable as MonoBehaviour).tag))
                         useDamage = true;
 
-                    float mul = superShot ? 3f : 1f;
+                    float mul = superShot ? 2f : 1f;
 
                     hittable.Hit(owner.gameObject, hitPoint, hitNormal, hitDirection, useDamage ? damage * mul : power * mul);
                 }
