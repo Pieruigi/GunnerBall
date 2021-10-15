@@ -46,6 +46,14 @@
                     "interactions": ""
                 },
                 {
+                    "name": "SuperShoot",
+                    "type": "Button",
+                    "id": "49139a7e-21bb-4ede-8ae8-1e8160e2646c",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
                     "name": "Sprint",
                     "type": "Button",
                     "id": "e6c0bb39-9877-4a75-b181-1b11888ae60d",
@@ -192,6 +200,17 @@
                     "processors": "",
                     "groups": "MouseAndKeyboard",
                     "action": "SwitchCamera",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "48d7b9a3-182a-4d88-83b2-9cbd037ca3f4",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "MouseAndKeyboard",
+                    "action": "SuperShoot",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

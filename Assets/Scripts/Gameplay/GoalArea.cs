@@ -33,7 +33,6 @@ namespace Zoca
 
         private void OnTriggerExit(Collider other)
         {
-            Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAA");
             if (Tag.Player.Equals(other.tag))
                 other.GetComponent<PlayerController>().ExitGoalArea(this);
         }

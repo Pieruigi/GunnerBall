@@ -140,6 +140,7 @@ namespace Zoca
         DateTime freezedLast;
 
         bool shooting = false;
+        bool superShoot = false;
 
         [SerializeField]
         float healthMax = 150;
@@ -196,9 +197,7 @@ namespace Zoca
         Quaternion startRotation;
 
         bool inGoalArea = false;
-        DateTime goalAreaTime;
-        float goalAreaDamagePerSec = 10;
-        
+       
         #endregion
 
         #region networked_fields
@@ -419,7 +418,7 @@ namespace Zoca
                         object[] parameters;
                         //Collider hitCollider;
                         // Returns true if the weapon is ready to shoot, otherwise returns false
-                        if (fireWeapon.TryShoot(out parameters))
+                        if (fireWeapon.TryShoot(superShoot, out parameters))
                         {
                             //if (parameters != null)
                             //{
@@ -448,27 +447,7 @@ namespace Zoca
  
                 }
 
-                // Check if player is in the goal area
-                if (inGoalArea)
-                {
-                    if (freezed)
-                    {
-                        // If the player is freezed just wait
-                        goalAreaTime = DateTime.UtcNow;
-                    }
-                    else
-                    {
-                        // Check if how much time has passed since the last time damage was applied
-                        if ((DateTime.UtcNow - goalAreaTime).TotalSeconds > 1)
-                        {
-                            // Apply damage
-                            health -= goalAreaDamagePerSec;
-                            goalAreaTime = DateTime.UtcNow;
-                        }
-                    }
-                    
-                }
-
+                
                 // Check if the player has been freezed and eventually recover it
                 if (freezed)
                 {
@@ -536,22 +515,21 @@ namespace Zoca
             }
         }
 
+        public bool IsInOpponentGoalArea()
+        {
+            return inGoalArea;
+        }
+
         public void EnterGoalArea(GoalArea goalArea)
         {
             if (inGoalArea)
                 return;
             
-            if(goalArea.Team == (Team)PlayerCustomPropertyUtility.GetPlayerCustomProperty(photonView.Owner, PlayerCustomPropertyKey.TeamColor))
+            if(goalArea.Team != (Team)PlayerCustomPropertyUtility.GetPlayerCustomProperty(photonView.Owner, PlayerCustomPropertyKey.TeamColor))
             {
                 // This player is in its goal area
                 inGoalArea = true;
-                goalAreaTime = DateTime.UtcNow;
-
-                // Play particle system
-                if (goalArea.Team == Team.Blue)
-                    goalAreaRedParticle.Play();
-                else
-                    goalAreaBlueParticle.Play();
+                
 
             }
 
@@ -559,12 +537,14 @@ namespace Zoca
 
         public void ExitGoalArea(GoalArea goalArea)
         {
-            Debug.Log("Exiting goal area...");
-            inGoalArea = false;
+            if (!inGoalArea)
+                return;
+            if (goalArea.Team != (Team)PlayerCustomPropertyUtility.GetPlayerCustomProperty(photonView.Owner, PlayerCustomPropertyKey.TeamColor))
+            {
+                inGoalArea = false;
+            }
+                
 
-            // Stop particle system
-            goalAreaRedParticle.Stop();
-            goalAreaBlueParticle.Stop();
 
         }
 
@@ -578,6 +558,7 @@ namespace Zoca
                 cc.Move(startPosition - transform.position);
                 transform.rotation = startRotation;
 
+                inGoalArea = false;
             }
         }
 
@@ -770,19 +751,58 @@ namespace Zoca
             if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
                 return;
 
+            // Always set the super shoot false
+            superShoot = false;
+
             // You can't shoot if you are sprinting
             if (sprinting)
             {
                 shooting = false;
+                
                 return;
             }
                 
            
             if (context.performed)
             {
+                
                 if (!shooting)
                 {
                     shooting = true;
+                }
+            }
+            else
+            {
+                if (shooting)
+                {
+                    shooting = false;
+                }
+            }
+        }
+
+        public void OnSuperShoot(InputAction.CallbackContext context)
+        {
+            if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
+                return;
+
+            // Always set the super shoot false
+            superShoot = false;
+
+            // You can't shoot if you are sprinting
+            if (sprinting)
+            {
+                shooting = false;
+                return;
+            }
+
+
+            if (context.performed)
+            {
+
+                if (!shooting)
+                {
+                    shooting = true;
+                    superShoot = true;
                 }
             }
             else

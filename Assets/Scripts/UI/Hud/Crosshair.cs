@@ -20,6 +20,9 @@ namespace Zoca.UI
         [SerializeField]
         Image aimLoaderImage;
 
+        [SerializeField]
+        Image superShotImage;
+
 
         PlayerController localPlayerController;
         Collider localPlayerCollider;
@@ -40,6 +43,8 @@ namespace Zoca.UI
             CheckDot();
 
             CheckLoader();
+
+            CheckSuperShot();
         }
 
         void CheckDot()
@@ -101,6 +106,13 @@ namespace Zoca.UI
             //{
             //    loaderImage.color = Color.green;
             //}
+        }
+
+        void CheckSuperShot()
+        {
+
+            superShotImage.fillAmount = localPlayerController.FireWeapon.SuperShotCharge / localPlayerController.FireWeapon.SuperShotChargeReady;
+            
         }
     }
 

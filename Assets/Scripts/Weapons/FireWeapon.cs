@@ -73,6 +73,19 @@ namespace Zoca
 
         float actualDistance;
 
+        float superShotCharge = 0;
+        public float SuperShotCharge
+        {
+            get { return superShotCharge; }
+        }
+        float superShotChargeReady = 5;
+        public float SuperShotChargeReady
+        {
+            get { return superShotChargeReady; }
+        }
+
+        
+
 #if TEST_DISTANCE
         GameObject testSphere;
 #endif
@@ -156,6 +169,11 @@ namespace Zoca
         }
 #endif
 
+        public bool IsSuperShotReady()
+        {
+            return !(superShotCharge < superShotChargeReady);
+        }
+
         /// <summary>
         /// Local player only.
         /// Returns true if he can shoot and some values are sent back as params 
@@ -163,7 +181,7 @@ namespace Zoca
         /// </summary>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        public virtual bool TryShoot(out object[] parameters)
+        public virtual bool TryShoot(bool superShot, out object[] parameters)
         {
             //Debug.Log("FireWeapon - TryShoot().");
             parameters = null;
@@ -175,6 +193,19 @@ namespace Zoca
             // Not ready yet
             if (cooldownElapsed > 0)
                 return false;
+
+            // Try super shot
+            if (superShot)
+            {
+                // If not ready don't shoot
+                if (!IsSuperShotReady())
+                    return false;
+                else
+                    superShotCharge = 0;// Uncharge the super shot
+
+            }
+            
+
 
             // Check coolers
             //if (activeCoolerCount == 0)
@@ -204,7 +235,7 @@ namespace Zoca
 
                 if(hittable != null)
                 {
-                    parameters = new object[5];
+                    parameters = new object[6];
                     if (!PhotonNetwork.OfflineMode)
                     {
                         
@@ -220,6 +251,14 @@ namespace Zoca
                     parameters[2] = info.normal;
                     parameters[3] = PhotonNetwork.Time;
                     parameters[4] = direction;
+                    parameters[5] = superShot;
+
+                    // If the player is in the enemy goal area then load the super shot
+                    if(!superShot && owner.IsInOpponentGoalArea())
+                    {
+                        superShotCharge = Mathf.Clamp(superShotCharge, superShotCharge + 1, superShotChargeReady);
+                    }
+                    
                 }
             }
             
@@ -280,6 +319,7 @@ namespace Zoca
             Vector3 hitNormal = (Vector3)parameters[2];
             double timestamp = (double)parameters[3];
             Vector3 hitDirection = (Vector3)parameters[4];
+            bool superShot = (bool)parameters[5];
 
             // Check the time passed
             float lag = (float)(PhotonNetwork.Time - timestamp);
@@ -299,7 +339,9 @@ namespace Zoca
                     if (!Tag.Ball.Equals((hittable as MonoBehaviour).tag))
                         useDamage = true;
 
-                    hittable.Hit(owner.gameObject, hitPoint, hitNormal, hitDirection, useDamage ? damage : power);
+                    float mul = superShot ? 3f : 1f;
+
+                    hittable.Hit(owner.gameObject, hitPoint, hitNormal, hitDirection, useDamage ? damage * mul : power * mul);
                 }
             }
            
