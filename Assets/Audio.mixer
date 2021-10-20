@@ -38,6 +38,39 @@ AudioMixerGroupController:
   m_Mute: 0
   m_Solo: 0
   m_BypassEffects: 0
+--- !u!243 &-8267005276964833071
+AudioMixerGroupController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Chat
+  m_AudioMixer: {fileID: 24100000}
+  m_GroupID: ecf9ea88f636189439744315b55c3fa6
+  m_Children: []
+  m_Volume: 93a004c6de6bf6a4fb95e01dfab0ef55
+  m_Pitch: 4f991bf3e61bd3640b57fa7a93bb7678
+  m_Send: 00000000000000000000000000000000
+  m_Effects:
+  - {fileID: -5738894861717535564}
+  m_UserColorIndex: 0
+  m_Mute: 0
+  m_Solo: 0
+  m_BypassEffects: 0
+--- !u!244 &-5738894861717535564
+AudioMixerEffectController:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_EffectID: 75a5e62f7add0d7488a0b88ef78bb182
+  m_EffectName: Attenuation
+  m_MixLevel: 0df7bafaed88ab340bbcde7e7f720754
+  m_Parameters: []
+  m_SendTarget: {fileID: 0}
+  m_EnableWetMix: 0
+  m_Bypass: 0
 --- !u!241 &24100000
 AudioMixerController:
   m_ObjectHideFlags: 0
@@ -65,6 +98,7 @@ AudioMixerController:
     - 4ee7203ddb3d37549bba8b88cff4c4d0
     - 6f69e4337134a6d4dbd4907a8f8109cb
     - ddbcc1fb5e608fd49b1b7559591faa25
+    - ecf9ea88f636189439744315b55c3fa6
     name: View
   m_CurrentViewIndex: 0
   m_TargetSnapshot: {fileID: 24500006}
@@ -80,6 +114,7 @@ AudioMixerGroupController:
   m_Children:
   - {fileID: -8909220055013940262}
   - {fileID: -8827194516872740905}
+  - {fileID: -8267005276964833071}
   m_Volume: 93daee741144a554d8af205c754d1c89
   m_Pitch: f4d35fd77d68d3b44ae0d833cef3996a
   m_Send: 00000000000000000000000000000000
@@ -113,7 +148,7 @@ AudioMixerSnapshotController:
   m_AudioMixer: {fileID: 24100000}
   m_SnapshotID: d33cfa9973489d4439d3d2f87e2dafef
   m_FloatValues:
-    93daee741144a554d8af205c754d1c89: -21.302507
+    93daee741144a554d8af205c754d1c89: 0
   m_TransitionOverrides: {}
 --- !u!244 &1770794086995862139
 AudioMixerEffectController:

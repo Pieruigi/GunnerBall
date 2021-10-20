@@ -496,18 +496,23 @@ namespace Zoca
             // Run this for both local and remote players
             if (freezed)
             {
+#if !FX_DISABLED
                 if (!freezeParticle.isPlaying)
                     freezeParticle.Play();
+#endif
 
                 if (!freezeAudioSource.isPlaying)
                     freezeAudioSource.Play();
+
 
                 animationController.AnimateFreeze(true);
             }
             else
             {
+#if !FX_DISABLED
                 if (freezeParticle.isPlaying)
                     freezeParticle.Stop();
+#endif
 
                 if (freezeAudioSource.isPlaying)
                     freezeAudioSource.Stop();
@@ -643,7 +648,7 @@ namespace Zoca
             }
         }
 
-        #region input_system_callbacks
+#region input_system_callbacks
         public void OnMove(InputAction.CallbackContext context)
         {
             if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
@@ -837,9 +842,9 @@ namespace Zoca
 
 
 
-        #endregion
+#endregion
 
-        #region private
+#region private
         private void OnDestroy()
         {
             //Destroy(playerCamera.gameObject);
@@ -880,10 +885,10 @@ namespace Zoca
             }
         }
 
-        #endregion
+#endregion
 
 
-        #region rpc
+#region rpc
 
         [PunRPC]
         void RpcShoot(object[] parameters, PhotonMessageInfo info)
@@ -902,7 +907,7 @@ namespace Zoca
 
         
 
-        #endregion
+#endregion
 
     }
 

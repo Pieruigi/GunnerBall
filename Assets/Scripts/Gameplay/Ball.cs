@@ -78,6 +78,7 @@ namespace Zoca
 
         Collider coll;
         float radius; // Collider radius
+        GameObject rootMesh;
 
         #region trail fields
         float trailMinSpeed = 10;
@@ -90,12 +91,15 @@ namespace Zoca
             if (!Instance)
             {
                 Instance = this;
+                rootMesh = GetComponentInChildren<Renderer>().gameObject;
                 rb = GetComponent<Rigidbody>();
                 coll = GetComponent<Collider>();
                 radius = ((SphereCollider)coll).radius;
 
                 rend = GetComponentInChildren<Renderer>();
+#if !FX_DISABLED
                 defaultEmission = rend.materials[materialId];
+
 
                 // Reset the trail particle parent
                 if (trailParticlePrefab)
@@ -103,17 +107,18 @@ namespace Zoca
                     trailParticle = GameObject.Instantiate(trailParticlePrefab);
                     trailParticle.transform.parent = null;
                 }
-                    
+#endif
 
                 if (rollingAudioSource)
                 {
                     rollingVolumeDefault = rollingAudioSource.volume;
                     rollingAudioSource.volume = 0;
-                    //rollingAudioSource.pitch = 0;
+                 
                     // Always playing, we just adjust the volume
                     rollingAudioSource.Play();
                 }
-                    
+
+                
             }
             else
             {
@@ -136,7 +141,7 @@ namespace Zoca
             
             if (rollingAudioSource)
             {
-                //bool rolling = true;
+               
                 float rollingVolume = 0;
                 float rollingMax = 36;
                 // Apply rolling fx
@@ -146,15 +151,13 @@ namespace Zoca
                     // Check horizontal speed
                     Vector3 vel = rb.velocity;
                     vel.y = 0;
-                   
                     
                     rollingVolume = Mathf.Lerp(0, rollingVolumeDefault, vel.sqrMagnitude / rollingMax);
                     
                 }
 
                 rollingAudioSource.volume = rollingVolume;
-                //rollingAudioSource.pitch = rollingVolume;
-
+               
             }
             
 
@@ -163,8 +166,9 @@ namespace Zoca
         void LateUpdate()
         {
             // Trail
+#if !FX_DISABLED
             if (trailParticle)
-            {
+            { 
                 trailParticle.transform.position = transform.position;
 
                 if (rb.velocity.magnitude < trailMinSpeed)
@@ -178,7 +182,7 @@ namespace Zoca
                         trailParticle.Play();
                 }
             }
-            
+#endif
         }
 
         private void FixedUpdate()
@@ -248,7 +252,8 @@ namespace Zoca
             {
                 ownerTeam = (Team)PlayerCustomPropertyUtility.GetPlayerCustomProperty(hitOwner.GetComponent<PhotonView>().Owner, PlayerCustomPropertyKey.TeamColor);
             }
-      
+
+#if !FX_DISABLED
             // Get the material by team
             Material tmp = null;
             
@@ -270,12 +275,14 @@ namespace Zoca
                 rend.materials = mats;
             }
 
+
             // Set the hit particle
             GameObject hitPrefab = ownerTeam == Team.Blue ? hitBlueParticlePrefab : hitRedParticlePrefab;
             GameObject.Instantiate(hitPrefab, hitPoint, Quaternion.identity);
 
             // Play particle
             PlayElectricParticle();
+#endif
 
             // Play audio
             //audioSource.Play();
@@ -325,7 +332,8 @@ namespace Zoca
             rb.rotation = LevelManager.Instance.BallSpawnPoint.rotation;
 
             coll.enabled = true;
-            GetComponentInChildren<Renderer>().enabled = true;
+            //GetComponentInChildren<Renderer>().enabled = true;
+            rootMesh.SetActive(true);
 
             //trail.ForceStop(false);
             trailForcedStop = false;
@@ -340,21 +348,24 @@ namespace Zoca
         public void Explode()
         {
             coll.enabled = false;
-            GetComponentInChildren<Renderer>().enabled = false;
+            //GetComponentInChildren<Renderer>().enabled = false;
+            rootMesh.SetActive(false);
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
 
+
+#if !FX_DISABLED
             // Apply fx
             GameObject.Instantiate(explosionPrefab, transform.position, Quaternion.identity);
-
             // Stop other fx
+
             electricParticle.Stop();
             if (trailParticle)
             {
                 trailParticle.Stop();
                 trailForcedStop = true;
             }
-            
+#endif
 
             // Play sount
             explosionAudioSource.Play();
@@ -404,7 +415,7 @@ namespace Zoca
 
 
 
-        #region private
+#region private
         /// <summary>
         /// In case of collision the old network sync gets skipped.
         /// Immagine the master client sends a sync just before a collision happens; 
@@ -423,7 +434,9 @@ namespace Zoca
             SkipLastMasterClientSync();
 
             // Play particle
+#if !FX_DISABLED
             PlayElectricParticle();
+#endif
 
             // Play audio
             bounceAudioSource.Play();
@@ -602,9 +615,9 @@ namespace Zoca
             electricParticle.Play();
         }
 
-        #endregion
+#endregion
 
-        #region rpc
+#region rpc
 
         [PunRPC]
         public void RpcHitByPlayer(Vector3 newVelocity, double timestamp)
@@ -612,7 +625,7 @@ namespace Zoca
             StartCoroutine(HitByPlayerDelayed(newVelocity, timestamp));
         }
 
-        #endregion
+#endregion
 
 
     }

@@ -295,8 +295,10 @@ namespace Zoca
         {
             //Debug.LogFormat("FireWeapon - Shooting: params.Length:{0}", parameters.Length);
 
-            // We can add some fx here
+// We can add some fx here
+#if !FX_DISABLED
             shootParticle.Play();
+#endif
 
             // Audio
             audioSource.Play();

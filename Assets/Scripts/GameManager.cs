@@ -1,4 +1,4 @@
-//#define TEST_SINGLE_PLAYER
+#define TEST_SINGLE_PLAYER
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -39,7 +39,9 @@ namespace Zoca
         // Start is called before the first frame update
         void Start()
         {
-
+#if FX_DISABLED
+        Debug.Log("FxIsDisabled");
+#endif
         }
 
         // Update is called once per frame
@@ -75,7 +77,7 @@ namespace Zoca
             
         }
 
-        #region private
+#region private
         /// <summary>
         /// Only used by the master client
         /// </summary>
@@ -85,9 +87,9 @@ namespace Zoca
             PhotonNetwork.LoadLevel(string.Format(level, PhotonNetwork.CurrentRoom.MaxPlayers/2));
         }
 
-        #endregion
+#endregion
 
-        #region callbacks
+#region callbacks
 
 
 
@@ -200,6 +202,7 @@ namespace Zoca
                     if (!PlayerController.LocalPlayer) // Local player is null
                     {
                         int cId = (int)PlayerCustomPropertyUtility.GetLocalPlayerCustomProperty(PlayerCustomPropertyKey.CharacterId);
+                        cId++; // To load prototype
                         //if (!PlayerCustomPropertyUtility.TryGetPlayerCustomProperty<int>(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.CharacterId, ref cId))
                         //{
                         //    Debug.LogErrorFormat("GameManager - Empty property for local player: [{0}]", PlayerCustomPropertyKey.CharacterId);
@@ -301,7 +304,7 @@ namespace Zoca
             //    Debug.LogFormat("GameManager - {0}:{1}", key, propertiesThatChanged[key]);
             //}
         }
-        #endregion
+#endregion
     }
 
 }
