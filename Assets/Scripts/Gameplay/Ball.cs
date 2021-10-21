@@ -195,8 +195,11 @@ namespace Zoca
             if (PhotonNetwork.IsMasterClient)
                 return;
 
+
             if (networkDisplacement != Vector3.zero)
             {
+                
+
                 //float lerpSpeed = 10;
                 float netDispMag = networkDisplacement.magnitude;
                 float deltaDispMag = Time.fixedDeltaTime * lerpSpeed;
@@ -215,7 +218,6 @@ namespace Zoca
                 rb.MovePosition(rb.position + deltaDisp);
 
                 // Check for collisions
-
                 int mask = ~LayerMask.NameToLayer(Layer.Ball);
                 if (Physics.CheckSphere(rb.position, radius, mask))
                 {
@@ -475,6 +477,7 @@ namespace Zoca
             
             if (!photonView.IsMine)
             {
+                Debug.Log("SkippLastClientSync()");
                 // Update network time to skip any sync that is just arrived
                 networkTime = PhotonNetwork.Time;
                 networkDisplacement = Vector3.zero;
@@ -551,43 +554,54 @@ namespace Zoca
             networkDisplacement = expectedPosition - rb.position;
             rb.velocity = expectedVelocity;
 
-            Debug.Log("Expected vel.y:" + expectedVelocity.y);
+            Debug.LogFormat("Network Vel:{0}, {1}, {2}", networkVelocity.x, networkVelocity.y, networkVelocity.z);
+            
 
-            //if (networkVelocity.sqrMagnitude > 0)
-            //{
+            if (networkVelocity.sqrMagnitude > 0)
+            {
                
                 // The ball is moving, we must check if is going to hit some collider; in that
                 // case we skip the last sync and reset velocity
-                //coll.enabled = false;
                 Ray ray = new Ray(rb.position, networkDisplacement.normalized);
                 int mask = ~LayerMask.NameToLayer(Layer.Ball);
 
                 if (Physics.SphereCast(ray, (coll as SphereCollider).radius, networkDisplacement.magnitude, mask))
                 {
+                    //Vector3 tmpDisp = networkDisplacement;
                     SkipLastMasterClientSync();
+                    Debug.Log("SphereCast collide");
 
                     rb.velocity = oldVelocity;
-                    // If the ball was grounded we need to update the y velocity
+                    // If the ball is grounded and hits a wall we must reset the y velocity; it only happens
+                    // when the ball is rolling along the floor ( ball hitting the floor means the ball is
+                    // falling down, so Y velocity can't be zero )
                     if (networkVelocity.y == 0)
                     {
-
+                        Debug.Log("NetVelocity Y is 0");
+                        //networkDisplacement = tmpDisp;
                         rb.position = new Vector3(rb.position.x, networkPosition.y, rb.position.z);
                         rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+                        
                     }
-
+                    
                 }
 
-                //coll.enabled = true;
-            //}
+               
+            }
             //else
             //{
-               
+                
             //    // The ball is not moving at all, so we just keep the position
             //    rb.position = networkPosition;
             //    networkDisplacement = Vector3.zero;
             //}
-            
-            
+
+            Debug.LogFormat("RB vel:{0}, {1}, {2}", rb.velocity.x, rb.velocity.y, rb.velocity.z);
+            Debug.LogFormat("Net Displacement:{0}, {1}, {2}", networkDisplacement.x, networkDisplacement.y, networkDisplacement.z);
+
+            Debug.Log("---------------------------------------------------------------------------");
+
+
             lerpSpeed = 10f;
 
         }

@@ -146,9 +146,9 @@ namespace Photon.Voice.PUN
                     {
                         if (instance.GetInstanceID() != value.GetInstanceID())
                         {
-                            if (instance.Logger.IsErrorEnabled)
+                            if (instance.Logger.IsWarningEnabled)
                             {
-                                instance.Logger.LogError("An instance of PhotonVoiceNetwork is already set. Destroying extra instance.");
+                                instance.Logger.LogWarning("An instance of PhotonVoiceNetwork is already set. Destroying extra instance.");
                             }
                             Destroy(value);
                         }
