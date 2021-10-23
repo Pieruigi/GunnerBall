@@ -10,10 +10,7 @@ namespace Zoca
         public static PlayerCamera Instance { get; private set; }
 
         [SerializeField]
-        Transform firstPersonTarget;
-
-        [SerializeField]
-        Transform thirdPersonTarget;
+        Transform target;
 
         // Player controller should pass this array
         [SerializeField]
@@ -31,12 +28,6 @@ namespace Zoca
         PlayerController playerController;
         Material playerMaterial;
 
-        bool thirdPerson = true;
-        bool switching = false;
-        float switchTime = 1f;
-        float switchElapsed = 0;
-        float switchSpeed;
-
         float distanceAdjustment;
         public float DistanceAdjustment
         {
@@ -48,8 +39,8 @@ namespace Zoca
 
         Collider playerCollider;
 
-        Vector3 thirdPersonPositionOnSprint;
-        Vector3 thirdPersonPositionDefault;
+        Vector3 targetPositionOnSprint;
+        Vector3 targetPositionDefault;
         float onSprintLerpSpeed = 0.8f;
 
         private void Awake()
@@ -62,14 +53,11 @@ namespace Zoca
                 // Move the camera outside
                 transform.parent = null;
 
-                // Calculate the switch speed
-                switchSpeed = Vector3.Distance(firstPersonTarget.position, thirdPersonTarget.position) / switchTime;
-
                 // Set the camera target position on sprint
-                thirdPersonPositionOnSprint = thirdPersonTarget.localPosition + Vector3.forward * 0.57f;
+                targetPositionOnSprint = target.localPosition + Vector3.forward * 0.57f;
 
                 // Store the default position
-                thirdPersonPositionDefault = thirdPersonTarget.localPosition;
+                targetPositionDefault = target.localPosition;
 
                 // Store original and create transparent materials
                 originalMaterials = new List<Material>();
@@ -117,158 +105,73 @@ namespace Zoca
             if (!playerController)
                 return;
 
-            // If camera is not switching between first and third person modes we
-            // can update position and rotation...
-            if (!switching)
-            {
-                if (thirdPerson)
-                {
-                    CheckPlayerSprint();
-                    UpdateThirdPerson();
-                }
-                else
-                {
-                    UpdateFirstPerson();
-                }
-            }
-            else //... otherwise we must lerp between the two modes
-            {
-                switchElapsed += switchSpeed * Time.deltaTime;
+            // On sprint we move the camera target closer to the player
+            CheckPlayerSprint();
 
-                Vector3 oldTargetPos, newTargetPos;
-                Quaternion targetRot;
-                if (thirdPerson)
-                {
-                    oldTargetPos = firstPersonTarget.position;
-                    newTargetPos = thirdPersonTarget.position;
-                    targetRot = GetThirdPersonTargetRotation();
-                }
-                else
-                {
-                    oldTargetPos = thirdPersonTarget.position;
-                    newTargetPos = firstPersonTarget.position;
-                    targetRot = GetFirstPersonTargetRotation();
-                }
-
-                Vector3 targetPos = Vector3.Slerp(oldTargetPos, newTargetPos, switchElapsed / switchTime);
-                transform.position = targetPos;
-                transform.rotation = targetRot;
-
-                if (switchElapsed > switchTime)
-                {
-                    switching = false;
-                    UpdateDistanceAdjustment();
-                    //SetMaterials(originalMaterials);
-                }
-                    
-            }
-
+            // Update the camera position and rotation
+            UpdatePositionAndRotation();
+          
             // Clip camera
             DoClipping();
         }
 
-        public void SetPlayerController(PlayerController playerController)
-        {
-            this.playerController = playerController;
-            playerCollider = playerController.GetComponent<Collider>();
-        }
+      
 
-        public void SetPitch(float pitch)
-        {
-            currentPitch = pitch;
-            Vector3 angles = transform.localEulerAngles;
-            angles.x = currentPitch;
-            transform.localEulerAngles = angles;
-        }
-
-        public void Switch()
-        {
-            switching = true;
-            switchElapsed = 0;
-            thirdPerson = !thirdPerson;
-
-            // Change material to transparent
-            StartCoroutine(DoTransparentEffect());
-            //SetMaterials(transparentMaterials);
-
-        }
-
-        public bool IsSwitching()
-        {
-            return switching;
-        }
-
-        public bool IsFirstPerson()
-        {
-            return !thirdPerson;
-        }
-
-
+      
+      
         #region private
 
 
         /// <summary>
-        /// Fire distance is calculated by the player and not by the camera, so
-        /// we need to adjust this value depending whether the camera is in
-        /// first person mode or not.
+        /// Fire distance is calculated by the player and not by the camera; in this way we can add more
+        /// zoom without interfering with gameplay
         /// </summary>
         void UpdateDistanceAdjustment()
         {
             
-            if (!thirdPerson)
-            {
-                distanceAdjustment = 0;
-            }
-            else
-            {
-                Vector3 camToPlayerVector = playerController.transform.position - transform.position;
-                distanceAdjustment = Vector3.Dot(camToPlayerVector, transform.forward);
-            }
-        }
-
-        void UpdateFirstPerson()
-        {
-            // Adjust position
-            transform.position = firstPersonTarget.position;
+            Vector3 camToPlayerVector = playerController.transform.position - transform.position;
+            distanceAdjustment = Vector3.Dot(camToPlayerVector, transform.forward);
             
-            // Adjust rotation taking into account the current pitch
-            transform.rotation = GetFirstPersonTargetRotation();
         }
 
+        /// <summary>
+        /// This method sets the appropriate camera target depending wheter the player is sprinting or not.
+        /// </summary>
         void CheckPlayerSprint()
         {
-            
-
+        
             if (playerController.Sprinting)
             {
-                // Move camera target to the sprint target position
-                thirdPersonTarget.localPosition = Vector3.MoveTowards(thirdPersonTarget.localPosition, thirdPersonPositionOnSprint, onSprintLerpSpeed * Time.deltaTime);
+                target.localPosition = Vector3.MoveTowards(target.localPosition, targetPositionOnSprint, onSprintLerpSpeed * Time.deltaTime);
             }
             else
             {
-                // Move the camera target to the default position
-                thirdPersonTarget.localPosition = Vector3.MoveTowards(thirdPersonTarget.localPosition, thirdPersonPositionDefault, onSprintLerpSpeed * Time.deltaTime);
+                target.localPosition = Vector3.MoveTowards(target.localPosition, targetPositionDefault, onSprintLerpSpeed * Time.deltaTime);
             }
         }
 
-        void UpdateThirdPerson()
+        /// <summary>
+        /// Update position and rotation
+        /// </summary>
+        void UpdatePositionAndRotation()
         {
             // Adjust position
-            transform.position = thirdPersonTarget.position;
+            transform.position = target.position;
 
             // Adjust rotation taking into account the current pitch
-            transform.rotation = GetThirdPersonTargetRotation();
+            //transform.rotation = GetThirdPersonTargetRotation();
+            // Reset transform
+            transform.forward = playerController.transform.forward;
+
+            // Add pitch
+            Vector3 eulers = transform.localEulerAngles;
+            eulers.x = currentPitch;
+            transform.localEulerAngles = eulers;
         }
 
       
 
-        Quaternion GetFirstPersonTargetRotation()
-        {
-            Vector3 eulers = transform.localEulerAngles;
-            eulers.y = playerController.transform.eulerAngles.y;
-            eulers.z = playerController.transform.eulerAngles.z;
-            return Quaternion.Euler(eulers);
-        }
+   
 
 
         Quaternion GetThirdPersonTargetRotation()
@@ -308,7 +211,7 @@ namespace Zoca
         IEnumerator DoTransparentEffect()
         {
             SetMaterials(transparentMaterials);
-            float time = switchTime / 2;
+            float time = 0.5f;
             float elapsed = 0;
 
             
@@ -334,7 +237,7 @@ namespace Zoca
             // collision point if any
             // Calculate the origin
             Vector3 origin = playerController.transform.position;
-            origin.y = thirdPersonTarget.position.y;
+            origin.y = target.position.y;
             // The direction
             Vector3 fromPlayerToCamera = transform.position - origin; 
             // The ray
@@ -348,13 +251,29 @@ namespace Zoca
             {
                 // Clipping, replace camera
                 Vector3 newPos = info.point - fromPlayerToCamera.normalized * .2f;
-                newPos.y = thirdPersonTarget.position.y;
+                newPos.y = target.position.y;
                 transform.position = newPos;
                 
             }
 
             // Enable player collider 
             playerCollider.enabled = true;
+        }
+        #endregion
+
+        #region public
+        public void SetPlayerController(PlayerController playerController)
+        {
+            this.playerController = playerController;
+            playerCollider = playerController.GetComponent<Collider>();
+        }
+
+        public void SetPitch(float pitch)
+        {
+            currentPitch = pitch;
+            //Vector3 angles = transform.localEulerAngles;
+            //angles.x = currentPitch;
+            //transform.localEulerAngles = angles;
         }
         #endregion
     }
