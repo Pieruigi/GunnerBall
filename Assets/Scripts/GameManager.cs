@@ -62,11 +62,11 @@ namespace Zoca
             
         }
 
-        
         public void LeaveRoom()
         {
             if (inGame)
             {
+                Debug.Log("Leaving room...");
                 PhotonNetwork.LeaveRoom();
             }
 

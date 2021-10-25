@@ -68,6 +68,14 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "MuteVoice",
+                    "type": "Button",
+                    "id": "b2a128fe-4e69-4abe-b42a-c2bb0127ca32",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -211,6 +219,17 @@
                     "processors": "",
                     "groups": "MouseAndKeyboard",
                     "action": "SuperShoot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1c44056d-847e-4713-b79d-4973550f4d97",
+                    "path": "<Keyboard>/v",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "MouseAndKeyboard",
+                    "action": "MuteVoice",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

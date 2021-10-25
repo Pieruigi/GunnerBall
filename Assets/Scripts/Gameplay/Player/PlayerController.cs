@@ -13,7 +13,8 @@ namespace Zoca
 {
     public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable, IHittable
     {
-        public UnityAction OnLeaveRoomRequest;
+        //public UnityAction OnLeaveRoomRequest;
+        public UnityAction OnPaused;
 
         public static GameObject LocalPlayer { get; private set; }
 
@@ -837,9 +838,17 @@ namespace Zoca
                 return;
 
             if (context.started)
-                OnLeaveRoomRequest?.Invoke();
+                OnPaused?.Invoke();
         }
 
+        public void OnVoiceOnOff(InputAction.CallbackContext context)
+        {
+            if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
+                return;
+
+            if (context.started)
+                VoiceManager.Instance.SwitchVoiceOnOff();
+        }
 
 
 #endregion

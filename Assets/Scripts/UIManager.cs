@@ -3,8 +3,9 @@ using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zoca.UI;
 
-namespace Zoca.UI
+namespace Zoca
 {
     public class UIManager : MonoBehaviourPunCallbacks
     {
@@ -16,13 +17,21 @@ namespace Zoca.UI
         [SerializeField]
         GameObject opponentLeftUI;
 
+        [SerializeField]
+        GameObject gameMenuUI;
+
+
         bool leavingRoom = false;
-       
+        GameMenu gameMenu;
+
+        #region private
         private void Awake()
         {
             if (!Instance)
             {
                 Instance = this;
+                gameMenu = gameMenuUI.GetComponent<GameMenu>();
+                     
             }
             else
             {
@@ -34,11 +43,11 @@ namespace Zoca.UI
         void Start()
         {
             // Hide cursor
-            ShowCursor(false);
+            GeneralUtility.ShowCursor(false);
 
             Match.Instance.OnStateChanged += HandleOnStateChanged;
 
-            PlayerController.Local.OnLeaveRoomRequest += LeaveGame;
+            PlayerController.Local.OnPaused += PauseGame;
 
             CloseAll();
         }
@@ -52,27 +61,12 @@ namespace Zoca.UI
         private void OnDestroy()
         {
             if (PlayerController.Local != null)
-                PlayerController.Local.OnLeaveRoomRequest -= LeaveGame;
+                PlayerController.Local.OnPaused -= PauseGame;
         }
 
-        /// <summary>
-        /// Called by the player during the match
-        /// </summary>
-        public void LeaveGame()
-        {
-            if (leavingRoom)
-                return;
+     
 
-            leavingRoom = true;
-
-            // Show cursor 
-            ShowCursor(true);
-
-            // Open the message box
-            MessageBox.Show(MessageBox.Type.YesNo, "Do you want to leave the game?", OnLeaveGameYes, OnLeaveGameNo);
-        }
-
-        #region private
+       
         void HandleOnStateChanged()
         {
             switch (Match.Instance.State)
@@ -97,7 +91,7 @@ namespace Zoca.UI
             opponentLeftUI.SetActive(true);
 
             // Show cursor
-            ShowCursor(true);
+            GeneralUtility.ShowCursor(true);
         }
 
         void OpenEndGameUI()
@@ -112,7 +106,7 @@ namespace Zoca.UI
             endGameUI.SetActive(true);
 
             // Show cursor
-            ShowCursor(true);
+            GeneralUtility.ShowCursor(true);
         }
 
         void CloseAll()
@@ -121,33 +115,7 @@ namespace Zoca.UI
             opponentLeftUI.SetActive(false);
         }
 
-        void ShowCursor(bool show)
-        {
-            if (show)
-            {
-                Cursor.lockState = CursorLockMode.None;
-            }
-            else
-            {
-                Cursor.lockState = CursorLockMode.Locked;
-            }
-        }
-
-        void OnLeaveGameYes()
-        {
-           
-            // Leave the game
-            GameManager.Instance.LeaveRoom();
-        }
-
-        void OnLeaveGameNo()
-        {
-            leavingRoom = false;
-
-            // Hide the cursor and do nothing
-            ShowCursor(false);
-
-        }
+ 
 
         /// <summary>
         /// Called when another player leaves
@@ -163,6 +131,47 @@ namespace Zoca.UI
             {
                 OpenPlayerLeftUI();
             }
+        }
+
+        void PauseGame()
+        {
+            if (leavingRoom || MessageBox.IsVisible() || endGameUI.activeSelf || opponentLeftUI.activeSelf)
+                return;
+            
+            Debug.Log("Paused game");
+            if (!gameMenu.Opened)
+                OpenGameMenuUI();
+            else
+                CloseGameMenuUI();
+        }
+        #endregion
+
+        #region public
+
+
+        public void OpenGameMenuUI()
+        {
+            
+
+            if (leavingRoom)
+                return;
+            if (MessageBox.IsVisible())
+                return;
+            if (gameMenu.Opened)
+                return;
+
+
+            GeneralUtility.ShowCursor(true);
+            gameMenu.Open();
+        }
+
+        public void CloseGameMenuUI()
+        {
+            if (!gameMenu.Opened)
+                return;
+
+            gameMenu.Close();
+            GeneralUtility.ShowCursor(false);
         }
         #endregion
     }

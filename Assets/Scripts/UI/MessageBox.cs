@@ -34,7 +34,7 @@ namespace Zoca.UI
         //private UnityAction _noAction;
 
         static MessageBox instance;
-        
+
 
         private Color panelColorDefault;
 
@@ -68,6 +68,9 @@ namespace Zoca.UI
             panelImage.sprite = null;
             panelImage.color = panelColorDefault;
             instance.box.localPosition = new Vector3(0, 0, 0);
+
+            // Remove all listeners
+            instance.RemoveAllListeners();
         }
 
         // Update is called once per frame
@@ -76,7 +79,12 @@ namespace Zoca.UI
 
         }
 
-       
+        public static bool IsVisible()
+        {
+            if (instance == null)
+                return false;
+            return instance.gameObject.activeSelf;
+        }
 
         public static void Hide()
         {
@@ -86,6 +94,8 @@ namespace Zoca.UI
 
         public static void Show(Type type, string msgText = null, UnityAction okYesAction = null, UnityAction noAction = null)
         {
+            instance.RemoveAllListeners();
+
             switch (type)
             {
                 case Type.Ok:
@@ -120,7 +130,7 @@ namespace Zoca.UI
             }
 
             if (msgText != null)
-                instance.msgText.text = msgText.Replace("\\n","\n");
+                instance.msgText.text = msgText.Replace("\\n", "\n");
 
             instance.gameObject.SetActive(true);
 
@@ -151,19 +161,17 @@ namespace Zoca.UI
                 instance.okButton.Select();
                 //EventSystem.current.SetSelectedGameObject(instance.noButton.gameObject);
             }
-                
+
         }
 
-        //public void Activate(bool value)
-        //{
-        //    //throw new System.NotImplementedException();
-        //    Debug.LogWarning("Use the MessageBox.Show() static method.");
-        //}
+        void RemoveAllListeners()
+        {
+            instance.okButton.onClick.RemoveAllListeners();
+            instance.noButton.onClick.RemoveAllListeners();
+            instance.yesButton.onClick.RemoveAllListeners();
+        }
 
-        //public bool IsActive()
-        //{
-        //    return gameObject.activeSelf;
-        //}
+
     }
 
 

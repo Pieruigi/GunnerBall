@@ -22,6 +22,7 @@ namespace Zoca
         {
             // Allow the master client to sync scene to other clients
             PhotonNetwork.AutomaticallySyncScene = true;
+            gameVersion = Application.version;
         }
 
         // Start is called before the first frame update
