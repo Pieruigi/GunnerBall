@@ -17,6 +17,7 @@ namespace Zoca.UI
             // Get panel
             panel = transform.GetChild(0).gameObject;
 
+
             Match.Instance.OnStateChanged += CheckState;
 
             CheckState();
