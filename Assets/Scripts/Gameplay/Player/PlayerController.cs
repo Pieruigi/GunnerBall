@@ -101,7 +101,7 @@ namespace Zoca
 
         #region look
         Vector2 lookInput;
-        float lookSensitivityMul = 10f;
+        float lookSensitivityMul = 5f;
         //public float LookSensitivity
         //{
         //    get { return lookSensitivity; }
@@ -846,8 +846,8 @@ namespace Zoca
             if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
                 return;
 
-            if (context.started)
-                VoiceManager.Instance.SwitchVoiceOnOff();
+            //if (context.started)
+            //    VoiceManager.Instance.SwitchVoiceOnOff();
         }
 
 
