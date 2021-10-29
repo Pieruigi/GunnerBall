@@ -12,6 +12,7 @@ namespace Zoca
         public static readonly string Characters = "Characters";
         public static readonly string Balls = "Balls";
         public static readonly string Sprites = "Sprites";
+        public static readonly string TeamFormations = "AI/Formations";
     }
 
     public class Tag
