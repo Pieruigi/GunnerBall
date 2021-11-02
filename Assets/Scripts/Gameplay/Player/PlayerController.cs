@@ -522,6 +522,15 @@ namespace Zoca
             }
         }
 
+        public void LookAtTheBall()
+        {
+            
+
+            // Rotate towards the ball
+            Vector3 aiToBallV = Ball.Instance.transform.position - transform.position;
+            transform.forward = new Vector3(aiToBallV.x, 0, aiToBallV.z);
+        }
+
         public bool IsInGoalArea()
         {
             return inGoalArea;
@@ -567,6 +576,24 @@ namespace Zoca
 
                 inGoalArea = false;
             }
+        }
+
+        public void Move(bool move, Vector2 direction)
+        {
+            if (move)
+            {
+                if(!moving)
+                    moving = true;
+
+            }
+            else
+            {
+                if(moving)
+                    moving = false;
+
+            }
+            moveInput = direction.normalized;
+            Debug.Log("Moving to " + moveInput);
         }
 
         public void Hit(GameObject owner, Vector3 hitPoint, Vector3 hitNormal, Vector3 hitDirection, float hitDamage)
@@ -667,32 +694,24 @@ namespace Zoca
             if (context.performed)
             {
                
-                if (!moving)
-                {
-                    moving = true;
-                    
-                    // Start moving
-                    //animator.SetBool(walkParam, true);
+                //if (!moving)
+                //{
+                //    moving = true;
+                //}
 
-                    //Debug.LogFormat("Player starts moving");
-                }
-
-                moveInput = context.ReadValue<Vector2>();
+                //moveInput = context.ReadValue<Vector2>();
+                Move(true, context.ReadValue<Vector2>());
                 
             }
             else
             {
-                if (moving)
-                {
-                    moving = false;
+                //if (moving)
+                //{
+                //    moving = false;
+                //}
 
-                    // Stop moving
-                    //animator.SetBool(walkParam, false);
-
-                    //Debug.LogFormat("Player stops moving");
-                }
-
-                moveInput = Vector2.zero;
+                //moveInput = Vector2.zero;
+                Move(false, Vector2.zero);
             }
 
         }

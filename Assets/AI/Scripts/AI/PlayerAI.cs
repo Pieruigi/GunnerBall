@@ -146,6 +146,9 @@ namespace Zoca.AI
         {
             waypointIndex = index;
         }
+
+        
+
         #endregion
 
         #region debug

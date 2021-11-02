@@ -15,12 +15,17 @@ namespace Zoca.AI
         TeamHelper teamHelper;
         GameObject ball;
 
+        FireWeapon fireWeapon;
+
         #endregion
 
         public IdleChoice(PlayerAI owner) :base(owner) 
         {
             teamHelper = new List<TeamHelper>(GameObject.FindObjectsOfType<TeamHelper>()).Find(t => t.Team == owner.Team);
             ball = GameObject.FindGameObjectWithTag(Tag.Ball);
+
+            
+            
         }  
 
         public override void Evaluate()
@@ -52,9 +57,48 @@ namespace Zoca.AI
             // Position interpolation
             pos = Vector3.Lerp(pos, pos2, closestToBall.magnitude / closestToClosest2.magnitude);
 
+            // Need to sprint?
+            // We sprint when:
+            // 1. the ai is too far away from the ball
+            // 2. the ball is running towards the goal line defended by the ai
+            bool sprinting = false;
+            if (!Owner.PlayerController.Sprinting)
+            {
+                if(Owner.PlayerController.Stamina / Owner.PlayerController.StaminaMax > .33f)
+                {
+                    // 1. too far away
+                    Vector3 aiToPosV = pos - Owner.transform.position;// Vector from the ai to the pos 
+                    if (aiToPosV.magnitude > GetFireWeaponRange())
+                        sprinting = true;
+
+                    // 2. sprint to denfend
+                    // At the moment the same ( we could just spare a little of stamina in case )
+                }
+
+
+
+            }
+          
+
+            Owner.PlayerController.Sprint(sprinting);
+
+            if (!Owner.PlayerController.Sprinting)
+            {
+                Owner.PlayerController.LookAtTheBall();
+            }
+
+
+
             // Move to destination
             Owner.PlayerController.MoveTo(pos);
 
+            
+
+        }
+
+        float GetFireWeaponRange()
+        {
+            return 10;
         }
     }
 
