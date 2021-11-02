@@ -27,6 +27,11 @@ public class FakePlayerController : MonoBehaviour
     bool hasDestination = false;
     float minDistSqr = 4f;
 
+    public float Stamina { get; private set; } = 100;
+    public float StaminaMax { get; private set; } = 100;
+
+    public float Sprinting { get; set; }
+
     #endregion
 
     // Start is called before the first frame update
@@ -84,8 +89,17 @@ public class FakePlayerController : MonoBehaviour
         Vector3 targetDir = new Vector3(moveDir.x, 0, moveDir.y);
         if (sprinting)
         {
-            targetDir = transform.forward;
-            targetSpeed *= 2;
+            if(Stamina > 0)
+            {
+                Stamina -= 10 * Time.deltaTime;
+                targetDir = transform.forward;
+                targetSpeed *= 2;
+            }
+            else
+            {
+                sprinting = false;
+                targetSpeed = maxSpeed;
+            }
         }
         Vector3 targetVelocity = targetSpeed * targetDir;
 
