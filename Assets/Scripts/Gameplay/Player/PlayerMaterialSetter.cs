@@ -24,6 +24,9 @@ namespace Zoca
             Renderer rend = GetComponent<Renderer>();
             // Get player owner
             Player owner = GetComponentInParent<PhotonView>().Owner;
+            
+            Debug.Log("IsMine:" + GetComponentInParent<PhotonView>().OwnerActorNr);
+            
             // Get team
             Team team = (Team)PlayerCustomPropertyUtility.GetPlayerCustomProperty(owner, PlayerCustomPropertyKey.TeamColor);
             // Get the renderer material array

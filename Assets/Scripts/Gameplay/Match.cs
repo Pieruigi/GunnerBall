@@ -72,6 +72,8 @@ namespace Zoca
                 Instance = this;
 
                 // Load all custom prperties
+                Debug.Log("Loading custom properties");
+
                 matchLength = (int)RoomCustomPropertyUtility.GetCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchLength);
                 timeElapsed = (float)RoomCustomPropertyUtility.GetCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchTimeElapsed);
                 stateTimestamp = (float)RoomCustomPropertyUtility.GetCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchStateTimestamp);

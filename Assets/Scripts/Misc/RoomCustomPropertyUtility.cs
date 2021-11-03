@@ -16,13 +16,12 @@ namespace Zoca
         public static readonly string BlueTeamScore = "bts"; // byte
         public static readonly string RedTeamScore = "rts"; // byte
         
-        //public static readonly float MatchTimeValueDefault = 300f;
     }
 
     public class RoomCustomPropertyUtility
     {
-        #region private
-        static void SynchronizeRoomCustomProperties(Room room)
+       
+        public static void SynchronizeRoomCustomProperties(Room room)
         {
             if (room == null)
             {
@@ -35,7 +34,7 @@ namespace Zoca
 
        
 
-        static void AddOrUpdateRoomCustomProperty(Room room, string key, object value)
+        public static void AddOrUpdateRoomCustomProperty(Room room, string key, object value)
         {
             if(room == null)
             {
@@ -57,38 +56,36 @@ namespace Zoca
 
       
 
-        static object GetRoomCustomProperty(Room room, string key)
+        public static object GetRoomCustomProperty(Room room, string key)
         {
+            Debug.Log("RoomCustomProperties.length:" + room.CustomProperties.Count);
+            Debug.LogFormat("RoomCustomProperties - {0}:{1}",key, room.CustomProperties[key]);
             if (!room.CustomProperties.ContainsKey(key))
                 return null;
 
             return room.CustomProperties[key];
         }
-        #endregion
+        
 
-        #region public
+        
         public static void AddOrUpdateCurrentRoomCustomProperty(string key, object value)
         {
-            if (!PhotonNetwork.OfflineMode)
-                AddOrUpdateRoomCustomProperty(PhotonNetwork.CurrentRoom, key, value);
-            else
-                OfflineRoom.AddOrUpdateCustomProperty(key, value);
+            AddOrUpdateRoomCustomProperty(PhotonNetwork.CurrentRoom, key, value);
         }
 
         public static object GetCurrentRoomCustomProperty(string key)
         {
-            if (!PhotonNetwork.OfflineMode)
-                return GetRoomCustomProperty(PhotonNetwork.CurrentRoom, key);
-            else
-                return OfflineRoom.GetCustomProperty(key);
+            return GetRoomCustomProperty(PhotonNetwork.CurrentRoom, key);
+            
         }
 
         public static void SynchronizeCurrentRoomCustomProperties()
         {
             SynchronizeRoomCustomProperties(PhotonNetwork.CurrentRoom);
+            
         }
 
-        #endregion
+      
     }
 
 }

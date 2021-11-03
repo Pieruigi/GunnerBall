@@ -32,6 +32,7 @@ namespace Zoca
     {
         public static readonly float StartDelay = 4;
         public static readonly float GoalDelay = 7;
+        
     }
 
     public class PhotonEvent

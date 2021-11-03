@@ -39,6 +39,7 @@ namespace Zoca
 
         public void QuickMatch(int expectedMaxPlayers)
         {
+            PhotonNetwork.OfflineMode = false;
             this.expectedMaxPlayers = expectedMaxPlayers;
 
             Connect();
@@ -71,6 +72,20 @@ namespace Zoca
         {
             // We must read the choosen join mode first
             PhotonNetwork.JoinRandomRoom(null, (byte)expectedMaxPlayers);
+        }
+
+        public void LaunchOffline(int maxPlayers)
+        {
+            
+            PhotonNetwork.OfflineMode = true;
+            
+            RoomOptions roomOptions = new RoomOptions() { MaxPlayers = (byte)maxPlayers };
+            roomOptions.CustomRoomPropertiesForLobby = new string[] { RoomCustomPropertyKey.MatchLength };
+            roomOptions.CustomRoomProperties = new ExitGames.Client.Photon.Hashtable();
+            roomOptions.CustomRoomProperties.Add(RoomCustomPropertyKey.MatchLength, (int)matchLength);
+
+            PhotonNetwork.CreateRoom(null, roomOptions);
+
         }
 
         #region private
@@ -138,31 +153,31 @@ namespace Zoca
         }
 
         /// <summary>
-        /// Called on the client who enters the room ( local player ).
+        /// Called on the local player when entering the room
         /// </summary>
         public override void OnJoinedRoom()
         {
-            Debug.LogFormat("PUN - Room joined [Name:{0}].", PhotonNetwork.CurrentRoom.Name);
+            //Debug.LogFormat("PUN - Room joined [Name:{0}].", PhotonNetwork.CurrentRoom.Name);
 
             // Set the team
             // We fill the blue team with the first players, and the red team with the last ones.
-            Debug.LogFormat("PUN - local player actor number: {0}", PhotonNetwork.LocalPlayer.ActorNumber);
-            //if (PhotonNetwork.LocalPlayer.ActorNumber == 1)
-            if (PhotonNetwork.LocalPlayer.ActorNumber <= PhotonNetwork.CurrentRoom.MaxPlayers / 2)
-            {
-                //PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.TeamColor, Team.Blue);
-                PlayerCustomPropertyUtility.AddOrUpdateLocalPlayerCustomProperty(PlayerCustomPropertyKey.TeamColor, Team.Blue);
-            }
-            else
-            {
-                //PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.TeamColor, Team.Red);
-                PlayerCustomPropertyUtility.AddOrUpdateLocalPlayerCustomProperty(PlayerCustomPropertyKey.TeamColor, Team.Red);
-            }
+            //Debug.LogFormat("PUN - local player actor number: {0}", PhotonNetwork.LocalPlayer.ActorNumber);
+            ////if (PhotonNetwork.LocalPlayer.ActorNumber == 1)
+            //if (PhotonNetwork.LocalPlayer.ActorNumber <= PhotonNetwork.CurrentRoom.MaxPlayers / 2)
+            //{
+            //    //PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.TeamColor, Team.Blue);
+            //    PlayerCustomPropertyUtility.AddOrUpdateLocalPlayerCustomProperty(PlayerCustomPropertyKey.TeamColor, Team.Blue);
+            //}
+            //else
+            //{
+            //    //PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.TeamColor, Team.Red);
+            //    PlayerCustomPropertyUtility.AddOrUpdateLocalPlayerCustomProperty(PlayerCustomPropertyKey.TeamColor, Team.Red);
+            //}
 
-            // Set the default character
-            Debug.LogFormat("PUN - Setting default character id.");
-            PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.CharacterId, 0);
-            PlayerCustomPropertyUtility.SynchronizePlayerCustomProperties(PhotonNetwork.LocalPlayer);
+            //// Set the default character
+            //Debug.LogFormat("PUN - Setting default character id.");
+            //PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.CharacterId, 0);
+            //PlayerCustomPropertyUtility.SynchronizePlayerCustomProperties(PhotonNetwork.LocalPlayer);
         }
         #endregion
 
