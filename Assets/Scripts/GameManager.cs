@@ -72,6 +72,22 @@ namespace Zoca
 
         }
 
+        public void PlayOfflineMatch(int numOfPlayers)
+        {
+            PhotonNetwork.OfflineMode = true;
+
+            // Create the offline room
+            // Any old instance will be destroyed
+            OfflineRoom.Create(numOfPlayers);
+            
+
+
+
+            RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty("Pippo", "aaa");
+            RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchStateTimestamp, (float)PhotonNetwork.Time);
+
+        }
+
         public void Resume()
         {
             

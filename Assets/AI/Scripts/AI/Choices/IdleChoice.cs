@@ -17,6 +17,8 @@ namespace Zoca.AI
 
         FireWeapon fireWeapon;
 
+        bool interpolateWaypoints = false;
+
         #endregion
 
         public IdleChoice(PlayerAI owner) :base(owner) 
@@ -35,10 +37,14 @@ namespace Zoca.AI
 
         public override void PerformAction()
         {
+            if(ball == null)
+                ball = GameObject.FindGameObjectWithTag(Tag.Ball);
+
             // We interpolate the player position with the two closest helpers
             // Waypoint from the two closest helpers
             Transform waypoint = teamHelper.FormationHelpers[0].GetChild(Owner.WaypointIndex);
             Transform waypoint2 = teamHelper.FormationHelpers[1].GetChild(Owner.WaypointIndex);
+
 
             // Position from the first helper
             Vector3 pos = new Vector3(waypoint.position.x - teamHelper.FormationHelpers[0].position.x, 0,  waypoint.position.z - teamHelper.FormationHelpers[0].position.z);
@@ -54,8 +60,12 @@ namespace Zoca.AI
             Vector3 closestToBall = ball.transform.position - teamHelper.FormationHelpers[0].position;
             Vector3 closestToClosest2 = teamHelper.FormationHelpers[1].position - teamHelper.FormationHelpers[0].position;
             float ballDistProj = Vector3.Dot(closestToBall, closestToClosest2);
-            // Position interpolation
-            pos = Vector3.Lerp(pos, pos2, closestToBall.magnitude / closestToClosest2.magnitude);
+            if (interpolateWaypoints)
+            {
+                // Position interpolation
+                pos = Vector3.Lerp(pos, pos2, closestToBall.magnitude / closestToClosest2.magnitude);
+            }
+            
 
             // Need to sprint?
             // We sprint when:

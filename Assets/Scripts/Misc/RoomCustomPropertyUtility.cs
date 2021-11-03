@@ -21,7 +21,8 @@ namespace Zoca
 
     public class RoomCustomPropertyUtility
     {
-        public static void SynchronizeRoomCustomProperties(Room room)
+        #region private
+        static void SynchronizeRoomCustomProperties(Room room)
         {
             if (room == null)
             {
@@ -32,12 +33,9 @@ namespace Zoca
             room.SetCustomProperties(room.CustomProperties);
         }
 
-        public static void SynchronizeCurrentRoomCustomProperties()
-        {
-            SynchronizeRoomCustomProperties(PhotonNetwork.CurrentRoom);
-        }
+       
 
-        public static void AddOrUpdateRoomCustomProperty(Room room, string key, object value)
+        static void AddOrUpdateRoomCustomProperty(Room room, string key, object value)
         {
             if(room == null)
             {
@@ -57,44 +55,40 @@ namespace Zoca
            
         }
 
-        public static void AddOrUpdateCurrentRoomCustomProperty(string key, object value)
-        {
-            AddOrUpdateRoomCustomProperty(PhotonNetwork.CurrentRoom, key, value);
-        }
+      
 
-        public static object GetRoomCustomProperty(Room room, string key)
+        static object GetRoomCustomProperty(Room room, string key)
         {
             if (!room.CustomProperties.ContainsKey(key))
                 return null;
 
             return room.CustomProperties[key];
         }
+        #endregion
+
+        #region public
+        public static void AddOrUpdateCurrentRoomCustomProperty(string key, object value)
+        {
+            if (!PhotonNetwork.OfflineMode)
+                AddOrUpdateRoomCustomProperty(PhotonNetwork.CurrentRoom, key, value);
+            else
+                OfflineRoom.AddOrUpdateCustomProperty(key, value);
+        }
 
         public static object GetCurrentRoomCustomProperty(string key)
         {
-            return GetRoomCustomProperty(PhotonNetwork.CurrentRoom, key);
+            if (!PhotonNetwork.OfflineMode)
+                return GetRoomCustomProperty(PhotonNetwork.CurrentRoom, key);
+            else
+                return OfflineRoom.GetCustomProperty(key);
         }
 
-        //public static bool TryGetRoomCustomProperty<T>(Room room, string key, ref T value)
-        //{
-        //    if (room == null)
-        //    {
-        //        Debug.LogWarningFormat("RoomCustomPropertyUtility - No room available, Room:{0}", room);
-        //        return false;
-        //    }
+        public static void SynchronizeCurrentRoomCustomProperties()
+        {
+            SynchronizeRoomCustomProperties(PhotonNetwork.CurrentRoom);
+        }
 
-        //    if (!room.CustomProperties.ContainsKey(key))
-        //        return false;
-
-        //    value = (T)room.CustomProperties[key];
-        //    return true;
-        //}
-
-        //public static bool TryGetCurrentRoomCustomProperty<T>(string key, ref T value)
-        //{
-        //    return TryGetRoomCustomProperty<T>(PhotonNetwork.CurrentRoom, key, ref value);
-        //}
-
+        #endregion
     }
 
 }

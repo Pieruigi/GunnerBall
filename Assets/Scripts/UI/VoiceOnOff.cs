@@ -20,6 +20,9 @@ namespace Zoca.UI
         // Start is called before the first frame update
         void Start()
         {
+            if (!VoiceManager.Instance)
+                return;
+
             VoiceManager.Instance.OnVoiceEnabled += VoiceUpdate;
             VoiceManager.Instance.OnVoiceDisabled += VoiceUpdate;
 
@@ -34,6 +37,8 @@ namespace Zoca.UI
 
         private void OnDestroy()
         {
+            if (!VoiceManager.Instance)
+                return;
             VoiceManager.Instance.OnVoiceEnabled -= VoiceUpdate;
             VoiceManager.Instance.OnVoiceDisabled -= VoiceUpdate;
         }
