@@ -860,14 +860,7 @@ namespace Zoca
                 OnPaused?.Invoke();
         }
 
-        public void OnVoiceOnOff(InputAction.CallbackContext context)
-        {
-            if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
-                return;
-
-            if (context.started)
-                VoiceManager.Instance.SwitchVoiceOnOff();
-        }
+       
 
 
 #endregion
