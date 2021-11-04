@@ -229,7 +229,7 @@ namespace Zoca
 
             animationController = GetComponent<AnimationController>();
 
-            if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
+            if (!photonView.IsMine)// && !PhotonNetwork.OfflineMode)
             {
                 // This is not the local player
                 Destroy(playerCamera.gameObject);

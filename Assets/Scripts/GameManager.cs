@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 using Zoca.UI;
 using UnityEngine.Events;
 
+
 namespace Zoca
 {
     public class GameManager : MonoBehaviourPunCallbacks
@@ -306,7 +307,7 @@ namespace Zoca
                             int id = actorNumber % (2*teamPlayers);
                             spawnPoint = LevelManager.Instance.RedTeamSpawnPoints[id];
                         }
-                        // Spawn
+                        // Spawn local player
                         PhotonNetwork.Instantiate(System.IO.Path.Combine(ResourceFolder.Characters, playerPrefab.name), spawnPoint.position, spawnPoint.rotation);
                     }
 
@@ -321,7 +322,6 @@ namespace Zoca
                             PhotonNetwork.InstantiateRoomObject(System.IO.Path.Combine(ResourceFolder.Balls, ballPrefab.name), LevelManager.Instance.BallSpawnPoint.position, Quaternion.identity); 
                             Debug.LogFormat("GameManager - Scene manager: {0}; Ball created:{1}", LevelManager.Instance, Ball.Instance);
                         }
-                        
                         
                     }
 
@@ -353,6 +353,41 @@ namespace Zoca
                         PhotonNetwork.InstantiateRoomObject(System.IO.Path.Combine(ResourceFolder.Balls, ballPrefab.name), LevelManager.Instance.BallSpawnPoint.position, Quaternion.identity);
                         Debug.LogFormat("GameManager - Scene manager: {0}; Ball created:{1}", LevelManager.Instance, Ball.Instance);
                     }
+
+                    // Spawn the AIs
+                    int count = PhotonNetwork.CurrentRoom.MaxPlayers - 1;
+                    Team playerTeam = (Team)PlayerCustomPropertyUtility.GetLocalPlayerCustomProperty(PlayerCustomPropertyKey.TeamColor);
+                    Team opponentTeam = playerTeam == Team.Blue ? Team.Red : Team.Blue;
+                    int spawnPointId = 1;
+                    for(int i=0; i<count; i++)
+                    {
+                        //PhotonNetwork.CurrentRoom.AddPlayer();
+                        Player newPlayer = Player.CreateOfflinePlayer(i + 2);
+                        PhotonNetwork.CurrentRoom.AddPlayer(newPlayer);
+                        if(i+1 < PhotonNetwork.CurrentRoom.MaxPlayers / 2)
+                        {
+                            PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(newPlayer, PlayerCustomPropertyKey.TeamColor, playerTeam);
+                            spawnPoint = LevelManager.Instance.BlueTeamSpawnPoints[spawnPointId];
+                        }
+                        else
+                        {
+                            if (i + 1 == PhotonNetwork.CurrentRoom.MaxPlayers / 2)
+                                spawnPointId = 0; // Reset the spawn point id
+
+                            PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(newPlayer, PlayerCustomPropertyKey.TeamColor, opponentTeam);
+                            spawnPoint = LevelManager.Instance.RedTeamSpawnPoints[spawnPointId];
+                        }
+                            
+
+                        GameObject newPlayerObject = GameObject.Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
+                        //GameObject newPlayerObject = PhotonNetwork.Instantiate(System.IO.Path.Combine(ResourceFolder.Characters, playerPrefab.name), spawnPoint.position, spawnPoint.rotation);
+                        newPlayerObject.GetComponent<PhotonView>().OwnerActorNr = i + 2;
+                    }
+
+                    Debug.Log("Players.Count: " + PhotonNetwork.CurrentRoom.Players.Count);
+                    Debug.LogFormat("OfflinePlayer: {0}, team:{1}", PhotonNetwork.CurrentRoom.Players[1].NickName, PhotonNetwork.CurrentRoom.Players[1].CustomProperties[PlayerCustomPropertyKey.TeamColor]);
+                    Debug.LogFormat("OfflinePlayer: {0}, team:{1}", PhotonNetwork.CurrentRoom.Players[2].NickName, PhotonNetwork.CurrentRoom.Players[2].CustomProperties[PlayerCustomPropertyKey.TeamColor]);
+
 
                 }
 

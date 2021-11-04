@@ -44,6 +44,16 @@ namespace Photon.Realtime
         /// </summary>
         protected internal Room RoomReference { get; set; }
 
+        /// <summary>
+        /// Added by Zoca to create offline players
+        /// </summary>
+        /// <param name="actorNumber"></param>
+        /// <returns></returns>
+        public static Player CreateOfflinePlayer(int actorNumber)
+        {
+            Player p = new Player(String.Format("Player_{0}", actorNumber), actorNumber, true);
+            return p;
+        }
 
         /// <summary>Backing field for property.</summary>
         private int actorNumber = -1;
