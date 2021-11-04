@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
+using Zoca.AI;
 using Zoca.Interfaces;
 
 namespace Zoca
@@ -211,6 +212,12 @@ namespace Zoca
 #endif
         #endregion
 
+        #region ai 
+        Vector3 destination;
+        bool hasDestination = false;
+        float minDistSqr = 4f;
+        #endregion
+
         AnimationController animationController;
 
         private void Awake()
@@ -289,6 +296,29 @@ namespace Zoca
 
             if (photonView.IsMine || PhotonNetwork.OfflineMode)
             {
+
+                if (GetComponent<PlayerAI>().Activated)
+                {
+                    // Check ai destination if any
+                    if (hasDestination)
+                    {
+                        Vector3 v = destination - transform.position;
+                        if (v.sqrMagnitude < minDistSqr)
+                        {
+                            hasDestination = false;
+                            Move(false, Vector2.zero);
+
+                        }
+                        else
+                        {
+                            //moveDir = new Vector2(v.x, v.z);
+                            Move(true, new Vector2(v.x, v.z).normalized);
+                        }
+
+
+
+                    }
+                }
 
                 // Check for sprinting input
                 if (sprintInput && stamina > 0)
@@ -596,6 +626,27 @@ namespace Zoca
             Debug.Log("Moving to " + moveInput);
         }
 
+        /// <summary>
+        /// For AI
+        /// </summary>
+        /// <param name="destination"></param>
+        public void MoveTo(Vector3 destination)
+        {
+            // Get distance
+            Debug.Log("Move to " + destination);
+            float sqrDist = Vector3.SqrMagnitude(transform.position - destination);
+
+            hasDestination = true;
+            this.destination = destination;
+
+        }
+
+        public void Sprint(bool value)
+        {
+            sprintInput = value;
+   
+        }
+
         public void Hit(GameObject owner, Vector3 hitPoint, Vector3 hitNormal, Vector3 hitDirection, float hitDamage)
         {
             
@@ -757,18 +808,20 @@ namespace Zoca
 
             if (context.performed)
             {
-                if (!sprintInput /*&& moveInput.x == 0 && moveInput.y > 0 */)
-                {
-                    //sprinting = true;
-                    sprintInput = true;
-                }
+                Sprint(true);
+                //if (!sprintInput /*&& moveInput.x == 0 && moveInput.y > 0 */)
+                //{
+                //    //sprinting = true;
+                //    sprintInput = true;
+                //}
             }
             else
             {
-                if (sprintInput)
-                {
-                    sprintInput = false;
-                }
+                Sprint(false);
+                //if (sprintInput)
+                //{
+                //    sprintInput = false;
+                //}
             }
         }
 

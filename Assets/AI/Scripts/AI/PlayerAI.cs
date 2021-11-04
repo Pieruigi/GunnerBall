@@ -1,4 +1,4 @@
-#define TEST
+//#define TEST
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -26,6 +26,7 @@ namespace Zoca.AI
         public Team Team
         {
             get { return team; }
+            set { team = value; }
         }
         public PlayerBehaviour Behaviour
         {
@@ -34,6 +35,10 @@ namespace Zoca.AI
         public int WaypointIndex
         {
             get { return waypointIndex; }
+        }
+        public bool Activated
+        {
+            get { return !deactivated; }
         }
 #if TEST
         public FakePlayerController PlayerController
@@ -49,8 +54,7 @@ namespace Zoca.AI
         #endregion
 
         #region private fields
-        bool deactivated = false;
-
+        bool deactivated = true;
         List<Choice> choices; // The list of all the available choices
         Choice lastChoice;
 
@@ -147,7 +151,15 @@ namespace Zoca.AI
             waypointIndex = index;
         }
 
-        
+        public void Activate()
+        {
+            deactivated = false;
+        }
+
+        public void Deactivate()
+        {
+            deactivated = true;
+        }
 
         #endregion
 

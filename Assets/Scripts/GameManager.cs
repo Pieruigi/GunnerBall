@@ -7,7 +7,7 @@ using Photon.Realtime;
 using UnityEngine.SceneManagement;
 using Zoca.UI;
 using UnityEngine.Events;
-
+using Zoca.AI;
 
 namespace Zoca
 {
@@ -380,6 +380,8 @@ namespace Zoca
                             
 
                         GameObject newPlayerObject = GameObject.Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
+                        newPlayerObject.GetComponent<PlayerAI>().Activate();
+                        newPlayerObject.GetComponent<PlayerAI>().Team = (Team)PlayerCustomPropertyUtility.GetPlayerCustomProperty(newPlayer, PlayerCustomPropertyKey.TeamColor);
                         //GameObject newPlayerObject = PhotonNetwork.Instantiate(System.IO.Path.Combine(ResourceFolder.Characters, playerPrefab.name), spawnPoint.position, spawnPoint.rotation);
                         newPlayerObject.GetComponent<PhotonView>().OwnerActorNr = i + 2;
                     }

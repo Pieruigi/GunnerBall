@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 4989537266413133277}
   - component: {fileID: 5990213063411280542}
   - component: {fileID: 6883992551167893711}
+  - component: {fileID: 4069958166935038270}
   m_Layer: 0
   m_Name: FemalePlayer
   m_TagString: Player
@@ -366,6 +367,21 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
+--- !u!114 &4069958166935038270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 707472009685262571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85f19122eed4997418f365417167e56b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  reactionTime: 0.25
+  team: 1
+  behaviour: 0
 --- !u!114 &4841784480799159600
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1222,6 +1238,11 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: a12f84b3e8aebaa47abe0a27d4ee219f, type: 3}
   m_PrefabInstance: {fileID: 5924224315358789918}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &4512375725258470362 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7829577706673091268, guid: a12f84b3e8aebaa47abe0a27d4ee219f, type: 3}
+  m_PrefabInstance: {fileID: 5924224315358789918}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8266200082404082135 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -6881390770214846263, guid: a12f84b3e8aebaa47abe0a27d4ee219f, type: 3}
@@ -1230,11 +1251,6 @@ Transform:
 --- !u!4 &8308760176317074742 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2412161367050800168, guid: a12f84b3e8aebaa47abe0a27d4ee219f, type: 3}
-  m_PrefabInstance: {fileID: 5924224315358789918}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &4512375725258470362 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7829577706673091268, guid: a12f84b3e8aebaa47abe0a27d4ee219f, type: 3}
   m_PrefabInstance: {fileID: 5924224315358789918}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6565853404604888399
