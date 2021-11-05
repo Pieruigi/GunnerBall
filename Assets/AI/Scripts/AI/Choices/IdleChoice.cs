@@ -15,9 +15,10 @@ namespace Zoca.AI
         TeamHelper teamHelper;
         GameObject ball;
 
-        FireWeapon fireWeapon;
-
         bool interpolateWaypoints = false;
+
+        Transform waypoint;
+        Vector3 targetPosition;
 
         #endregion
 
@@ -32,65 +33,50 @@ namespace Zoca.AI
 
         public override void Evaluate()
         {
-            Weight = 1;
+            SetTargetWaypoint();
+            SetTargetPosition();
+            if ((Owner.transform.position - targetPosition).magnitude > Owner.PlayerController.FireWeapon.FireRange)
+                Weight = 1;
+            else
+                Weight = 0;
+            
         }
 
         public override void PerformAction()
         {
-            if(ball == null)
-                ball = GameObject.FindGameObjectWithTag(Tag.Ball);
+            if (!waypoint)
+                return;
 
-            // We interpolate the player position with the two closest helpers
-            // Waypoint from the two closest helpers
-            Transform waypoint = teamHelper.FormationHelpers[0].GetChild(Owner.WaypointIndex);
-            Transform waypoint2 = teamHelper.FormationHelpers[1].GetChild(Owner.WaypointIndex);
-
-
-            // Position from the first helper
-            Vector3 pos = new Vector3(waypoint.position.x - teamHelper.FormationHelpers[0].position.x, 0,  waypoint.position.z - teamHelper.FormationHelpers[0].position.z);
-            pos += ball.transform.position;
-            pos.y = 0;
-
-            // Position from the second helper
-            Vector3 pos2 = new Vector3(waypoint2.position.x - teamHelper.FormationHelpers[1].position.x, 0, waypoint2.position.z - teamHelper.FormationHelpers[1].position.z);
-            pos2 += ball.transform.position;
-            pos2.y = 0;
-
-            // Closest->Ball projected on closets->closets2
-            Vector3 closestToBall = ball.transform.position - teamHelper.FormationHelpers[0].position;
-            Vector3 closestToClosest2 = teamHelper.FormationHelpers[1].position - teamHelper.FormationHelpers[0].position;
-            float ballDistProj = Vector3.Dot(closestToBall, closestToClosest2);
-            if (interpolateWaypoints)
-            {
-                // Position interpolation
-                pos = Vector3.Lerp(pos, pos2, closestToBall.magnitude / closestToClosest2.magnitude);
-            }
-            
+         
 
             // Need to sprint?
             // We sprint when:
             // 1. the ai is too far away from the ball
             // 2. the ball is running towards the goal line defended by the ai
             bool sprinting = false;
-            if (!Owner.PlayerController.Sprinting)
+           
+            if (Owner.PlayerController.Stamina /*/ Owner.PlayerController.StaminaMax*/ > 0f)
             {
-                if(Owner.PlayerController.Stamina / Owner.PlayerController.StaminaMax > .33f)
-                {
-                    // 1. too far away
-                    Vector3 aiToPosV = pos - Owner.transform.position;// Vector from the ai to the pos 
-                    if (aiToPosV.magnitude > GetFireWeaponRange())
-                        sprinting = true;
+                // 1. too far away
+                Vector3 aiToPosV = targetPosition - Owner.transform.position;// Vector from the ai to the pos 
+                if (aiToPosV.magnitude > Owner.PlayerController.FireWeapon.FireRange)
+                    sprinting = true;
 
-                    // 2. sprint to denfend
-                    // At the moment the same ( we could just spare a little of stamina in case )
-                }
-
-
-
+                // 2. sprint to denfend
+                // At the moment the same ( we could just spare a little of stamina in case )
             }
-          
-
-            Owner.PlayerController.Sprint(sprinting);
+            
+            if(sprinting)
+            {
+                if(!Owner.PlayerController.Sprinting)
+                    Owner.PlayerController.Sprint(sprinting);
+            }
+            else
+            {
+                if (Owner.PlayerController.Sprinting)
+                    Owner.PlayerController.Sprint(sprinting);
+            }
+                
 
             if (!Owner.PlayerController.Sprinting)
             {
@@ -100,16 +86,29 @@ namespace Zoca.AI
 
 
             // Move to destination
-            Owner.PlayerController.MoveTo(pos);
+            Owner.PlayerController.MoveTo(targetPosition);
 
             
 
         }
 
-        float GetFireWeaponRange()
+        void SetTargetWaypoint()
         {
-            return 10;
+            Debug.Log("Closest:" + teamHelper.GetTheClosestFormationHelper());
+            waypoint = teamHelper.GetTheClosestFormationHelper().GetChild(Owner.WaypointIndex);
         }
+
+        void SetTargetPosition()
+        {
+            if (ball == null)
+                ball = GameObject.FindGameObjectWithTag(Tag.Ball);
+
+            // Position from the first helper
+            targetPosition = new Vector3(waypoint.position.x - waypoint.parent.position.x, 0, waypoint.position.z - waypoint.parent.position.z);
+            targetPosition += ball.transform.position;
+            targetPosition.y = 0;
+        }
+
     }
 
 }

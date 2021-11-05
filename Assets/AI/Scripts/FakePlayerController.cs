@@ -14,6 +14,13 @@ public class FakePlayerController : MonoBehaviour
     float sprintMul = 2;
 
     [SerializeField]
+    FireWeapon fireWeapon;
+    public FireWeapon FireWeapon
+    {
+        get { return fireWeapon; }
+    }
+
+    [SerializeField]
     Transform testTarget;
 
     #region private fields
@@ -104,7 +111,10 @@ public class FakePlayerController : MonoBehaviour
                 targetSpeed = maxSpeed;
             }
         }
-
+        if (sprinting)
+        {
+            transform.forward = targetDir;
+        }
     
         Vector3 targetVelocity = targetSpeed * targetDir;
 

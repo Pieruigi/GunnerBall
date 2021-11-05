@@ -75,12 +75,14 @@ namespace Zoca.AI
             // Get player controller
 #if TEST
             playerController = GetComponent<FakePlayerController>();
+            deactivated = false;
 #else
             playerController = GetComponent<PlayerController>();
 #endif
 
             choices = new List<Choice>();
             choices.Add(new IdleChoice(this));
+            choices.Add(new ShootChoice(this));
         }
         
 

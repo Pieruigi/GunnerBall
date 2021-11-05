@@ -40,7 +40,7 @@ namespace Zoca.AI
         List<PlayerAI> players;
         int playersPerTeam = 1; // How many players per team
         GameObject formationObject;
-        int formationIndex = 1;
+        int formationIndex = 0;
         Transform ball;
 
         Transform closestFormationHelper;
@@ -64,7 +64,7 @@ namespace Zoca.AI
 
         void LateUpdate()
         {
-            OrderHelpersByBallDistance();
+            //OrderHelpersByBallDistance();
 
             lastClosestFormationHelper = closestFormationHelper;
             closestFormationHelper = null;
@@ -93,7 +93,7 @@ namespace Zoca.AI
             // Create the formation game object
             SetFormationObject(formationPrefabs[formationIndex]);
 
-            OrderHelpersByBallDistance();
+            //OrderHelpersByBallDistance();
 
             // Compute the positions the players should keep around the ball
             for (int i=0; i<playersPerTeam; i++)
@@ -130,6 +130,7 @@ namespace Zoca.AI
         /// <summary>
         /// Rearrange the list of helper in increasing ordered by the distance from each helper and the ball
         /// </summary>
+        /*
         void OrderHelpersByBallDistance()
         {
             // Compute the distance between the ball and each helper in the helper list
@@ -160,14 +161,14 @@ namespace Zoca.AI
                 tmpHelpers.Insert(index, formationHelpers[i]);
             }
 
-            Debug.Log("Order-----------------------");
-            foreach (Transform d in tmpHelpers)
-                Debug.Log(d);
+            //Debug.Log("Order-----------------------");
+            //foreach (Transform d in tmpHelpers)
+            //    Debug.Log(d);
 
             formationHelpers = tmpHelpers;
 
         }
-
+        */
         #endregion
 
         #region public
