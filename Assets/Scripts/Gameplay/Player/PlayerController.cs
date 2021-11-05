@@ -212,11 +212,11 @@ namespace Zoca
 #endif
         #endregion
 
-        #region ai 
-        Vector3 destination;
-        bool hasDestination = false;
-        float minDistSqr = 4f;
-        #endregion
+        //#region ai 
+        //Vector3 destination;
+        //bool hasDestination = false;
+        //float minDistSqr = 4f;
+        //#endregion
 
         AnimationController animationController;
 
@@ -296,29 +296,29 @@ namespace Zoca
 
             if (photonView.IsMine || PhotonNetwork.OfflineMode)
             {
+                //// If AI is enabled then 
+                //if (GetComponent<PlayerAI>().Activated)
+                //{
+                //    // Check ai destination if any
+                //    if (hasDestination)
+                //    {
+                //        Vector3 v = destination - transform.position;
+                //        if (v.sqrMagnitude < minDistSqr)
+                //        {
+                //            hasDestination = false;
+                //            Move(false, Vector2.zero);
 
-                if (GetComponent<PlayerAI>().Activated)
-                {
-                    // Check ai destination if any
-                    if (hasDestination)
-                    {
-                        Vector3 v = destination - transform.position;
-                        if (v.sqrMagnitude < minDistSqr)
-                        {
-                            hasDestination = false;
-                            Move(false, Vector2.zero);
-
-                        }
-                        else
-                        {
-                            //moveDir = new Vector2(v.x, v.z);
-                            Move(true, new Vector2(v.x, v.z).normalized);
-                        }
+                //        }
+                //        else
+                //        {
+                //            //moveDir = new Vector2(v.x, v.z);
+                //            Move(true, new Vector2(v.x, v.z).normalized);
+                //        }
 
 
 
-                    }
-                }
+                //    }
+                //}
 
                 // Check for sprinting input
                 if (sprintInput && stamina > 0)
@@ -630,16 +630,16 @@ namespace Zoca
         /// For AI
         /// </summary>
         /// <param name="destination"></param>
-        public void MoveTo(Vector3 destination)
-        {
-            // Get distance
-            Debug.Log("Move to " + destination);
-            float sqrDist = Vector3.SqrMagnitude(transform.position - destination);
+        //public void MoveTo(Vector3 destination)
+        //{
+        //    // Get distance
+        //    Debug.Log("Move to " + destination);
+        //    float sqrDist = Vector3.SqrMagnitude(transform.position - destination);
 
-            hasDestination = true;
-            this.destination = destination;
+        //    hasDestination = true;
+        //    this.destination = destination;
 
-        }
+        //}
 
         public void Sprint(bool value)
         {

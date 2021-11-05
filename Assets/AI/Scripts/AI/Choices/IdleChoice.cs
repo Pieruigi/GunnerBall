@@ -35,7 +35,7 @@ namespace Zoca.AI
         {
             SetTargetWaypoint();
             SetTargetPosition();
-            if ((Owner.transform.position - targetPosition).magnitude > Owner.PlayerController.FireWeapon.FireRange)
+            if ((Owner.transform.position - targetPosition).magnitude > Owner.FireWeapon.FireRange)
                 Weight = 1;
             else
                 Weight = 0;
@@ -55,11 +55,12 @@ namespace Zoca.AI
             // 2. the ball is running towards the goal line defended by the ai
             bool sprinting = false;
            
-            if (Owner.PlayerController.Stamina /*/ Owner.PlayerController.StaminaMax*/ > 0f)
+            //if (Owner.PlayerController.Stamina /*/ Owner.PlayerController.StaminaMax*/ > 0f)
+            if(Owner.CanSprint())
             {
                 // 1. too far away
                 Vector3 aiToPosV = targetPosition - Owner.transform.position;// Vector from the ai to the pos 
-                if (aiToPosV.magnitude > Owner.PlayerController.FireWeapon.FireRange)
+                if (aiToPosV.magnitude > Owner.FireWeapon.FireRange)
                     sprinting = true;
 
                 // 2. sprint to denfend
@@ -68,27 +69,28 @@ namespace Zoca.AI
             
             if(sprinting)
             {
-                if(!Owner.PlayerController.Sprinting)
-                    Owner.PlayerController.Sprint(sprinting);
+                if(!Owner.Sprinting)
+                    Owner.Sprint(sprinting);
             }
             else
             {
-                if (Owner.PlayerController.Sprinting)
-                    Owner.PlayerController.Sprint(sprinting);
+                if (Owner.Sprinting)
+                    Owner.Sprint(sprinting);
             }
                 
 
-            if (!Owner.PlayerController.Sprinting)
+            if (!Owner.Sprinting)
             {
-                Owner.PlayerController.LookAtTheBall();
+                Owner.LookAtTheBall();
             }
 
 
 
             // Move to destination
-            Owner.PlayerController.MoveTo(targetPosition);
+            //Owner.PlayerController.MoveTo(targetPosition);
+            Owner.MoveTo(targetPosition);
 
-            
+
 
         }
 
@@ -105,8 +107,10 @@ namespace Zoca.AI
 
             // Position from the first helper
             targetPosition = new Vector3(waypoint.position.x - waypoint.parent.position.x, 0, waypoint.position.z - waypoint.parent.position.z);
-            targetPosition += ball.transform.position;
+            targetPosition += ball.transform.position;// + new Vector3(Random.Range(-4f, 4f), 0, Random.Range(-4f, 4f));
             targetPosition.y = 0;
+
+            
         }
 
     }

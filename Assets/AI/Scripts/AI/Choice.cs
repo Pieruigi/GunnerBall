@@ -35,7 +35,7 @@ namespace Zoca.AI
 
         #region private fields
         float weight = 0;
-        float weightErr = .75f;
+        float weightErr = .3f;
         PlayerAI owner;
         #endregion
 

@@ -1,4 +1,4 @@
-//#define TEST
+#define TEST
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -40,17 +40,25 @@ namespace Zoca.AI
         {
             get { return !deactivated; }
         }
-#if TEST
-        public FakePlayerController PlayerController
+        public bool Sprinting
         {
-            get { return playerController; }
+            get { return playerController.Sprinting; }
         }
-#else
-        public PlayerController PlayerController
+        public FireWeapon FireWeapon
         {
-            get { return playerController; }
+            get { return playerController.FireWeapon; }
         }
-#endif
+//#if TEST
+//        public FakePlayerController PlayerController
+//        {
+//            get { return playerController; }
+//        }
+//#else
+//        public PlayerController PlayerController
+//        {
+//            get { return playerController; }
+//        }
+//#endif
         #endregion
 
         #region private fields
@@ -61,6 +69,11 @@ namespace Zoca.AI
         DateTime lastReaction;
 
         int waypointIndex = 0;
+
+        // Destination 
+        Vector3 destination;
+        bool hasDestination = false;
+        float minDistSqr = 4f;
 
 #if TEST
         FakePlayerController playerController;
@@ -97,6 +110,26 @@ namespace Zoca.AI
         {
             if (deactivated)
                 return;
+
+            // Check if the AI has a destination to reach
+            if (hasDestination)
+            {
+                Vector3 v = destination - transform.position;
+                if (v.sqrMagnitude < minDistSqr)
+                {
+                    hasDestination = false;
+                    playerController.Move(false, Vector2.zero);
+
+                }
+                else
+                {
+                    //moveDir = new Vector2(v.x, v.z);
+                    playerController.Move(true, new Vector2(v.x, v.z).normalized);
+                }
+
+
+
+            }
 
             if ((DateTime.UtcNow - lastReaction).TotalSeconds > reactionTime)
             {
@@ -163,6 +196,31 @@ namespace Zoca.AI
             deactivated = true;
         }
 
+        public void MoveTo(Vector3 destination)
+        {
+            // Get distance
+            Debug.Log("Move to " + destination);
+            float sqrDist = Vector3.SqrMagnitude(transform.position - destination);
+
+            hasDestination = true;
+            this.destination = destination;
+
+        }
+
+        public void Sprint(bool value)
+        {
+            playerController.Sprint(value);
+        }
+
+        public bool CanSprint()
+        {
+            return playerController.Stamina > 0;
+        }
+
+        public void LookAtTheBall()
+        {
+            playerController.LookAtTheBall();
+        }
         #endregion
 
         #region debug

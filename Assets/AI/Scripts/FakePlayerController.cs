@@ -54,24 +54,24 @@ public class FakePlayerController : MonoBehaviour
 
         CheckTestTarget();
 
-        if(hasDestination)
-        {
-            Vector3 v = destination - transform.position;
-            if(v.sqrMagnitude < minDistSqr)
-            {
-                hasDestination = false;
-                Move(false, Vector2.zero);
+        //if(hasDestination)
+        //{
+        //    Vector3 v = destination - transform.position;
+        //    if(v.sqrMagnitude < minDistSqr)
+        //    {
+        //        hasDestination = false;
+        //        Move(false, Vector2.zero);
 
-            }
-            else
-            {
-                moveDir = new Vector2(v.x, v.z);
-                Move(true, moveDir.normalized);
-            }
+        //    }
+        //    else
+        //    {
+        //        moveDir = new Vector2(v.x, v.z);
+        //        Move(true, moveDir.normalized);
+        //    }
             
 
             
-        }
+        //}
 
         CheckMovement();
       
@@ -111,15 +111,17 @@ public class FakePlayerController : MonoBehaviour
                 targetSpeed = maxSpeed;
             }
         }
-        if (sprinting)
-        {
-            transform.forward = targetDir;
-        }
+        
     
         Vector3 targetVelocity = targetSpeed * targetDir;
 
         // Adjust current velocity
         velocity = Vector3.MoveTowards(velocity, targetVelocity, Time.deltaTime * acc);
+
+        if (sprinting)
+        {
+            transform.forward = velocity.normalized;
+        }
 
         // Move player
         transform.position += velocity * Time.deltaTime;
