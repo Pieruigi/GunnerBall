@@ -46,6 +46,9 @@ namespace Zoca.AI
         // Call every time you want to perform this action
         public abstract void PerformAction();
 
+       
+        public abstract void StopPerformingAction();
+
         #endregion
 
         public Choice(PlayerAI owner)
@@ -60,30 +63,6 @@ namespace Zoca.AI
 
     }
 
-    //public class Idle : Choice
-    //{
-    //    public override void Evaluate()
-    //    {
-    //        Weight = (float)ChoiceWeight.High;
-    //    }
-
-    //    public override void PerformAction()
-    //    {
-    //        Debug.Log("Performing " + this.GetType().Name);
-    //    }
-    //}
-
-    //public class RunToDefendChoice : Choice
-    //{
-    //    public override void Evaluate()
-    //    {
-    //        Weight = (float)ChoiceWeight.Medium;
-    //    }
-
-    //    public override void PerformAction()
-    //    {
-    //        Debug.Log("Performing " + this.GetType().Name);
-    //    }
-    //}
+   
 
 }

@@ -23,6 +23,10 @@ namespace Zoca.AI
         #endregion
 
         #region properties
+        public float ReactionTime
+        {
+            get { return reactionTime; }
+        }
         public Team Team
         {
             get { return team; }
@@ -64,7 +68,7 @@ namespace Zoca.AI
         #region private fields
         bool deactivated = true;
         List<Choice> choices; // The list of all the available choices
-        Choice lastChoice;
+        Choice currentChoice;
 
         DateTime lastReaction;
 
@@ -96,7 +100,7 @@ namespace Zoca.AI
 
             choices = new List<Choice>();
             choices.Add(new IdleChoice(this));
-            choices.Add(new ShootChoice(this));
+           // choices.Add(new ShootChoice(this));
         }
         
 
@@ -135,9 +139,17 @@ namespace Zoca.AI
             {
                 EvaluateChoices(); // Update choices weights
 
-                lastChoice = GetBestChoice(); // Get the more convenient choice
+                Choice lastChoice = currentChoice;
+                currentChoice = GetTheBestChoice(); // Get the more convenient choice
 
-                lastChoice?.PerformAction(); // Perform action
+                // If the current choice is not the last choice we must stop the last choice
+                if(lastChoice != currentChoice)
+                {
+                    lastChoice?.StopPerformingAction();
+                    //currentChoice?.StartPerformingAction();
+                }
+
+                currentChoice?.PerformAction(); // Perform action
 
 
                 //PrintLog(); /// Only for test
@@ -150,7 +162,7 @@ namespace Zoca.AI
                 choice.Evaluate();
         }
 
-        Choice GetBestChoice()
+        Choice GetTheBestChoice()
         {
             float max = 0;
             Choice ret = null;

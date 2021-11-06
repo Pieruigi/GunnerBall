@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,7 +12,7 @@ namespace Zoca.AI
 
         Vector3 target;
         bool hasTarget = false;
-        float shootCooldown = 0;
+        DateTime lastShootTime;
 
         public ShootChoice(PlayerAI owner) : base(owner) 
         {
@@ -29,20 +30,24 @@ namespace Zoca.AI
             }
             else
             {
-                hasTarget = false;
+                Reset();
                 Weight = 0;
             }
                 
         }
 
+      
+        public override void StopPerformingAction()
+        {
+            Reset();
+        }
+
+
         public override void PerformAction()
         {
-            if(shootCooldown > 0)
-            {
-                shootCooldown -= Time.deltaTime;
-            }
+        
 
-            // AI must choose where to shoot the ball
+            //AI must choose where to shoot the ball
             if (!hasTarget)
             {
                 Vector3 playerToBall = ball.transform.position - Owner.transform.position;
@@ -83,22 +88,22 @@ namespace Zoca.AI
             // Check aim
             if(Owner.transform.forward == targetFwd.normalized)
             {
-                if(shootCooldown <= 0)
+                if( (DateTime.UtcNow - lastShootTime).TotalSeconds > 1f/Owner.FireWeapon.FireRate)
                 {
-                    shootCooldown = 1;
+                    lastShootTime = DateTime.UtcNow;
                     Debug.DrawRay(Owner.transform.position, Owner.transform.forward * 10, Color.red, 5);
-                    hasTarget = false;
+                    Reset();
+                    
                 }
                 
             }
-            //else
-            //{
-            //    Owner.PlayerController.LookAtTheBall();
-            //}
+            
+        }
 
-           
-
-
+        void Reset()
+        {
+            
+            hasTarget = false;
         }
     }
 

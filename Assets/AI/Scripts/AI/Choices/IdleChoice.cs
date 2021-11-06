@@ -19,14 +19,15 @@ namespace Zoca.AI
 
         Transform waypoint;
         Vector3 targetPosition;
-
+        
+        float sprintElapsed = 0;
         #endregion
 
         public IdleChoice(PlayerAI owner) :base(owner) 
         {
             teamHelper = new List<TeamHelper>(GameObject.FindObjectsOfType<TeamHelper>()).Find(t => t.Team == owner.Team);
             ball = GameObject.FindGameObjectWithTag(Tag.Ball);
-
+            
             
             
         }  
@@ -36,17 +37,31 @@ namespace Zoca.AI
             SetTargetWaypoint();
             SetTargetPosition();
             if ((Owner.transform.position - targetPosition).magnitude > Owner.FireWeapon.FireRange)
+            {
                 Weight = 1;
+            }
             else
+            {
                 Weight = 0;
+                Reset();
+            }
+                
             
+        }
+
+        //public override void StartPerformingAction()
+        //{
+        //}
+
+        public override void StopPerformingAction()
+        {
+            Reset();
         }
 
         public override void PerformAction()
         {
             if (!waypoint)
                 return;
-
          
 
             // Need to sprint?
@@ -62,18 +77,34 @@ namespace Zoca.AI
                 Vector3 aiToPosV = targetPosition - Owner.transform.position;// Vector from the ai to the pos 
                 if (aiToPosV.magnitude > Owner.FireWeapon.FireRange)
                     sprinting = true;
+                    
 
                 // 2. sprint to denfend
                 // At the moment the same ( we could just spare a little of stamina in case )
             }
            
+          
             if (sprinting)
             {
-                if(!Owner.Sprinting)
-                    Owner.Sprint(sprinting);
+                if (!Owner.Sprinting)
+                {
+                    // It may happen that when the AI start sprinting the target destination has not been updated due to
+                    // the reaction time; in this case the AI can turn back because is start looking at the destination 
+                    // rather than the ball.
+                    if (sprintElapsed < Owner.ReactionTime)
+                    {
+                        sprintElapsed += Time.deltaTime;
+                    }
+                    else
+                    {
+                        Owner.Sprint(sprinting);
+                    }
+                }
+                    
             }
             else
             {
+                sprintElapsed = 0;
                 if (Owner.Sprinting)
                     Owner.Sprint(sprinting);
             }
@@ -113,6 +144,12 @@ namespace Zoca.AI
             
         }
 
+        void Reset()
+        {
+            Owner.Sprint(false);
+            sprintElapsed = 0;
+        }
+        
     }
 
 }

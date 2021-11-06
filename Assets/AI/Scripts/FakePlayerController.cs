@@ -153,7 +153,7 @@ public class FakePlayerController : MonoBehaviour
             
         }
         moveDir = direction.normalized;
-        Debug.Log("Moving to " + moveDir);
+        
     }
 
     public void MoveTo(Vector3 destination)
@@ -174,10 +174,17 @@ public class FakePlayerController : MonoBehaviour
 
     public void LookAt(Vector3 target)
     {
+        // Yaw
         Vector3 targetFwd = target - transform.position;
         transform.forward = Vector3.MoveTowards(transform.forward, new Vector3(targetFwd.x, 0, targetFwd.z), Time.deltaTime*720);
 
-               
+        // Pitch
+        Vector3 pToT = target - transform.position;
+        Vector3 fwd = transform.forward;
+        //pToT.y = 0;
+        //fwd.y = 0;
+        float angle = Vector3.SignedAngle(fwd, pToT, Vector3.up);
+        Debug.Log("angle:" + angle);
     }
 
     #endregion
