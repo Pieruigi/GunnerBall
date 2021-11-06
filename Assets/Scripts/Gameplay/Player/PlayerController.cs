@@ -103,6 +103,10 @@ namespace Zoca
         #region look
         Vector2 lookInput;
         float lookSensitivityMul = 10f;
+        float yawSpeed = 720;
+        float yawSpeedOnSprint = 20;
+        float pitchSpeed = 240;
+        
         //public float LookSensitivity
         //{
         //    get { return lookSensitivity; }
@@ -340,17 +344,22 @@ namespace Zoca
                     lookAngles = Vector3.zero;
                 }
 
+                
                 if (sprinting)
                 {
                     // Reduce the yaw 
                     lookAngles.x *= 0.05f;
                 }
 
+                //targetLookAngles = lookAngles;
+
                 // Set yaw
-                transform.eulerAngles += Vector3.up * lookAngles.x;
+                //transform.eulerAngles += Vector3.up * lookAngles.x;
+                transform.eulerAngles = Vector3.MoveTowards(transform.eulerAngles, transform.eulerAngles + Vector3.up * lookAngles.x, Time.deltaTime * (sprinting ? yawSpeedOnSprint : yawSpeed));
 
                 // Set camera pitch
-                currentPitch -= lookAngles.y;
+                //currentPitch -= lookAngles.y;
+                currentPitch = Mathf.MoveTowards(currentPitch, currentPitch - lookAngles.y, Time.deltaTime * pitchSpeed);
                 currentPitch = Mathf.Clamp(currentPitch, minPitch, maxPitch);
                 playerCamera.SetPitch(currentPitch);
 
@@ -552,13 +561,14 @@ namespace Zoca
             }
         }
 
-        public void LookAtTheBall()
+        public void LookAt(Vector3 target)
         {
-            
+            // Rotate towards the target
+            Vector3 targetFwd = target - transform.position;
+            transform.forward = Vector3.MoveTowards(transform.forward, new Vector3(targetFwd.x, 0, targetFwd.z), Time.deltaTime * (sprinting ? yawSpeedOnSprint : yawSpeed));
 
-            // Rotate towards the ball
-            Vector3 aiToBallV = Ball.Instance.transform.position - transform.position;
-            transform.forward = new Vector3(aiToBallV.x, 0, aiToBallV.z);
+            // Add pitch
+            //float targetPitch = Vector3.SignedAngle()
         }
 
         public bool IsInGoalArea()

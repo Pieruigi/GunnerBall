@@ -74,6 +74,7 @@ namespace Zoca.AI
         Vector3 destination;
         bool hasDestination = false;
         float minDistSqr = 4f;
+     
 
 #if TEST
         FakePlayerController playerController;
@@ -125,11 +126,10 @@ namespace Zoca.AI
                 {
                     //moveDir = new Vector2(v.x, v.z);
                     playerController.Move(true, new Vector2(v.x, v.z).normalized);
+
                 }
-
-
-
             }
+
 
             if ((DateTime.UtcNow - lastReaction).TotalSeconds > reactionTime)
             {
@@ -199,12 +199,13 @@ namespace Zoca.AI
         public void MoveTo(Vector3 destination)
         {
             // Get distance
-            Debug.Log("Move to " + destination);
-            float sqrDist = Vector3.SqrMagnitude(transform.position - destination);
+            //Debug.Log("Move to " + destination);
+            //float sqrDist = Vector3.SqrMagnitude(transform.position - destination);
 
             hasDestination = true;
             this.destination = destination;
 
+            //playerController.MoveTo(destination);
         }
 
         public void Sprint(bool value)
@@ -219,7 +220,19 @@ namespace Zoca.AI
 
         public void LookAtTheBall()
         {
-            playerController.LookAtTheBall();
+   
+
+#if TEST
+                playerController.LookAt(GameObject.FindGameObjectWithTag(Tag.Ball).transform.position);
+#else
+                playerController.LookAt(Ball.Instance.transform.position);
+            
+#endif
+      
+
+            //transform.forward = new Vector3(aiToBallV.x, 0, aiToBallV.z);
+
+
         }
         #endregion
 

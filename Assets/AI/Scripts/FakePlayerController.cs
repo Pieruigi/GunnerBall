@@ -54,10 +54,10 @@ public class FakePlayerController : MonoBehaviour
 
         CheckTestTarget();
 
-        //if(hasDestination)
+        //if (hasDestination)
         //{
         //    Vector3 v = destination - transform.position;
-        //    if(v.sqrMagnitude < minDistSqr)
+        //    if (v.sqrMagnitude < minDistSqr)
         //    {
         //        hasDestination = false;
         //        Move(false, Vector2.zero);
@@ -68,9 +68,9 @@ public class FakePlayerController : MonoBehaviour
         //        moveDir = new Vector2(v.x, v.z);
         //        Move(true, moveDir.normalized);
         //    }
-            
 
-            
+
+
         //}
 
         CheckMovement();
@@ -120,7 +120,7 @@ public class FakePlayerController : MonoBehaviour
 
         if (sprinting)
         {
-            transform.forward = velocity.normalized;
+            transform.forward = Vector3.MoveTowards(transform.forward, velocity.normalized, Time.deltaTime * 10);
         }
 
         // Move player
@@ -156,6 +156,12 @@ public class FakePlayerController : MonoBehaviour
         Debug.Log("Moving to " + moveDir);
     }
 
+    public void MoveTo(Vector3 destination)
+    {
+        hasDestination = true;
+        this.destination = destination;
+    }
+
     /// <summary>
     /// Sprint event in the player controller should call this method
     /// </summary>
@@ -164,25 +170,14 @@ public class FakePlayerController : MonoBehaviour
         sprintInput = value;
     }
 
-    public void MoveTo(Vector3 destination)
+   
+
+    public void LookAt(Vector3 target)
     {
-        // Get distance
-        Debug.Log("Move to " + destination);
-        float sqrDist = Vector3.SqrMagnitude(transform.position - destination);
+        Vector3 targetFwd = target - transform.position;
+        transform.forward = Vector3.MoveTowards(transform.forward, new Vector3(targetFwd.x, 0, targetFwd.z), Time.deltaTime*720);
 
-            hasDestination = true;
-            this.destination = destination;
-        
-    }
-
-    public void LookAtTheBall()
-    {
-        Transform ball = GameObject.FindGameObjectWithTag(Tag.Ball).transform;
-
-
-        // Rotate towards the ball
-        Vector3 aiToBallV = ball.position - transform.position;
-        transform.forward = new Vector3(aiToBallV.x, 0, aiToBallV.z);
+               
     }
 
     #endregion

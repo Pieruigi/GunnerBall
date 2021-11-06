@@ -66,8 +66,8 @@ namespace Zoca.AI
                 // 2. sprint to denfend
                 // At the moment the same ( we could just spare a little of stamina in case )
             }
-            
-            if(sprinting)
+           
+            if (sprinting)
             {
                 if(!Owner.Sprinting)
                     Owner.Sprint(sprinting);
@@ -83,7 +83,7 @@ namespace Zoca.AI
             {
                 Owner.LookAtTheBall();
             }
-
+      
 
 
             // Move to destination
