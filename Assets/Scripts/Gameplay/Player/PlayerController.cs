@@ -244,8 +244,8 @@ namespace Zoca
             {
                 // This is not the local player
                 Destroy(playerCamera.gameObject);
+                   
 
-                
             }
             else
             {
