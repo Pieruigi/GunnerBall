@@ -20,6 +20,7 @@ namespace Zoca.AI
         Transform waypoint;
         Vector3 targetPosition;
         
+        
         float sprintElapsed = 0;
         #endregion
 
@@ -74,10 +75,10 @@ namespace Zoca.AI
             if(Owner.CanSprint())
             {
                 // 1. too far away
-                Vector3 aiToPosV = targetPosition - Owner.transform.position;// Vector from the ai to the pos 
-                if (aiToPosV.magnitude > Owner.FireWeapon.FireRange)
+                Vector3 aiToPosV = targetPosition - Owner.FireWeapon.transform.position;// Vector from the ai to the pos 
+                float angle = Vector3.Angle(Owner.transform.forward, targetPosition);
+                if (aiToPosV.magnitude > Owner.FireWeapon.FireRange && angle < 40)
                     sprinting = true;
-                    
 
                 // 2. sprint to denfend
                 // At the moment the same ( we could just spare a little of stamina in case )
@@ -129,25 +130,33 @@ namespace Zoca.AI
         {
             Debug.Log("Closest:" + teamHelper.GetTheClosestFormationHelper());
             waypoint = teamHelper.GetTheClosestFormationHelper().GetChild(Owner.WaypointIndex);
+            Debug.LogFormat("Waypoint:{0}/{1}", waypoint.parent.name, waypoint.name);
+
         }
 
         void SetTargetPosition()
         {
-            if (ball == null)
-                ball = GameObject.FindGameObjectWithTag(Tag.Ball);
+            //if (Ball.Instance)
+            //    ball = Ball.Instance.gameObject;
+            //if (ball == null)
+            //    ball = GameObject.FindGameObjectWithTag(Tag.Ball);
 
+            Vector3 oldTargetPosition = targetPosition;
+            
             // Position from the first helper
             targetPosition = new Vector3(waypoint.position.x - waypoint.parent.position.x, 0, waypoint.position.z - waypoint.parent.position.z);
             targetPosition += ball.transform.position;// + new Vector3(Random.Range(-4f, 4f), 0, Random.Range(-4f, 4f));
             targetPosition.y = 0;
 
-            
+            if (Vector3.SqrMagnitude(targetPosition - oldTargetPosition) < 1)
+                targetPosition = oldTargetPosition;
         }
 
         void Reset()
         {
             Owner.Sprint(false);
             sprintElapsed = 0;
+
         }
         
     }

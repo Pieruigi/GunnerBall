@@ -300,29 +300,7 @@ namespace Zoca
 
             if (photonView.IsMine || PhotonNetwork.OfflineMode)
             {
-                //// If AI is enabled then 
-                //if (GetComponent<PlayerAI>().Activated)
-                //{
-                //    // Check ai destination if any
-                //    if (hasDestination)
-                //    {
-                //        Vector3 v = destination - transform.position;
-                //        if (v.sqrMagnitude < minDistSqr)
-                //        {
-                //            hasDestination = false;
-                //            Move(false, Vector2.zero);
-
-                //        }
-                //        else
-                //        {
-                //            //moveDir = new Vector2(v.x, v.z);
-                //            Move(true, new Vector2(v.x, v.z).normalized);
-                //        }
-
-
-
-                //    }
-                //}
+                
 
                 // Check for sprinting input
                 if (sprintInput && stamina > 0)
@@ -379,7 +357,11 @@ namespace Zoca
                 else
                 {
                     // You can move along y and x axis
+                    Debug.Log("MoveInput:" + moveInput);
+
                     dir = transform.forward * moveInput.y + transform.right * moveInput.x;
+                    //dir = new Vector3(moveInput.x, 0, moveInput.y);
+                   
                 }
                 
                 // Target velocity is the max velocity we can reach
@@ -398,7 +380,7 @@ namespace Zoca
 
                 //targetVelocity = dir.normalized * ((sprinting && stamina > 0) ? sprintSpeed : maxSpeed);
                 targetVelocity = dir.normalized * speed;
-                
+                Debug.Log("UpdatingDirection:" + dir);
 
                 // Stop moving if paused 
                 if (freezed || startPaused)
@@ -568,7 +550,12 @@ namespace Zoca
             transform.forward = Vector3.MoveTowards(transform.forward, new Vector3(targetFwd.x, 0, targetFwd.z), Time.deltaTime * (sprinting ? yawSpeedOnSprint : yawSpeed));
 
             // Add pitch
-            //float targetPitch = Vector3.SignedAngle()
+            Vector3 playerToTarget = target - transform.position + Vector3.up * 1.7f;
+            Vector3 lookForward = transform.forward;
+            float angle = Vector3.SignedAngle(playerToTarget, lookForward, Vector3.up);
+            
+            currentPitch = Mathf.MoveTowards(currentPitch, angle, Time.deltaTime * pitchSpeed);
+            currentPitch = Mathf.Clamp(currentPitch, minPitch, maxPitch);
         }
 
         public bool IsInGoalArea()
@@ -618,38 +605,31 @@ namespace Zoca
             }
         }
 
-        public void Move(bool move, Vector2 direction)
+        public void Move(bool move, Vector2? direction = null)
         {
+            moving = move;
+
             if (move)
             {
-                if(!moving)
-                    moving = true;
+                Debug.Log("Moving to direction:" + direction);
+                Vector2 t = new Vector2(transform.right.x, transform.right.z);
+                float dotX = Vector2.Dot(direction.Value, t);
+                t = new Vector2(transform.forward.x, transform.forward.z);
+                float dotZ = Vector2.Dot(direction.Value, t);
 
+                moveInput = new Vector2(dotX, dotZ).normalized;
             }
             else
             {
-                if(moving)
-                    moving = false;
-
+                moveInput = Vector2.zero;
             }
-            moveInput = direction.normalized;
+            
+            
+
             Debug.Log("Moving to " + moveInput);
         }
 
-        /// <summary>
-        /// For AI
-        /// </summary>
-        /// <param name="destination"></param>
-        //public void MoveTo(Vector3 destination)
-        //{
-        //    // Get distance
-        //    Debug.Log("Move to " + destination);
-        //    float sqrDist = Vector3.SqrMagnitude(transform.position - destination);
-
-        //    hasDestination = true;
-        //    this.destination = destination;
-
-        //}
+      
 
         public void Sprint(bool value)
         {
@@ -755,24 +735,19 @@ namespace Zoca
             if (context.performed)
             {
                
-                //if (!moving)
-                //{
-                //    moving = true;
-                //}
-
-                //moveInput = context.ReadValue<Vector2>();
-                Move(true, context.ReadValue<Vector2>());
+                
+                moving = true;
+                
+                moveInput = context.ReadValue<Vector2>();
+                //Move(true, context.ReadValue<Vector2>());
                 
             }
             else
             {
-                //if (moving)
-                //{
-                //    moving = false;
-                //}
-
-                //moveInput = Vector2.zero;
-                Move(false, Vector2.zero);
+                moving = false;
+                
+                moveInput = Vector2.zero;
+                //Move(false, Vector2.zero);
             }
 
         }

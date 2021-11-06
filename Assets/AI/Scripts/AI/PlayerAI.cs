@@ -1,4 +1,4 @@
-#define TEST
+//#define TEST
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,8 +17,8 @@ namespace Zoca.AI
         [SerializeField]
         Team team = Team.Blue;
         
-        [SerializeField]
-        PlayerBehaviour behaviour = PlayerBehaviour.Neutral;
+        //[SerializeField]
+        //PlayerBehaviour behaviour = PlayerBehaviour.Neutral;
         
         #endregion
 
@@ -32,10 +32,10 @@ namespace Zoca.AI
             get { return team; }
             set { team = value; }
         }
-        public PlayerBehaviour Behaviour
-        {
-            get { return behaviour; }
-        }
+        //public PlayerBehaviour Behaviour
+        //{
+        //    get { return behaviour; }
+        //}
         public int WaypointIndex
         {
             get { return waypointIndex; }
@@ -120,6 +120,7 @@ namespace Zoca.AI
             if (hasDestination)
             {
                 Vector3 v = destination - transform.position;
+                Debug.Log("Destination:" + destination);
                 if (v.sqrMagnitude < minDistSqr)
                 {
                     hasDestination = false;
@@ -208,6 +209,11 @@ namespace Zoca.AI
             deactivated = true;
         }
 
+        public void ResetDestination()
+        {
+            hasDestination = false;
+        }
+
         public void MoveTo(Vector3 destination)
         {
             // Get distance
@@ -216,6 +222,7 @@ namespace Zoca.AI
 
             hasDestination = true;
             this.destination = destination;
+            Debug.Log("Setting new destination:" + destination);
 
             //playerController.MoveTo(destination);
         }

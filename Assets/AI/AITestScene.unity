@@ -252,8 +252,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   reactionTime: 0.25
-  team: 0
-  behaviour: 0
+  team: 1
 --- !u!1 &277154935
 GameObject:
   m_ObjectHideFlags: 0
@@ -283,7 +282,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19ceb4cb80882a54a93c639b9e095b64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  team: 0
+  team: 1
   formationPrefabs:
   - {fileID: 2307108096363984748, guid: 2d2427e4100d6de469082f8d67a31aa8, type: 3}
   - {fileID: 2307108096363984748, guid: 8b29c7899d0d9364fad5f8f4ee724aac, type: 3}

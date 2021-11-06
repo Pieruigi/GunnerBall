@@ -23,7 +23,7 @@ namespace Zoca.AI
         public override void Evaluate()
         {
             
-            Vector3 playerToBallV = ball.transform.position - Owner.transform.position;
+            Vector3 playerToBallV = ball.transform.position - Owner.FireWeapon.transform.position;
             if (playerToBallV.magnitude < Owner.FireWeapon.FireRange)
             {
                 Weight = 2f;
