@@ -100,7 +100,7 @@ namespace Zoca.AI
 
             choices = new List<Choice>();
             choices.Add(new IdleChoice(this));
-           // choices.Add(new ShootChoice(this));
+            choices.Add(new ShootChoice(this));
         }
         
 
@@ -120,7 +120,7 @@ namespace Zoca.AI
             if (hasDestination)
             {
                 Vector3 v = destination - transform.position;
-                Debug.Log("Destination:" + destination);
+               
                 if (v.sqrMagnitude < minDistSqr)
                 {
                     hasDestination = false;
@@ -222,8 +222,7 @@ namespace Zoca.AI
 
             hasDestination = true;
             this.destination = destination;
-            Debug.Log("Setting new destination:" + destination);
-
+         
             //playerController.MoveTo(destination);
         }
 
@@ -253,6 +252,24 @@ namespace Zoca.AI
 
 
         }
+
+        public void TryShoot()
+        {
+            Debug.Log("AI - try shoot:" + gameObject.name);
+#if TEST
+                playerController.LookAt(GameObject.FindGameObjectWithTag(Tag.Ball).transform.position);
+#else
+
+                playerController.Shoot(true);
+                StartCoroutine(StopShooting());    
+#endif
+        }
+        IEnumerator StopShooting()
+        {
+            yield return new WaitForEndOfFrame();
+            playerController.Shoot(false);
+        }
+
         #endregion
 
         #region debug

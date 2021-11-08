@@ -90,7 +90,9 @@ namespace Zoca.AI
             {
                 if( (DateTime.UtcNow - lastShootTime).TotalSeconds > 1f/Owner.FireWeapon.FireRate)
                 {
+                    Debug.Log("Try shoot....................");
                     lastShootTime = DateTime.UtcNow;
+                    Owner.TryShoot();
                     Debug.DrawRay(Owner.transform.position, Owner.transform.forward * 10, Color.red, 5);
                     Reset();
                     

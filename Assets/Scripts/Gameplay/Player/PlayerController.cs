@@ -243,8 +243,8 @@ namespace Zoca
             if (!photonView.IsMine)// && !PhotonNetwork.OfflineMode)
             {
                 // This is not the local player
-                Destroy(playerCamera.gameObject);
-                   
+                Destroy(playerCamera.GetComponent<Camera>());
+                //playerCamera.gameObject.SetActive(false); 
 
             }
             else
@@ -357,8 +357,7 @@ namespace Zoca
                 else
                 {
                     // You can move along y and x axis
-                    Debug.Log("MoveInput:" + moveInput);
-
+                   
                     dir = transform.forward * moveInput.y + transform.right * moveInput.x;
                     //dir = new Vector3(moveInput.x, 0, moveInput.y);
                    
@@ -380,8 +379,7 @@ namespace Zoca
 
                 //targetVelocity = dir.normalized * ((sprinting && stamina > 0) ? sprintSpeed : maxSpeed);
                 targetVelocity = dir.normalized * speed;
-                Debug.Log("UpdatingDirection:" + dir);
-
+            
                 // Stop moving if paused 
                 if (freezed || startPaused)
                 {
@@ -460,7 +458,8 @@ namespace Zoca
                             else
                             {
                                 // In offline mode we call the weapon.Shoot() directly
-                                fireWeapon.Shoot(parameters);
+                                //fireWeapon.Shoot(parameters);
+                                photonView.RPC("RpcShoot", RpcTarget.AllViaServer, parameters as object);
                             }
 
                         }
@@ -611,7 +610,7 @@ namespace Zoca
 
             if (move)
             {
-                Debug.Log("Moving to direction:" + direction);
+             
                 Vector2 t = new Vector2(transform.right.x, transform.right.z);
                 float dotX = Vector2.Dot(direction.Value, t);
                 t = new Vector2(transform.forward.x, transform.forward.z);
@@ -623,13 +622,37 @@ namespace Zoca
             {
                 moveInput = Vector2.zero;
             }
-            
-            
 
-            Debug.Log("Moving to " + moveInput);
         }
 
-      
+        public void Shoot(bool value)
+        {
+            Debug.Log("Shoot:" + gameObject.name);
+
+            // Always set the super shoot false
+            superShoot = false;
+
+            // You can't shoot if you are sprinting
+            if (sprinting)
+            {
+                shooting = false;
+
+                return;
+            }
+
+
+            if (value)
+            {
+
+                shooting = true;
+
+            }
+            else
+            {
+                shooting = false;
+
+            }
+        }
 
         public void Sprint(bool value)
         {
@@ -810,38 +833,49 @@ namespace Zoca
             }
         }
 
+      
+
         public void OnShoot(InputAction.CallbackContext context)
         {
+            //if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
+            //    return;
+
+            //// Always set the super shoot false
+            //superShoot = false;
+
+            //// You can't shoot if you are sprinting
+            //if (sprinting)
+            //{
+            //    shooting = false;
+
+            //    return;
+            //}
+
+
+            //if (context.performed)
+            //{
+
+            //    if (!shooting)
+            //    {
+            //        shooting = true;
+            //    }
+
+            //}
+            //else
+            //{
+            //    if (shooting)
+            //    {
+            //        shooting = false;
+            //    }
+            //}
+
             if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
                 return;
 
-            // Always set the super shoot false
-            superShoot = false;
 
-            // You can't shoot if you are sprinting
-            if (sprinting)
-            {
-                shooting = false;
-                
-                return;
-            }
-                
-           
-            if (context.performed)
-            {
-                
-                if (!shooting)
-                {
-                    shooting = true;
-                }
-            }
-            else
-            {
-                if (shooting)
-                {
-                    shooting = false;
-                }
-            }
+            Shoot(context.performed);
+
+            
         }
 
         public void OnSuperShoot(InputAction.CallbackContext context)

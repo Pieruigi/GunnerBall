@@ -128,10 +128,9 @@ namespace Zoca.AI
 
         void SetTargetWaypoint()
         {
-            Debug.Log("Closest:" + teamHelper.GetTheClosestFormationHelper());
+            
             waypoint = teamHelper.GetTheClosestFormationHelper().GetChild(Owner.WaypointIndex);
-            Debug.LogFormat("Waypoint:{0}/{1}", waypoint.parent.name, waypoint.name);
-
+            
         }
 
         void SetTargetPosition()
