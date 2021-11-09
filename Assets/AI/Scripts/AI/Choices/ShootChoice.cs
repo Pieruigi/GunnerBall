@@ -45,7 +45,8 @@ namespace Zoca.AI
 
         public override void PerformAction()
         {
-        
+            if (Match.Instance.State != (int)MatchState.Started)
+                return;
 
             //AI must choose where to shoot the ball
             if (!hasTarget)

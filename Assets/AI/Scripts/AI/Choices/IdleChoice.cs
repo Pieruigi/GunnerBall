@@ -35,6 +35,8 @@ namespace Zoca.AI
 
         public override void Evaluate()
         {
+            
+
             SetTargetWaypoint();
             SetTargetPosition();
             if ((Owner.transform.position - targetPosition).magnitude > Owner.FireWeapon.FireRange)
@@ -61,6 +63,9 @@ namespace Zoca.AI
 
         public override void PerformAction()
         {
+            if (Match.Instance.State != (int)MatchState.Started)
+                return;
+
             if (!waypoint)
                 return;
          
@@ -76,9 +81,15 @@ namespace Zoca.AI
             {
                 // 1. too far away
                 Vector3 aiToPosV = targetPosition - Owner.FireWeapon.transform.position;// Vector from the ai to the pos 
-                float angle = Vector3.Angle(Owner.transform.forward, targetPosition);
-                if (aiToPosV.magnitude > Owner.FireWeapon.FireRange && angle < 40)
-                    sprinting = true;
+                float angle = Vector3.Angle(Owner.transform.forward, aiToPosV);
+                if (aiToPosV.magnitude > Owner.FireWeapon.FireRange && angle < 60)
+                {
+                    // Check if there is some obstacle further
+                    Ray ray = new Ray(Owner.transform.position + Vector3.up, Owner.transform.forward);
+                    if(!Physics.Raycast(ray, 5))
+                        sprinting = true;
+                }
+                    
 
                 // 2. sprint to denfend
                 // At the moment the same ( we could just spare a little of stamina in case )

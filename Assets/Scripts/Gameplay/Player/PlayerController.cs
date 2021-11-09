@@ -544,27 +544,21 @@ namespace Zoca
 
         public void LookAt(Vector3 target)
         {
-            Debug.Log("LookAt:" + target);
+         
             // Rotate towards the target
             Vector3 targetFwd = target - transform.position;
             transform.forward = Vector3.MoveTowards(transform.forward, new Vector3(targetFwd.x, 0, targetFwd.z), Time.deltaTime * (sprinting ? yawSpeedOnSprint : yawSpeed));
 
             // Add pitch
-            Debug.Log("Computing pitch...");
             Vector3 cameraToTarget = target - playerCamera.transform.position;
             Vector3 cameraForward = playerCamera.transform.forward;
-            cameraForward.y = 0;
+            cameraForward.y = 0; // Reset the pitch
             Vector3 planeNormal = playerCamera.transform.right;
-
             Vector3 cameraToTargetProj = Vector3.ProjectOnPlane(cameraToTarget, planeNormal);
             
             float angle = Vector3.SignedAngle(cameraForward, cameraToTargetProj, planeNormal);
             
-            //Quaternion.LookRotation(playerToTarget)
-
-            Debug.Log("LookAt Pitch angle:" + angle);
-            //currentPitch = Mathf.MoveTowards(currentPitch, angle, Time.deltaTime * pitchSpeed);
-            currentPitch = angle;//angle;
+            currentPitch = angle;
             currentPitch = Mathf.Clamp(currentPitch, minPitch, maxPitch);
         }
 
@@ -755,7 +749,7 @@ namespace Zoca
 #region input_system_callbacks
         public void OnMove(InputAction.CallbackContext context)
         {
-            if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
+            if (!photonView.IsMine || photonView.Owner != PhotonNetwork.MasterClient)
                 return;
 
             /// TEST ////////////////////////////
@@ -789,7 +783,7 @@ namespace Zoca
 
         public void OnLook(InputAction.CallbackContext context)
         {
-            if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
+            if (!photonView.IsMine || photonView.Owner != PhotonNetwork.MasterClient)
                 return;
 
            
@@ -802,7 +796,7 @@ namespace Zoca
         {
             return;
 
-            if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
+            if (!photonView.IsMine || photonView.Owner != PhotonNetwork.MasterClient)
                 return;
 
             if (stamina < jumpStamina)
@@ -823,7 +817,7 @@ namespace Zoca
 
         public void OnSprint(InputAction.CallbackContext context)
         {
-            if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
+            if (!photonView.IsMine || photonView.Owner != PhotonNetwork.MasterClient)
                 return;
 
             if (context.performed)
@@ -881,7 +875,7 @@ namespace Zoca
             //    }
             //}
 
-            if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
+            if (!photonView.IsMine || photonView.Owner != PhotonNetwork.MasterClient)
                 return;
 
 
@@ -892,7 +886,7 @@ namespace Zoca
 
         public void OnSuperShoot(InputAction.CallbackContext context)
         {
-            if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
+            if (!photonView.IsMine || photonView.Owner != PhotonNetwork.MasterClient)
                 return;
 
             // Always set the super shoot false
@@ -937,7 +931,7 @@ namespace Zoca
 
         public void OnPause(InputAction.CallbackContext context)
         {
-            if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
+            if (!photonView.IsMine || photonView.Owner != PhotonNetwork.MasterClient)
                 return;
 
             if (context.started)

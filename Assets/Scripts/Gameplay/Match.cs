@@ -189,11 +189,18 @@ namespace Zoca
                     if(Ball.Instance)
                         Ball.Instance.ResetBall();
 
-                    //PlayerController.LocalPlayer.GetComponent<PlayerController>().MoveDisabled = true;
-                    //PlayerController.LocalPlayer.GetComponent<PlayerController>().ShootDisabled = true;
-                    PlayerController.Local.StartPaused = true;
-                    PlayerController.Local.GoalPaused = false;
-                    PlayerController.LocalPlayer.GetComponent<PlayerController>().ResetPlayer();
+                    // We must manage also the player controllers driven by the ai for offline matches
+                    List<PlayerController> players = GetOwnedPlayerControllers();
+                    foreach(PlayerController player in players)
+                    {
+                        player.StartPaused = true;
+                        player.GoalPaused = false;
+                        player.ResetPlayer();
+                    }
+
+                    //PlayerController.Local.StartPaused = true;
+                    //PlayerController.Local.GoalPaused = false;
+                    //PlayerController.LocalPlayer.GetComponent<PlayerController>().ResetPlayer();
 
                     // Set target time
                     targetTime = stateTimestamp + Constants.StartDelay;
@@ -203,10 +210,13 @@ namespace Zoca
                     // To be sure get the time elapsed from the properties
                     timeElapsed = (float)RoomCustomPropertyUtility.GetCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchTimeElapsed);
 
-                    // Set player
-                    //PlayerController.LocalPlayer.GetComponent<PlayerController>().MoveDisabled = false;
-                    //PlayerController.LocalPlayer.GetComponent<PlayerController>().ShootDisabled = false;
-                    PlayerController.Local.StartPaused = false;
+                    // Set owned player controllers ( also the ai in offline matches)
+                    players = GetOwnedPlayerControllers();
+                    foreach (PlayerController player in players)
+                    {
+                        player.StartPaused = false;
+                    }
+                    //PlayerController.Local.StartPaused = false;
                     
                     break;
                 case (int)MatchState.Goaled:
@@ -215,8 +225,13 @@ namespace Zoca
                     redTeamScore = (byte)RoomCustomPropertyUtility.GetCurrentRoomCustomProperty(RoomCustomPropertyKey.RedTeamScore);
                     blueTeamScore = (byte)RoomCustomPropertyUtility.GetCurrentRoomCustomProperty(RoomCustomPropertyKey.BlueTeamScore);
 
-                    //PlayerController.LocalPlayer.GetComponent<PlayerController>().ShootDisabled = false;
-                    PlayerController.Local.GoalPaused = true;
+                    // Set owned player controllers ( also the ai in offline matches)
+                    players = GetOwnedPlayerControllers();
+                    foreach (PlayerController player in players)
+                    {
+                        player.GoalPaused = true;
+                    }
+                    //PlayerController.Local.GoalPaused = true;
 
                     // Destroy the ball
                     Ball.Instance.Explode();
@@ -225,9 +240,14 @@ namespace Zoca
                     targetTime = stateTimestamp + Constants.GoalDelay;
                     break;
                 case (int)MatchState.Completed:
-                    //PlayerController.LocalPlayer.GetComponent<PlayerController>().MoveDisabled = false;
-                    //PlayerController.LocalPlayer.GetComponent<PlayerController>().ShootDisabled = false;
-                    PlayerController.Local.GoalPaused = true;
+                    // Set owned player controllers ( also the ai in offline matches)
+                    players = GetOwnedPlayerControllers();
+                    foreach (PlayerController player in players)
+                    {
+                        player.GoalPaused = true;
+                    }
+
+                    //PlayerController.Local.GoalPaused = true;
                     break;
             }
 
@@ -338,7 +358,12 @@ namespace Zoca
             PhotonNetwork.RaiseEvent(PhotonEvent.StateChanged, null, raiseEventOptions, SendOptions.SendReliable);
         }
 
-        
+        List<PlayerController> GetOwnedPlayerControllers()
+        {
+            List<PlayerController> players = new List<PlayerController>(GameObject.FindObjectsOfType<PlayerController>());
+            players = players.FindAll(p => p.photonView.IsMine);
+            return players;
+        }
     }
 }
 
