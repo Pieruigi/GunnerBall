@@ -16,13 +16,17 @@ namespace Zoca.AI
 
         [SerializeField]
         Team team = Team.Blue;
+
         
+        
+
         //[SerializeField]
         //PlayerBehaviour behaviour = PlayerBehaviour.Neutral;
         
         #endregion
 
         #region properties
+      
         public float ReactionTime
         {
             get { return reactionTime; }
@@ -67,6 +71,7 @@ namespace Zoca.AI
 
         #region private fields
         bool deactivated = true;
+       
         List<Choice> choices; // The list of all the available choices
         Choice currentChoice;
 
@@ -155,6 +160,11 @@ namespace Zoca.AI
 
                 //PrintLog(); /// Only for test
             }
+        }
+        IEnumerator StopShooting()
+        {
+            yield return null;
+            playerController.Shoot(false);
         }
 
         void EvaluateChoices()
@@ -264,11 +274,7 @@ namespace Zoca.AI
                 StartCoroutine(StopShooting());    
 #endif
         }
-        IEnumerator StopShooting()
-        {
-            yield return new WaitForEndOfFrame();
-            playerController.Shoot(false);
-        }
+        
 
         #endregion
 

@@ -29,6 +29,7 @@ namespace Zoca
             {
                 Instance = this;
                 SceneManager.sceneLoaded += HandleOnSceneLoaded;
+                
                 DontDestroyOnLoad(gameObject);
             }
             else
@@ -377,13 +378,15 @@ namespace Zoca
                             PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(newPlayer, PlayerCustomPropertyKey.TeamColor, opponentTeam);
                             spawnPoint = LevelManager.Instance.RedTeamSpawnPoints[spawnPointId];
                         }
-                            
 
-                        GameObject newPlayerObject = GameObject.Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
+                        GameObject newPlayerObject = PhotonNetwork.InstantiateRoomObject(System.IO.Path.Combine(ResourceFolder.Characters, playerPrefab.name), spawnPoint.position, spawnPoint.rotation);
+                        //GameObject newPlayerObject = GameObject.Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
                         newPlayerObject.GetComponent<PlayerAI>().Activate();
                         newPlayerObject.GetComponent<PlayerAI>().Team = (Team)PlayerCustomPropertyUtility.GetPlayerCustomProperty(newPlayer, PlayerCustomPropertyKey.TeamColor);
-                        //GameObject newPlayerObject = PhotonNetwork.Instantiate(System.IO.Path.Combine(ResourceFolder.Characters, playerPrefab.name), spawnPoint.position, spawnPoint.rotation);
+                        //newPlayerObject.GetComponent<PlayerAI>().ActorId = i + 2;
                         newPlayerObject.GetComponent<PhotonView>().OwnerActorNr = i + 2;
+                        
+
                     }
 
                     Debug.Log("Players.Count: " + PhotonNetwork.CurrentRoom.Players.Count);
@@ -400,11 +403,10 @@ namespace Zoca
             {
                 inGame = false;
 
-                // The player camera is not destryed leaving the arena, so we must
-                // do it here.
-                Debug.LogFormat("GameManager - Not in game, camera instance: {0}", PlayerCamera.Instance);
-                if (PlayerCamera.Instance)
-                    Destroy(PlayerCamera.Instance.gameObject);
+                // The player camera has not been destroyed leaving the arena, so we do it here.
+                //Debug.LogFormat("GameManager - Not in game, camera instance: {0}", PlayerCamera.Instance);
+                //if (PlayerCamera.Instance)
+                //    Destroy(PlayerCamera.Instance.gameObject);
 
             }
             Debug.LogFormat("GameManager - scene loaded [Name:{0}]; inGame:{1}", scene.name, inGame);

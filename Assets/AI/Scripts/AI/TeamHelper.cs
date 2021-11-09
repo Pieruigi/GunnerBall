@@ -119,6 +119,7 @@ namespace Zoca.AI
             formationObject = GameObject.Instantiate(formationPrefab);
             formationObject.transform.position = Vector3.zero;
             formationObject.transform.rotation = Quaternion.identity;
+            formationObject.transform.rotation = transform.rotation;
 
             // Set helpers and waypoints 
             for(int i=0; i<formationObject.transform.childCount; i++)

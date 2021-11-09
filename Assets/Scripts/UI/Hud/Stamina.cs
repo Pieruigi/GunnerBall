@@ -18,6 +18,7 @@ namespace Zoca.UI
         // Start is called before the first frame update
         void Start()
         {
+            
             staminaImage.fillAmount = PlayerController.Local.Stamina / PlayerController.Local.StaminaMax;
         }
 

@@ -185,12 +185,12 @@ namespace Zoca
         /// <returns></returns>
         public virtual bool TryShoot(bool superShot, out object[] parameters)
         {
-            //Debug.Log("FireWeapon - TryShoot().");
+            Debug.Log("FireWeapon - TryShoot().");
             parameters = null;
 
             // Local player only
-            if (!owner.photonView.IsMine && !PhotonNetwork.OfflineMode)
-                return false;
+            //if (!owner.photonView.IsMine && !PhotonNetwork.OfflineMode)
+            //    return false;
 
             // Not ready yet
             if (cooldownElapsed > 0)
@@ -228,6 +228,7 @@ namespace Zoca
             RaycastHit info;
             //int mask = ~LayerMask.NameToLayer(Layer.Player);
             ownerCollider.enabled = false;
+            Debug.DrawRay(ray.origin, ray.direction * 100 /* (fireRange + owner.PlayerCamera.DistanceAdjustment) */, Color.red, 30);
             bool hit = Physics.Raycast(ray, out info, fireRange + owner.PlayerCamera.DistanceAdjustment);
             ownerCollider.enabled = true;
             if (hit)
@@ -238,17 +239,17 @@ namespace Zoca
                 if(hittable != null)
                 {
                     parameters = new object[6];
-                    if (!PhotonNetwork.OfflineMode)
-                    {
+                    //if (!PhotonNetwork.OfflineMode)
+                    //{
                         
                         //parameters[0] = info.collider.GetComponent<Ball>().photonView.ViewID;
                         parameters[0] = (hittable as MonoBehaviourPun).photonView.ViewID;
-                    }
-                    else
-                    {
-                        parameters[0] = (hittable as MonoBehaviourPun).GetInstanceID();
-                        //parameters[0] = (hittable as MonoBehaviourPun);
-                    }
+                    //}
+                    //else
+                    //{
+                    //    parameters[0] = (hittable as MonoBehaviourPun).GetInstanceID();
+                    //    //parameters[0] = (hittable as MonoBehaviourPun);
+                    //}
                     parameters[1] = info.point;
                     parameters[2] = info.normal;
                     parameters[3] = PhotonNetwork.Time;
@@ -312,14 +313,14 @@ namespace Zoca
             // Get params
             GameObject hitObject = null;
 
-            if (!PhotonNetwork.OfflineMode)
-            {
+            //if (!PhotonNetwork.OfflineMode)
+            //{
                 hitObject = PhotonNetwork.GetPhotonView((int)parameters[0]).gameObject;
-            }
-            else
-            {
-                hitObject = new List<MonoBehaviourPun>(GameObject.FindObjectsOfType<MonoBehaviourPun>()).Find(m => m.GetInstanceID() == (int)parameters[0]).gameObject;
-            }
+            //}
+            //else
+            //{
+            //    hitObject = new List<MonoBehaviourPun>(GameObject.FindObjectsOfType<MonoBehaviourPun>()).Find(m => m.GetInstanceID() == (int)parameters[0]).gameObject;
+            //}
             Vector3 hitPoint = (Vector3)parameters[1];
             Vector3 hitNormal = (Vector3)parameters[2];
             double timestamp = (double)parameters[3];

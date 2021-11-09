@@ -79,15 +79,16 @@ namespace Zoca.AI
 
             //}
 
-            Vector3 dir = ball.transform.position - Owner.transform.position;
-            Vector3 targetFwd = dir;
-            targetFwd.y = 0;
-            
-            Owner.transform.forward = Vector3.MoveTowards(Owner.transform.forward, targetFwd.normalized, Time.deltaTime * 10);
+            //Vector3 dir = ball.transform.position - Owner.transform.position;
+            //Vector3 targetFwd = dir;
+            //targetFwd.y = 0;
+
+            //Owner.transform.forward = Vector3.MoveTowards(Owner.transform.forward, targetFwd.normalized, Time.deltaTime * 10);
+            Owner.LookAtTheBall();
 
             // Check aim
-            if(Owner.transform.forward == targetFwd.normalized)
-            {
+            //if(Owner.transform.forward == targetFwd.normalized)
+            //{
                 if( (DateTime.UtcNow - lastShootTime).TotalSeconds > 1f/Owner.FireWeapon.FireRate)
                 {
                     Debug.Log("Try shoot....................");
@@ -98,7 +99,7 @@ namespace Zoca.AI
                     
                 }
                 
-            }
+            //}
             
         }
 

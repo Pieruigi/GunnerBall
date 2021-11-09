@@ -1,13 +1,15 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Rendering.Universal;
 
 namespace Zoca
 {
     public class PlayerCamera : MonoBehaviour
     {
-        public static PlayerCamera Instance { get; private set; }
+        //public static PlayerCamera Instance { get; private set; }
 
         [SerializeField]
         Transform target;
@@ -45,9 +47,9 @@ namespace Zoca
 
         private void Awake()
         {
-            if (!Instance)
-            {
-                Instance = this;
+            //if (!Instance)
+            //{
+                //Instance = this;
                 currentPitch = transform.localEulerAngles.x;
 
                 // Move the camera outside
@@ -75,11 +77,11 @@ namespace Zoca
                     }
 
                 }
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
+            //}
+            //else
+            //{
+            //    Destroy(gameObject);
+            //}
 
 
 
@@ -88,8 +90,8 @@ namespace Zoca
         // Start is called before the first frame update
         void Start()
         {
-           
-                
+            
+
 
             UpdateDistanceAdjustment();
         }
@@ -106,13 +108,15 @@ namespace Zoca
                 return;
 
             // On sprint we move the camera target closer to the player
-            CheckPlayerSprint();
+            if (playerController.photonView.IsMine)
+                CheckPlayerSprint();
 
             // Update the camera position and rotation
             UpdatePositionAndRotation();
           
             // Clip camera
-            DoClipping();
+            if(playerController.photonView.IsMine)
+                DoClipping();
         }
 
       
@@ -266,6 +270,22 @@ namespace Zoca
         {
             this.playerController = playerController;
             playerCollider = playerController.GetComponent<Collider>();
+
+            Debug.Log("PlayerCamera.ViewId:" + playerController.photonView.ViewID);
+            Debug.Log("PlayerCamera.Owner:" + playerController.photonView.Owner);
+            Debug.Log("PlayerCamera.OwnerActorNr:" + playerController.photonView.OwnerActorNr);
+            Debug.Log("PlayerCamera.AmController:" + playerController.photonView.AmController);
+            Debug.Log("PlayerCamera.AmOwner:" + playerController.photonView.AmOwner);
+            Debug.Log("PlayerCamera.ControllerActornNr:" + playerController.photonView.ControllerActorNr);
+
+            if (!playerController.photonView.IsMine || playerController.photonView.IsRoomView)
+            {
+                Destroy(GetComponent<AudioListener>());
+                Destroy(GetComponent<UniversalAdditionalCameraData>());
+                Destroy(GetComponent<Camera>());
+
+
+            }
         }
 
         public void SetPitch(float pitch)

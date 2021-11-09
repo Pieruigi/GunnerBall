@@ -232,22 +232,21 @@ namespace Zoca
             // Set the fireweapon owner
             fireWeapon.SetOwner(this);
 
-
-
             healthDefault = health;
             sprintSpeed = maxSpeed * sprintMultiplier;
             staminaDefault = stamina;
 
             animationController = GetComponent<AnimationController>();
 
-            if (!photonView.IsMine)// && !PhotonNetwork.OfflineMode)
-            {
-                // This is not the local player
-                Destroy(playerCamera.GetComponent<Camera>());
-                //playerCamera.gameObject.SetActive(false); 
+            // Init player camera
+            // Camera is helpful for the aiming system even if the player is not the local one
+            playerCamera.SetPlayerController(this);
 
-            }
-            else
+            // Store initial position
+            startPosition = transform.position;
+            startRotation = transform.rotation;
+
+            if (photonView.IsMine && !photonView.IsRoomView)
             {
                 ///// ONLY FOR TEST
                 ///
@@ -269,29 +268,27 @@ namespace Zoca
 
                 Local = this;
 
-                // Init player camera
-                playerCamera.SetPlayerController(this);
+                //// Init player camera
+                //playerCamera.SetPlayerController(this);
 
-                // Store initial position
-                startPosition = transform.position;
-                startRotation = transform.rotation;
+                //// Store initial position
+                //startPosition = transform.position;
+                //startRotation = transform.rotation;
+
+                
 
                 // Avoid to destroy the player 
-                DontDestroyOnLoad(gameObject);
+                //DontDestroyOnLoad(gameObject);
 
 
 
             }
+
+           
         }
 
         // Start is called before the first frame update
-        void Start()
-        {
-            if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
-                return;
-
-
-        }
+        
 
         // Update is called once per frame
         void Update()
@@ -433,9 +430,10 @@ namespace Zoca
 
                 if (shooting)
                 {
+                    Debug.Log("Update - shooting...");
                     if (!startPaused && !freezed && !goalPaused)
                     {
-
+                        Debug.Log("Update - shooting 2...");
                         object[] parameters;
                         //Collider hitCollider;
                         // Returns true if the weapon is ready to shoot, otherwise returns false
@@ -542,18 +540,31 @@ namespace Zoca
             }
         }
 
+
+
         public void LookAt(Vector3 target)
         {
+            Debug.Log("LookAt:" + target);
             // Rotate towards the target
             Vector3 targetFwd = target - transform.position;
             transform.forward = Vector3.MoveTowards(transform.forward, new Vector3(targetFwd.x, 0, targetFwd.z), Time.deltaTime * (sprinting ? yawSpeedOnSprint : yawSpeed));
 
             // Add pitch
-            Vector3 playerToTarget = target - transform.position + Vector3.up * 1.7f;
-            Vector3 lookForward = transform.forward;
-            float angle = Vector3.SignedAngle(playerToTarget, lookForward, Vector3.up);
+            Debug.Log("Computing pitch...");
+            Vector3 cameraToTarget = target - playerCamera.transform.position;
+            Vector3 cameraForward = playerCamera.transform.forward;
+            cameraForward.y = 0;
+            Vector3 planeNormal = playerCamera.transform.right;
+
+            Vector3 cameraToTargetProj = Vector3.ProjectOnPlane(cameraToTarget, planeNormal);
             
-            currentPitch = Mathf.MoveTowards(currentPitch, angle, Time.deltaTime * pitchSpeed);
+            float angle = Vector3.SignedAngle(cameraForward, cameraToTargetProj, planeNormal);
+            
+            //Quaternion.LookRotation(playerToTarget)
+
+            Debug.Log("LookAt Pitch angle:" + angle);
+            //currentPitch = Mathf.MoveTowards(currentPitch, angle, Time.deltaTime * pitchSpeed);
+            currentPitch = angle;//angle;
             currentPitch = Mathf.Clamp(currentPitch, minPitch, maxPitch);
         }
 
@@ -640,6 +651,7 @@ namespace Zoca
                 return;
             }
 
+            Debug.Log("Set shooting:" + value);
 
             if (value)
             {

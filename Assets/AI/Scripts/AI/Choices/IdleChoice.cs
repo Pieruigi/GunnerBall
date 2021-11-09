@@ -90,7 +90,7 @@ namespace Zoca.AI
                 if (!Owner.Sprinting)
                 {
                     // It may happen that when the AI start sprinting the target destination has not been updated due to
-                    // the reaction time; in this case the AI can turn back because is start looking at the destination 
+                    // the reaction time; in this case the AI can turn back because it starts looking at the destination 
                     // rather than the ball.
                     if (sprintElapsed < Owner.ReactionTime)
                     {
