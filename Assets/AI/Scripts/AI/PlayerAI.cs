@@ -1,4 +1,4 @@
-//#define TEST
+#define TEST
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,8 +17,6 @@ namespace Zoca.AI
         [SerializeField]
         Team team = Team.Blue;
 
-        
-        
 
         //[SerializeField]
         //PlayerBehaviour behaviour = PlayerBehaviour.Neutral;
@@ -263,11 +261,17 @@ namespace Zoca.AI
 
         }
 
+        public void LookAt(Vector3 target)
+        {
+            playerController.LookAt(target);
+        }
+
         public void TryShoot()
         {
             Debug.Log("AI - try shoot:" + gameObject.name);
 #if TEST
-                playerController.LookAt(GameObject.FindGameObjectWithTag(Tag.Ball).transform.position);
+            //playerController.LookAt(GameObject.FindGameObjectWithTag(Tag.Ball).transform.position);
+            playerController.Shoot(true);
 #else
 
                 playerController.Shoot(true);

@@ -63,7 +63,7 @@ namespace Zoca.AI
 
         public override void PerformAction()
         {
-            if (Match.Instance.State != (int)MatchState.Started)
+            if (Match.Instance && Match.Instance.State != (int)MatchState.Started)
                 return;
 
             if (!waypoint)

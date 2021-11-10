@@ -187,5 +187,10 @@ public class FakePlayerController : MonoBehaviour
         Debug.Log("angle:" + angle);
     }
 
+    public void Shoot(bool value)
+    {
+        Debug.DrawRay(transform.position, transform.forward * 10, Color.red, 5);
+    }
+
     #endregion
 }

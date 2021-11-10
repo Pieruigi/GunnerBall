@@ -18,10 +18,31 @@ namespace Zoca.AI
         List<GameObject> formationPrefabs;
 
         [SerializeField]
+        Transform middleField;
+
+        [SerializeField]
+        Transform ownedGoalLine;
+
+        [SerializeField]
+        Transform opponentGoalLine;
+
+        [SerializeField]
         GameObject testFormation;
         #endregion
 
         #region properties
+        public Transform MiddleField
+        {
+            get { return middleField; }
+        }
+        public Transform OpponentGoalLine
+        {
+            get { return opponentGoalLine; }
+        }
+        public Transform OwnedGoalLine
+        {
+            get { return ownedGoalLine; }
+        }
         public int PlayersPerTeam
         {
             get { return playersPerTeam; }
