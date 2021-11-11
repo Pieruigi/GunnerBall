@@ -18,6 +18,7 @@ namespace Zoca.AI
     ///     
     /// 
     /// </summary>
+    [System.Serializable]
     public abstract class Choice
     {
         #region properties

@@ -50,9 +50,29 @@ namespace Zoca.AI
         {
             get { return playerController.Sprinting; }
         }
-        public FireWeapon FireWeapon
+        //public FireWeapon FireWeapon
+        //{
+        //    get { return playerController.FireWeapon; }
+        //}
+        public float FireRate
         {
-            get { return playerController.FireWeapon; }
+            get { return playerController.FireWeapon.FireRate; }
+        }
+        public Transform AimOrigin
+        {
+#if !TEST
+            get { return playerController.PlayerCamera.transform; }
+#else
+            get { return playerController.FireWeapon.transform; }
+#endif
+        }
+        public float AimRange
+        {
+#if !TEST
+            get { return playerController.PlayerCamera.DistanceAdjustment + playerController.FireWeapon.FireRange; }
+#else
+            get { return playerController.FireWeapon.FireRange; }
+#endif
         }
 //#if TEST
 //        public FakePlayerController PlayerController
@@ -65,12 +85,13 @@ namespace Zoca.AI
 //            get { return playerController; }
 //        }
 //#endif
-        #endregion
+#endregion
 
-        #region private fields
+#region private fields
         bool deactivated = true;
        
         List<Choice> choices; // The list of all the available choices
+        
         Choice currentChoice;
 
         DateTime lastReaction;
@@ -88,9 +109,9 @@ namespace Zoca.AI
 #else
         PlayerController playerController;
 #endif
-        #endregion
+#endregion
 
-        #region private
+#region private
         private void Awake()
         {
             // Get player controller
@@ -153,11 +174,13 @@ namespace Zoca.AI
                     //currentChoice?.StartPerformingAction();
                 }
 
-                currentChoice?.PerformAction(); // Perform action
+                //currentChoice?.PerformAction(); // Perform action
 
-
-                //PrintLog(); /// Only for test
+                Debug.Log("CurrentChoice:" + currentChoice);
+                PrintLog(); /// Only for test
             }
+
+            currentChoice?.PerformAction(); // Perform action
         }
         IEnumerator StopShooting()
         {
@@ -199,9 +222,9 @@ namespace Zoca.AI
             return ret;
 
         }
-        #endregion
+#endregion
 
-        #region public
+#region public
         public void SetWaypointIndex(int index)
         {
             waypointIndex = index;
@@ -270,8 +293,8 @@ namespace Zoca.AI
         {
             Debug.Log("AI - try shoot:" + gameObject.name);
 #if TEST
-            //playerController.LookAt(GameObject.FindGameObjectWithTag(Tag.Ball).transform.position);
-            playerController.Shoot(true);
+           
+                playerController.Shoot(true);
 #else
 
                 playerController.Shoot(true);
@@ -280,9 +303,9 @@ namespace Zoca.AI
         }
         
 
-        #endregion
+#endregion
 
-        #region debug
+#region debug
         void PrintLog()
         {
             foreach (Choice c in choices)

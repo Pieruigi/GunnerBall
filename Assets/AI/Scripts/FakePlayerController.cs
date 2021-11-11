@@ -34,6 +34,7 @@ public class FakePlayerController : MonoBehaviour
     Vector3 destination;
     bool hasDestination = false;
     float minDistSqr = 4f;
+    Rigidbody ballRB;
 
     public float Stamina { get; private set; } = 100;
     public float StaminaMax { get; private set; } = 100;
@@ -45,7 +46,7 @@ public class FakePlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        ballRB = GameObject.FindGameObjectWithTag(Tag.Ball).GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -177,19 +178,28 @@ public class FakePlayerController : MonoBehaviour
         // Yaw
         Vector3 targetFwd = target - transform.position;
         transform.forward = Vector3.MoveTowards(transform.forward, new Vector3(targetFwd.x, 0, targetFwd.z), Time.deltaTime*720);
-
+        //transform.forward = targetFwd;
         // Pitch
         Vector3 pToT = target - transform.position;
         Vector3 fwd = transform.forward;
         //pToT.y = 0;
         //fwd.y = 0;
         float angle = Vector3.SignedAngle(fwd, pToT, Vector3.up);
-        Debug.Log("angle:" + angle);
+  
     }
 
     public void Shoot(bool value)
     {
-        Debug.DrawRay(transform.position, transform.forward * 10, Color.red, 5);
+        //transform.Rotate(new Vector3(0, 3, 0), Space.Self);
+        Debug.DrawRay(transform.position, transform.forward * fireWeapon.FireRange*10, Color.red, 5);
+        
+        Ray ray = new Ray(transform.position, transform.forward);
+        RaycastHit info;
+        bool hit = Physics.Raycast(ray, out info, fireWeapon.FireRange * 2);
+        if(hit)
+        {
+            ballRB.AddForce(-info.normal * 80, ForceMode.VelocityChange);
+        }
     }
 
     #endregion

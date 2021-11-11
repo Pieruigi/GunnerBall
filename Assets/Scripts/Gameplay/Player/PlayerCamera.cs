@@ -52,6 +52,7 @@ namespace Zoca
                 //Instance = this;
                 currentPitch = transform.localEulerAngles.x;
 
+               
                 // Move the camera outside
                 transform.parent = null;
 
@@ -284,7 +285,12 @@ namespace Zoca
                 Destroy(GetComponent<UniversalAdditionalCameraData>());
                 Destroy(GetComponent<Camera>());
 
+                // Move the camera pivot behind
+                target.localPosition = new Vector3(0, target.localPosition.y, target.localPosition.z);
+                targetPositionOnSprint = target.localPosition;
 
+                //// Store the default position
+                targetPositionDefault = target.localPosition;
             }
         }
 

@@ -228,8 +228,10 @@ namespace Zoca
             RaycastHit info;
             //int mask = ~LayerMask.NameToLayer(Layer.Player);
             ownerCollider.enabled = false;
-            Debug.DrawRay(ray.origin, ray.direction * 100 /* (fireRange + owner.PlayerCamera.DistanceAdjustment) */, Color.red, 30);
+            Debug.DrawRay(ray.origin, ray.direction * (fireRange + owner.PlayerCamera.DistanceAdjustment), Color.red, 30);
             bool hit = Physics.Raycast(ray, out info, fireRange + owner.PlayerCamera.DistanceAdjustment);
+            Debug.Log("cameraDistanceAdjust:" + owner.PlayerCamera.DistanceAdjustment);
+            //Time.timeScale = 0;
             ownerCollider.enabled = true;
             if (hit)
             {

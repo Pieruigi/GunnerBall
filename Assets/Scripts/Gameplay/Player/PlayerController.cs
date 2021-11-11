@@ -548,7 +548,7 @@ namespace Zoca
             // Rotate towards the target
             Vector3 targetFwd = target - transform.position;
             transform.forward = Vector3.MoveTowards(transform.forward, new Vector3(targetFwd.x, 0, targetFwd.z), Time.deltaTime * (sprinting ? yawSpeedOnSprint : yawSpeed));
-
+            //transform.forward = targetFwd;
             // Add pitch
             Vector3 cameraToTarget = target - playerCamera.transform.position;
             Vector3 cameraForward = playerCamera.transform.forward;

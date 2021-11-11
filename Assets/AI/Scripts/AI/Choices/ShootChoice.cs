@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace Zoca.AI
 {
+    [System.Serializable]
     public class ShootChoice : Choice
     {
         GameObject ball;
@@ -14,20 +15,21 @@ namespace Zoca.AI
         Vector3 target;
         bool hasTarget = false;
         DateTime lastShootTime;
-
+        Rigidbody ballRB;
 
         public ShootChoice(PlayerAI owner) : base(owner) 
         {
             ball = GameObject.FindGameObjectWithTag(Tag.Ball);
-            ballRadius = ball.GetComponent<SphereCollider>().radius;
+            ballRB = ball.GetComponent<Rigidbody>();
+            ballRadius = ball.GetComponent<SphereCollider>().radius * ball.transform.localScale.x;
             teamHelper = new List<TeamHelper>(GameObject.FindObjectsOfType<TeamHelper>()).Find(t => t.Team == Owner.Team);
         }
 
         public override void Evaluate()
         {
             
-            Vector3 playerToBallV = ball.transform.position - Owner.FireWeapon.transform.position;
-            if (playerToBallV.magnitude < Owner.FireWeapon.FireRange)
+            Vector3 playerToBallV = ballRB.position - Owner.AimOrigin.position;
+            if (playerToBallV.magnitude < Owner.AimRange * 0.8f)
             {
                 Weight = 2f;
             }
@@ -54,20 +56,20 @@ namespace Zoca.AI
             //AI must choose where to shoot the ball
             if (!hasTarget)
             {
-                Vector3 playerToBall = ball.transform.position - Owner.transform.position;
+                Vector3 playerToBall = ballRB.position - Owner.transform.position;
 
                 bool defensivePosition = Vector3.Dot(playerToBall, teamHelper.transform.forward) < 0;
                 bool onTheRight = Vector3.Dot(playerToBall, Vector3.right) < 0;
 
                 hasTarget = true;
-                target = ball.transform.position;
+                target = ballRB.position;
             }
 
             Owner.Sprint(false);
 
             // Check where is the ball in the field
-            Vector3 ballToOppGoalLine = teamHelper.OpponentGoalLine.position - ball.transform.position;
-            Vector3 ballToOwnedGoalLine = teamHelper.OwnedGoalLine.position - ball.transform.position;
+            Vector3 ballToOppGoalLine = teamHelper.OpponentGoalLine.position - ballRB.position;
+            Vector3 ballToOwnedGoalLine = teamHelper.OwnedGoalLine.position - ballRB.position;
             bool attacking = ballToOppGoalLine.sqrMagnitude - ballToOwnedGoalLine.sqrMagnitude > 0 ? true : false;
 
             // Adjust aim
@@ -84,7 +86,7 @@ namespace Zoca.AI
             // Check aim
             //if(Owner.transform.forward == targetFwd.normalized)
             //{
-                if( (DateTime.UtcNow - lastShootTime).TotalSeconds > 1f/Owner.FireWeapon.FireRate)
+                if( (DateTime.UtcNow - lastShootTime).TotalSeconds > 1f/Owner.FireRate)
                 {
                     Debug.Log("Try shoot....................");
                     lastShootTime = DateTime.UtcNow;
@@ -106,40 +108,73 @@ namespace Zoca.AI
 
         Vector3 GetTargetToAim(bool attacking)
         {
-            Vector3 target = ball.transform.position;
+            Vector3 ballPos = ballRB.position;
+            Vector3 target = ballPos;
+            // The shoot it will take place in 100 millis, so we need to adjust the position
+            //target += ballRB.velocity * 0.1f;
+
 
             // Check if the ai is behind or in front of the ball
-            Vector3 aiToBall = ball.transform.position - Owner.transform.position;
+            Vector3 aiToBall = ballPos - Owner.AimOrigin.position;
             if(Vector3.Dot(aiToBall, teamHelper.transform.forward) < 0)
             {
                 // Is in front of the ball
                 // We don't have a clear direction towards the goal line
                 Debug.Log("In front of the ball");
+                // Starting from the center of the ball we can aim to the right or to the left depending on the player
+                // position; at most we can hit the tangent so we can find the maximum angle this way: 
+                // ballRadius = ballDist * cosB; A = 90 - B; A is the angle we need
+                Vector3 dir = aiToBall;
+                
+                float angleB = Mathf.Acos(ballRadius / dir.magnitude) * Mathf.Rad2Deg;
+                float angleA = 90 - angleB;
+                Debug.Log("AngleA:" + angleA);
+                // Gived the direction between the ai and the all we can rotate between 0 and A ( or -A, depends
+                // on the position )
+
+
+                // Check whether the ai is to the right or to the left
+                Vector3 newDir;
+                if (Vector3.Dot(aiToBall, Vector3.right) > 0)
+                {
+                    // To the left
+                    newDir = Quaternion.AngleAxis(angleA/2, Vector3.up) * aiToBall;
+                }
+                else
+                {
+                    // To the right
+                    newDir = Quaternion.AngleAxis(-angleA/2, Vector3.up) * aiToBall;
+                }
+
+                // Apply rotation to the direction
+                Debug.DrawRay(Owner.AimOrigin.position, newDir * 10, Color.black, 5);
+                target = Owner.AimOrigin.position + newDir;
             }
             else
             {
+               
                 // Is behind the ball
                 // Check if there is some way to shoot in goal
-                Vector3 goalToBall = ball.transform.position - teamHelper.OpponentGoalLine.position;
+                Vector3 goalToBall = ballPos - teamHelper.OpponentGoalLine.position;
                 Vector3 ballToAI = -aiToBall;
-                if(Vector3.Angle(goalToBall.normalized, ballToAI.normalized) < 60)
+                if(Vector3.Angle(goalToBall.normalized, ballToAI.normalized) < 80)
                 {
+                    Debug.Log("Behind the ball having shoot direction");
                     // We have a clear direction towards the goal line
-                    Debug.Log("Behind the ball, aiming goal line");
+                    //Debug.Log("Behind the ball, aiming goal line");
                     // Find the direction to shoot the ball in goal
                     Vector3 dirV = goalToBall + goalToBall.normalized * 4 * ballRadius;
                     Vector3 origin = teamHelper.OpponentGoalLine.position + dirV;
 
 
                     Ray ray = new Ray(origin, -goalToBall.normalized);
-                    Debug.DrawRay(ray.origin, ray.direction*10, Color.yellow, 5);
+                    Debug.DrawRay(ray.origin, ray.direction*100, Color.yellow, 5);
                     RaycastHit hit;
                     if(Physics.Raycast(ray, out hit, 10, LayerMask.GetMask(new string[] { Layer.Ball })))
                     {
-                        // The point we found is on the other side of the ball
-                        //Debug.DrawRay(Owner.transform.position, hit.point * aiToBall.magnitude, Color.blue, 5);
-
+                        
                         target = hit.point;
+                        
                     }
                 }
                 else
@@ -148,7 +183,7 @@ namespace Zoca.AI
                     Debug.Log("Behind the ball");
                 }
             }
-
+            //target = ballRB.position;
             return target;
         }
     }

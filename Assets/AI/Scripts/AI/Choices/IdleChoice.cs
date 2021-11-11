@@ -9,11 +9,13 @@ namespace Zoca.AI
     /// would stay in front of the ball, while a defender would stay back.
     /// 
     /// </summary>
+    [System.Serializable]
     public class IdleChoice : Choice
     {
         #region private fields
         TeamHelper teamHelper;
         GameObject ball;
+        Rigidbody ballRB;
 
         bool interpolateWaypoints = false;
 
@@ -28,7 +30,7 @@ namespace Zoca.AI
         {
             teamHelper = new List<TeamHelper>(GameObject.FindObjectsOfType<TeamHelper>()).Find(t => t.Team == owner.Team);
             ball = GameObject.FindGameObjectWithTag(Tag.Ball);
-            
+            ballRB = ball.GetComponent<Rigidbody>();
             
             
         }  
@@ -39,15 +41,16 @@ namespace Zoca.AI
 
             SetTargetWaypoint();
             SetTargetPosition();
-            if ((Owner.transform.position - targetPosition).magnitude > Owner.FireWeapon.FireRange)
-            {
-                Weight = 1;
-            }
-            else
-            {
-                Weight = 0;
-                Reset();
-            }
+            Weight = 1;
+            //if ((Owner.transform.position - targetPosition).magnitude > Owner.FireWeapon.FireRange)
+            //{
+            //    Weight = 1;
+            //}
+            //else
+            //{
+            //    Weight = 0;
+            //    Reset();
+            //}
                 
             
         }
@@ -80,13 +83,13 @@ namespace Zoca.AI
             if(Owner.CanSprint())
             {
                 // 1. too far away
-                Vector3 aiToPosV = targetPosition - Owner.FireWeapon.transform.position;// Vector from the ai to the pos 
+                Vector3 aiToPosV = targetPosition - Owner.AimOrigin.position;// Vector from the ai to the pos 
                 float angle = Vector3.Angle(Owner.transform.forward, aiToPosV);
-                if (aiToPosV.magnitude > Owner.FireWeapon.FireRange && angle < 60)
+                if (aiToPosV.magnitude > Owner.AimRange && angle < 60)
                 {
                     // Check if there is some obstacle further
                     Ray ray = new Ray(Owner.transform.position + Vector3.up, Owner.transform.forward);
-                    if(!Physics.Raycast(ray, 5))
+                    if(!Physics.Raycast(ray, 1.5f))
                         sprinting = true;
                 }
                     
@@ -155,7 +158,7 @@ namespace Zoca.AI
             
             // Position from the first helper
             targetPosition = new Vector3(waypoint.position.x - waypoint.parent.position.x, 0, waypoint.position.z - waypoint.parent.position.z);
-            targetPosition += ball.transform.position;// + new Vector3(Random.Range(-4f, 4f), 0, Random.Range(-4f, 4f));
+            targetPosition += ballRB.position;// + new Vector3(Random.Range(-4f, 4f), 0, Random.Range(-4f, 4f));
             targetPosition.y = 0;
 
             if (Vector3.SqrMagnitude(targetPosition - oldTargetPosition) < 1)
