@@ -134,21 +134,35 @@ namespace Zoca.AI
 
 
                 // Check whether the ai is to the right or to the left
+                float teamSign = -Mathf.Sign(Vector3.Dot(aiToBall, Vector3.forward));
                 Vector3 newDir;
                 if (Vector3.Dot(aiToBall, Vector3.right) > 0)
                 {
+                    
                     // To the left
-                    newDir = Quaternion.AngleAxis(angleA/2, Vector3.up) * aiToBall;
+                    newDir = Quaternion.AngleAxis(teamSign * angleA/2, Vector3.up) * aiToBall;
                 }
                 else
                 {
                     // To the right
-                    newDir = Quaternion.AngleAxis(-angleA/2, Vector3.up) * aiToBall;
+                    newDir = Quaternion.AngleAxis(-angleA/2*teamSign, Vector3.up) * aiToBall;
                 }
 
                 // Apply rotation to the direction
                 Debug.DrawRay(Owner.AimOrigin.position, newDir * 10, Color.black, 5);
                 target = Owner.AimOrigin.position + newDir;
+
+                // We want the ai to hit the ball in the bottom
+                // We move the target point down and then we get the new target by connecting the stretched target to
+                // the center of the ball
+                // Stretch down the target point
+                target += Vector3.down * UnityEngine.Random.Range(1f, 6f) * ballRadius;
+                // Connect the new point to the center of the ball
+                target = target - ball.transform.position;
+                // Get the intersection
+                target = ball.transform.position + target.normalized * ballRadius;
+                Debug.DrawRay(Owner.AimOrigin.position, (target-Owner.AimOrigin.position).normalized * 10, Color.grey, 5);
+                //Time.timeScale = 0;
             }
             else
             {
