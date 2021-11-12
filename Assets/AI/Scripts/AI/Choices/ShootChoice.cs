@@ -174,7 +174,7 @@ namespace Zoca.AI
                 
                 //Vector3 goalToBall = ballPos - teamHelper.OpponentGoalLine.position;
                 //Vector3 ballToAI = -aiToBall;
-                if(Vector3.Angle(goalToBall.normalized, ballToAI.normalized) < 80)
+                if(Vector3.Angle(goalToBall.normalized, ballToAI.normalized) < 90)
                 {
                     // We can shoot on goal from here
                     Debug.Log("Behind the ball having shoot direction");
