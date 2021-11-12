@@ -59,9 +59,9 @@ namespace Zoca.AI
 
         #region private fields
         List<PlayerAI> players;
-        int playersPerTeam = 1; // How many players per team
+        int playersPerTeam = 2; // How many players per team
         GameObject formationObject;
-        int formationIndex = 0;
+        int formationIndex = 1;
         Transform ball;
 
         Transform closestFormationHelper;

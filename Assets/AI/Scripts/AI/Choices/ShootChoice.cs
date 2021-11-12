@@ -29,7 +29,7 @@ namespace Zoca.AI
         {
             
             Vector3 playerToBallV = ballRB.position - Owner.AimOrigin.position;
-            if (playerToBallV.magnitude < Owner.AimRange * 0.8f)
+            if (playerToBallV.magnitude < Owner.AimRange * 1.4f)
             {
                 Weight = 2f;
             }
@@ -82,6 +82,7 @@ namespace Zoca.AI
             //Owner.transform.forward = Vector3.MoveTowards(Owner.transform.forward, targetFwd.normalized, Time.deltaTime * 10);
             //Owner.LookAtTheBall();
             Owner.LookAt(target);
+            Owner.MoveTo(target);
 
             // Check aim
             //if(Owner.transform.forward == targetFwd.normalized)
