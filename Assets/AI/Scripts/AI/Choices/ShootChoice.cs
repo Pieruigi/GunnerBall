@@ -117,10 +117,12 @@ namespace Zoca.AI
 
             // Check if the ai is behind or in front of the ball
             Vector3 aiToBall = ballPos - Owner.AimOrigin.position;
-            if(Vector3.Dot(aiToBall, teamHelper.transform.forward) < 0)
+            Vector3 goalToBall = ballPos - teamHelper.OpponentGoalLine.position;
+            Vector3 ballToAI = -aiToBall;
+            if (Vector3.Dot(aiToBall, teamHelper.transform.forward) < 0)// || Vector3.Angle(goalToBall.normalized, ballToAI.normalized) > 80)
             {
-                // Is in front of the ball
-                // We don't have a clear direction towards the goal line
+                // In front of the ball
+                // We can't shoot on goal from here, so we try to hit the ball in the bottom
                 Debug.Log("In front of the ball");
                 // Starting from the center of the ball we can aim to the right or to the left depending on the player
                 // position; at most we can hit the tangent so we can find the maximum angle this way: 
@@ -168,12 +170,13 @@ namespace Zoca.AI
             else
             {
                
-                // Is behind the ball
-                // Check if there is some way to shoot in goal
-                Vector3 goalToBall = ballPos - teamHelper.OpponentGoalLine.position;
-                Vector3 ballToAI = -aiToBall;
+                // Behind the ball
+                
+                //Vector3 goalToBall = ballPos - teamHelper.OpponentGoalLine.position;
+                //Vector3 ballToAI = -aiToBall;
                 if(Vector3.Angle(goalToBall.normalized, ballToAI.normalized) < 80)
                 {
+                    // We can shoot on goal from here
                     Debug.Log("Behind the ball having shoot direction");
                     // We have a clear direction towards the goal line
                     //Debug.Log("Behind the ball, aiming goal line");
@@ -194,7 +197,7 @@ namespace Zoca.AI
                 }
                 else
                 {
-                    // We don't have a clear direction towards the goal line
+                    
                     Debug.Log("Behind the ball");
                 }
             }

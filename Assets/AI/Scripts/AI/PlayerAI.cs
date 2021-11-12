@@ -12,7 +12,7 @@ namespace Zoca.AI
     {
         #region inspector
         [SerializeField]
-        float reactionTime = 0.25f;
+        float reactionTime = 0.1f;
 
         [SerializeField]
         Team team = Team.Blue;
@@ -160,7 +160,7 @@ namespace Zoca.AI
             }
 
 
-            if ((DateTime.UtcNow - lastReaction).TotalSeconds > reactionTime)
+            //if ((DateTime.UtcNow - lastReaction).TotalSeconds > reactionTime)
             {
                 EvaluateChoices(); // Update choices weights
 
