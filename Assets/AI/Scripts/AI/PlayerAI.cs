@@ -129,16 +129,16 @@ namespace Zoca.AI
             playerController = GetComponent<PlayerController>();
 #endif
 
-            choices = new List<Choice>();
-            choices.Add(new IdleChoice(this));
-            choices.Add(new ShootChoice(this));
+          
         }
         
 
         // Start is called before the first frame update
         void Start()
         {
-
+            choices = new List<Choice>();
+            choices.Add(new IdleChoice(this));
+            choices.Add(new ShootChoice(this));
         }
 
         // Update is called once per frame

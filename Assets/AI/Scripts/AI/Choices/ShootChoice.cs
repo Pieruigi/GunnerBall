@@ -218,14 +218,14 @@ namespace Zoca.AI
                         target = hit.point;
                         GameObject g = new GameObject("Target");
                         g.transform.position = target;
-
+                        
                         // We need now to adjust aim by taking into account the actual ball velocity ( ex. if the ball
                         // is moving to the right it could keep moving to the right even after we shoot )
                         // We simulate to hit the ball to get the new velocity
                         Vector3 simVel = ball.ComputeNewVelocity(Owner.FirePower, target, hit.normal);
                         Debug.DrawRay(ray.origin, simVel, Color.black, 5);
                         // To avoid computing drag we simply lerp the simVel towards the targetVel
-                        simVel = simVel.magnitude * Vector3.Lerp(simVel.normalized, -goalToBall.normalized, 0.6f);
+                        simVel = simVel.magnitude * Vector3.Lerp(simVel.normalized, -goalToBall.normalized, 0.5f);
                         Debug.DrawRay(ray.origin, simVel, Color.blue, 5);
                         // Get the velocity we must apply to the ball in order to reach the target velocity; 
                         // velToApply = targetVel - simulatedVel
@@ -233,9 +233,10 @@ namespace Zoca.AI
                         Debug.DrawRay(ray.origin, velDirToApply*100, Color.white, 5);
                         // Compute the target point
                         target = ballRB.position - velDirToApply * ballRadius;
+                        
                     }
 
-                    Time.timeScale = 0;
+                    Time.timeScale = 0.1f;
                     
 
                 }
