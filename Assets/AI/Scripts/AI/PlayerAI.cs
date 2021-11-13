@@ -1,4 +1,4 @@
-//#define TEST
+//#define TEST_AI
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -20,11 +20,13 @@ namespace Zoca.AI
 
         //[SerializeField]
         //PlayerBehaviour behaviour = PlayerBehaviour.Neutral;
-        
+
         #endregion
 
         #region properties
-      
+
+
+
         public float ReactionTime
         {
             get { return reactionTime; }
@@ -58,9 +60,14 @@ namespace Zoca.AI
         {
             get { return playerController.FireWeapon.FireRate; }
         }
+
+        public float FirePower
+        {
+            get { return playerController.FireWeapon.Power; }
+        }
         public Transform AimOrigin
         {
-#if !TEST
+#if !TEST_AI
             get { return playerController.PlayerCamera.transform; }
 #else
             get { return playerController.FireWeapon.transform; }
@@ -68,7 +75,7 @@ namespace Zoca.AI
         }
         public float AimRange
         {
-#if !TEST
+#if !TEST_AI
             get { return playerController.PlayerCamera.DistanceAdjustment + playerController.FireWeapon.FireRange; }
 #else
             get { return playerController.FireWeapon.FireRange; }
@@ -102,9 +109,9 @@ namespace Zoca.AI
         Vector3 destination;
         bool hasDestination = false;
         float minDistSqr = 4f;
-     
 
-#if TEST
+
+#if TEST_AI
         FakePlayerController playerController;
 #else
         PlayerController playerController;
@@ -115,7 +122,7 @@ namespace Zoca.AI
         private void Awake()
         {
             // Get player controller
-#if TEST
+#if TEST_AI
             playerController = GetComponent<FakePlayerController>();
             deactivated = false;
 #else
@@ -176,8 +183,8 @@ namespace Zoca.AI
 
                 //currentChoice?.PerformAction(); // Perform action
 
-                Debug.Log("CurrentChoice:" + currentChoice);
-                PrintLog(); /// Only for test
+                //Debug.Log("CurrentChoice:" + currentChoice);
+                //PrintLog(); /// Only for test
             }
 
             currentChoice?.PerformAction(); // Perform action
@@ -269,12 +276,12 @@ namespace Zoca.AI
 
         public void LookAtTheBall()
         {
-   
 
-#if TEST
+
+#if TEST_AI
                 playerController.LookAt(GameObject.FindGameObjectWithTag(Tag.Ball).transform.position);
 #else
-                playerController.LookAt(Ball.Instance.transform.position);
+            playerController.LookAt(Ball.Instance.transform.position);
             
 #endif
       
@@ -292,7 +299,7 @@ namespace Zoca.AI
         public void TryShoot()
         {
             Debug.Log("AI - try shoot:" + gameObject.name);
-#if TEST
+#if TEST_AI
            
                 playerController.Shoot(true);
 #else

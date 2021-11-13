@@ -1,3 +1,4 @@
+//#define TEST_AI
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,7 +9,11 @@ namespace Zoca.AI
     [System.Serializable]
     public class ShootChoice : Choice
     {
-        GameObject ball;
+#if !TEST_AI
+        Ball ball;
+#else
+        FakeBall ball;
+#endif
         float ballRadius;
         TeamHelper teamHelper;
 
@@ -19,7 +24,11 @@ namespace Zoca.AI
 
         public ShootChoice(PlayerAI owner) : base(owner) 
         {
-            ball = GameObject.FindGameObjectWithTag(Tag.Ball);
+#if !TEST_AI
+            ball = Ball.Instance;
+#else
+            ball = FakeBall.Instance;
+#endif
             ballRB = ball.GetComponent<Rigidbody>();
             ballRadius = ball.GetComponent<SphereCollider>().radius * ball.transform.localScale.x;
             teamHelper = new List<TeamHelper>(GameObject.FindObjectsOfType<TeamHelper>()).Find(t => t.Team == Owner.Team);
@@ -28,8 +37,24 @@ namespace Zoca.AI
         public override void Evaluate()
         {
             
-            Vector3 playerToBallV = ballRB.position - Owner.AimOrigin.position;
-            if (playerToBallV.magnitude < Owner.AimRange * 1.4f)
+            Vector3 aiToBallV = ballRB.position - Owner.AimOrigin.position;
+
+            // If the ball is too high only try to shoot when too close to the owned goal line
+            float maxShootPitchInRadians = 45 * Mathf.Deg2Rad;
+            // If B is the high of the ball and A the distance from the ball projected on the floor then B/A < tg(maxpitch)
+            float bDivA = Mathf.Tan(maxShootPitchInRadians);
+            
+            float b = ball.transform.position.y;
+            float a = new Vector2(aiToBallV.x, aiToBallV.z).magnitude;
+            
+            if (b/a > bDivA)
+            {
+                Reset();
+                Weight = 0;
+                return;
+            }
+
+            if (aiToBallV.magnitude < Owner.AimRange * 1.4f)
             {
                 Weight = 2f;
             }
@@ -165,7 +190,7 @@ namespace Zoca.AI
                 // Get the intersection
                 target = ball.transform.position + target.normalized * ballRadius;
                 Debug.DrawRay(Owner.AimOrigin.position, (target-Owner.AimOrigin.position).normalized * 10, Color.grey, 5);
-                //Time.timeScale = 0;
+              
             }
             else
             {
@@ -177,23 +202,42 @@ namespace Zoca.AI
                 if(Vector3.Angle(goalToBall.normalized, ballToAI.normalized) < 90)
                 {
                     // We can shoot on goal from here
-                    Debug.Log("Behind the ball having shoot direction");
+                  //  Debug.Log("Behind the ball having shoot direction");
                     // We have a clear direction towards the goal line
                     //Debug.Log("Behind the ball, aiming goal line");
-                    // Find the direction to shoot the ball in goal
-                    Vector3 dirV = goalToBall + goalToBall.normalized * 4 * ballRadius;
+                    // Find the direction to shoot in goal
+                    Vector3 dirV = goalToBall + goalToBall.normalized * (ballRadius + 0.5f);
                     Vector3 origin = teamHelper.OpponentGoalLine.position + dirV;
 
-
+                    // Ray goes from ball to goal line
                     Ray ray = new Ray(origin, -goalToBall.normalized);
                     Debug.DrawRay(ray.origin, ray.direction*100, Color.yellow, 5);
                     RaycastHit hit;
                     if(Physics.Raycast(ray, out hit, 10, LayerMask.GetMask(new string[] { Layer.Ball })))
                     {
-                        
                         target = hit.point;
-                        
+                        GameObject g = new GameObject("Target");
+                        g.transform.position = target;
+
+                        // We need now to adjust aim by taking into account the actual ball velocity ( ex. if the ball
+                        // is moving to the right it could keep moving to the right even after we shoot )
+                        // We simulate to hit the ball to get the new velocity
+                        Vector3 simVel = ball.ComputeNewVelocity(Owner.FirePower, target, hit.normal);
+                        Debug.DrawRay(ray.origin, simVel, Color.black, 5);
+                        // To avoid computing drag we simply lerp the simVel towards the targetVel
+                        simVel = simVel.magnitude * Vector3.Lerp(simVel.normalized, -goalToBall.normalized, 0.6f);
+                        Debug.DrawRay(ray.origin, simVel, Color.blue, 5);
+                        // Get the velocity we must apply to the ball in order to reach the target velocity; 
+                        // velToApply = targetVel - simulatedVel
+                        Vector3 velDirToApply = -2*goalToBall.normalized - simVel.normalized;
+                        Debug.DrawRay(ray.origin, velDirToApply*100, Color.white, 5);
+                        // Compute the target point
+                        target = ballRB.position - velDirToApply * ballRadius;
                     }
+
+                    Time.timeScale = 0;
+                    
+
                 }
                 else
                 {

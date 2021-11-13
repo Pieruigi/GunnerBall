@@ -177,7 +177,8 @@ public class FakePlayerController : MonoBehaviour
     {
         // Yaw
         Vector3 targetFwd = target - transform.position;
-        transform.forward = Vector3.MoveTowards(transform.forward, new Vector3(targetFwd.x, 0, targetFwd.z), Time.deltaTime*720);
+        //transform.forward = Vector3.MoveTowards(transform.forward, new Vector3(targetFwd.x, 0, targetFwd.z), Time.deltaTime*720);
+        transform.forward = new Vector3(targetFwd.x, 0, targetFwd.z);
         //transform.forward = targetFwd;
         // Pitch
         Vector3 pToT = target - transform.position;

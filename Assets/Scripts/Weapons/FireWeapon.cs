@@ -17,6 +17,10 @@ namespace Zoca
         [Header("Stats")]
         [SerializeField]
         float power = 5f;
+        public float Power
+        {
+            get { return power; }
+        }
 
         //[SerializeField]
         //float speed = 60;
@@ -231,7 +235,7 @@ namespace Zoca
             Debug.DrawRay(ray.origin, ray.direction * (fireRange + owner.PlayerCamera.DistanceAdjustment), Color.red, 30);
             bool hit = Physics.Raycast(ray, out info, fireRange + owner.PlayerCamera.DistanceAdjustment);
             Debug.Log("cameraDistanceAdjust:" + owner.PlayerCamera.DistanceAdjustment);
-            //Time.timeScale = 0;
+            Time.timeScale = 0;
             ownerCollider.enabled = true;
             if (hit)
             {
