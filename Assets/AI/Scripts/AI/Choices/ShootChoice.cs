@@ -93,11 +93,13 @@ namespace Zoca.AI
             //}
 
             // Check the distance
+            //Vector3 aiToBall = ballRB.position - Owner.AimOrigin.position;
+            //float sqrTargetDistance = aiToBall.sqrMagnitude;
+
             Vector3 aiToBall = ballRB.position - Owner.AimOrigin.position;
-            float sqrTargetDistance = aiToBall.sqrMagnitude;
-            
-            if (sqrTargetDistance > Mathf.Pow(Owner.AimRange * 0.8f, 2) ||
-                (lastTargetDistance > 0 && Mathf.Pow(lastTargetDistance,2) > sqrTargetDistance))
+            //float sqrTargetDistance = aiToBall.sqrMagnitude;
+            //if (sqrTargetDistance > Mathf.Pow(Owner.AimRange * 0.9f, 2))
+            if (IsTooFarAway())
             {
                 // Check the direction the ai is sprinting
                 if(Vector3.Angle(Owner.transform.forward, new Vector3(aiToBall.x, 0, aiToBall.z).normalized) < 20)
@@ -127,7 +129,7 @@ namespace Zoca.AI
                 Owner.LookAt(target);
                 Owner.MoveTo(target);
 
-                if (Owner.CanShoot())
+                if (Owner.CanShoot() && (Owner.AimOrigin.position - ballRB.position).sqrMagnitude < Mathf.Pow(Owner.AimRange,2))
                 {
                     Debug.Log("Try shoot....................");
                     
@@ -142,6 +144,26 @@ namespace Zoca.AI
            
 
             
+        }
+
+        bool IsTooFarAway()
+        {
+            Vector3 aiToBall = ballRB.position - Owner.AimOrigin.position;
+            float sqrTargetDistance = aiToBall.sqrMagnitude;
+            // Dot > 0 means the ball is going away
+            float aiFwdBallVelDot = Vector3.Dot(ballRB.velocity, aiToBall);
+
+
+
+            // Ball is going away
+            if (aiFwdBallVelDot >= 0 && sqrTargetDistance > Mathf.Pow(Owner.AimRange * 0.9f, 2))
+                return true;
+
+            // Ball is coming towards the player
+            if (aiFwdBallVelDot < 0 && sqrTargetDistance > Mathf.Pow(Owner.AimRange * 1.3f, 2))
+                return true;
+
+            return false;
         }
 
         void Reset()
@@ -207,6 +229,8 @@ namespace Zoca.AI
                 target = target - ball.transform.position;
                 // Get the intersection
                 target = ball.transform.position + target.normalized * ballRadius;
+
+                target = ballRB.position;
                 Debug.DrawRay(Owner.AimOrigin.position, (target-Owner.AimOrigin.position).normalized * 10, Color.grey, 5);
               
             }
@@ -234,8 +258,8 @@ namespace Zoca.AI
                     if (Physics.Raycast(ray, out hit, 10, LayerMask.GetMask(new string[] { Layer.Ball })))
                     {
                         target = hit.point;
-                        GameObject g = new GameObject("Target");
-                        g.transform.position = target;
+                        //GameObject g = new GameObject("Target");
+                        //g.transform.position = target;
                         
                         // We need now to adjust aim by taking into account the actual ball velocity ( ex. if the ball
                         // is moving to the right it could keep moving to the right even after we shoot )
