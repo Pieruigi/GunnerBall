@@ -69,6 +69,8 @@ namespace Zoca
             get { return cooldownElapsed; }
         }
 
+       
+
         PlayerController owner;
         Collider ownerCollider;
         //int activeCoolerCount;
@@ -170,6 +172,11 @@ namespace Zoca
         }
 #endif
 
+        public bool CanShoot()
+        {
+            return cooldownElapsed <= 0;
+        }
+
         public void IncreaseSuperShotCharge()
         {
             superShotCharge = Mathf.Clamp(superShotCharge, superShotCharge + 1, superShotChargeReady);
@@ -235,7 +242,7 @@ namespace Zoca
             Debug.DrawRay(ray.origin, ray.direction * (fireRange + owner.PlayerCamera.DistanceAdjustment), Color.red, 30);
             bool hit = Physics.Raycast(ray, out info, fireRange + owner.PlayerCamera.DistanceAdjustment);
             Debug.Log("cameraDistanceAdjust:" + owner.PlayerCamera.DistanceAdjustment);
-           // Time.timeScale = 0;
+           
             ownerCollider.enabled = true;
             if (hit)
             {

@@ -65,6 +65,8 @@ namespace Zoca.AI
         {
             get { return playerController.FireWeapon.Power; }
         }
+
+        
         public Transform AimOrigin
         {
 #if !TEST_AI
@@ -294,6 +296,12 @@ namespace Zoca.AI
         public void LookAt(Vector3 target)
         {
             playerController.LookAt(target);
+        }
+
+        public bool CanShoot()
+        {
+            return playerController.FireWeapon.CanShoot(); 
+
         }
 
         public void TryShoot()

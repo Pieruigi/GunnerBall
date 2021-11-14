@@ -24,7 +24,7 @@ public class FakePlayerController : MonoBehaviour
     Transform testTarget;
 
     #region private fields
-    float acc = 30;
+    float acc = 60;
     float speed = 0;
     bool moving = false;
     bool sprinting = false;

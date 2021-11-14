@@ -18,9 +18,9 @@ namespace Zoca.AI
         TeamHelper teamHelper;
 
         Vector3 target;
-        bool hasTarget = false;
-        DateTime lastShootTime;
+     
         Rigidbody ballRB;
+        float lastTargetDistance = -1;
 
         public ShootChoice(PlayerAI owner) : base(owner) 
         {
@@ -78,58 +78,76 @@ namespace Zoca.AI
             if (Match.Instance && Match.Instance.State != (int)MatchState.Started)
                 return;
 
-            //AI must choose where to shoot the ball
-            if (!hasTarget)
-            {
-                Vector3 playerToBall = ballRB.position - Owner.transform.position;
+            // Ball is the target
+            target = ballRB.position;
 
-                bool defensivePosition = Vector3.Dot(playerToBall, teamHelper.transform.forward) < 0;
-                bool onTheRight = Vector3.Dot(playerToBall, Vector3.right) < 0;
-
-                hasTarget = true;
-                target = ballRB.position;
-            }
-
-            Owner.Sprint(false);
-
-            // Check where is the ball in the field
-            Vector3 ballToOppGoalLine = teamHelper.OpponentGoalLine.position - ballRB.position;
-            Vector3 ballToOwnedGoalLine = teamHelper.OwnedGoalLine.position - ballRB.position;
-            bool attacking = ballToOppGoalLine.sqrMagnitude - ballToOwnedGoalLine.sqrMagnitude > 0 ? true : false;
-
-            // Adjust aim
-            target = GetTargetToAim(attacking);
-
-            //Vector3 dir = ball.transform.position - Owner.transform.position;
-            //Vector3 targetFwd = dir;
-            //targetFwd.y = 0;
-
-            //Owner.transform.forward = Vector3.MoveTowards(Owner.transform.forward, targetFwd.normalized, Time.deltaTime * 10);
-            //Owner.LookAtTheBall();
-            Owner.LookAt(target);
-            Owner.MoveTo(target);
-
-            // Check aim
-            //if(Owner.transform.forward == targetFwd.normalized)
+            //if (!hasTarget)
             //{
-                if( (DateTime.UtcNow - lastShootTime).TotalSeconds > 1f/Owner.FireRate)
+            //    Vector3 playerToBall = ballRB.position - Owner.transform.position;
+
+            //    bool defensivePosition = Vector3.Dot(playerToBall, teamHelper.transform.forward) < 0;
+            //    bool onTheRight = Vector3.Dot(playerToBall, Vector3.right) < 0;
+
+            //    hasTarget = true;
+            //    target = ballRB.position;
+            //}
+
+            // Check the distance
+            Vector3 aiToBall = ballRB.position - Owner.AimOrigin.position;
+            float sqrTargetDistance = aiToBall.sqrMagnitude;
+            
+            if (sqrTargetDistance > Mathf.Pow(Owner.AimRange * 0.95f, 2) ||
+                (lastTargetDistance > 0 && Mathf.Pow(lastTargetDistance,2) > sqrTargetDistance))
+            {
+                // Check the direction the ai is sprinting
+                if(Vector3.Angle(Owner.transform.forward, new Vector3(aiToBall.x, 0, aiToBall.z).normalized) < 20)
+                {
+                    Owner.Sprint(true);
+                    //Owner.Sprint(false);
+                }
+                else
+                {
+                    Owner.Sprint(false);
+                }
+                Owner.MoveTo(target);
+            }
+            else
+            {
+                Owner.Sprint(false);
+
+                // Check where is the ball in the field
+                Vector3 ballToOppGoalLine = teamHelper.OpponentGoalLine.position - ballRB.position;
+                Vector3 ballToOwnedGoalLine = teamHelper.OwnedGoalLine.position - ballRB.position;
+                bool attacking = ballToOppGoalLine.sqrMagnitude - ballToOwnedGoalLine.sqrMagnitude > 0 ? true : false;
+
+                // Adjust aim
+                target = GetTargetToAim(attacking);
+
+                // Aim the target
+                Owner.LookAt(target);
+                Owner.MoveTo(target);
+
+                if (Owner.CanShoot())
                 {
                     Debug.Log("Try shoot....................");
-                    lastShootTime = DateTime.UtcNow;
+                    
                     Owner.TryShoot();
-                    
+
                     Reset();
-                    
+
                 }
+            }
                 
-            //}
+
+           
+
             
         }
 
         void Reset()
         {
+            lastTargetDistance = -1;
             
-            hasTarget = false;
         }
 
         Vector3 GetTargetToAim(bool attacking)
@@ -236,7 +254,7 @@ namespace Zoca.AI
                         
                     }
 
-                    Time.timeScale = 0.1f;
+                    //Time.timeScale = 0f;
                     
 
                 }

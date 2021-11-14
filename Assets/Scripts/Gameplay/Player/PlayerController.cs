@@ -547,8 +547,8 @@ namespace Zoca
          
             // Rotate towards the target
             Vector3 targetFwd = target - transform.position;
-            transform.forward = Vector3.MoveTowards(transform.forward, new Vector3(targetFwd.x, 0, targetFwd.z), Time.deltaTime * (sprinting ? yawSpeedOnSprint : yawSpeed));
-            //transform.forward = targetFwd;
+            //transform.forward = Vector3.MoveTowards(transform.forward, new Vector3(targetFwd.x, 0, targetFwd.z), Time.deltaTime * (sprinting ? yawSpeedOnSprint : yawSpeed));
+            transform.forward = new Vector3(targetFwd.x, 0, targetFwd.z);
             // Add pitch
             Vector3 cameraToTarget = target - playerCamera.transform.position;
             Vector3 cameraForward = playerCamera.transform.forward;
@@ -663,7 +663,8 @@ namespace Zoca
         public void Sprint(bool value)
         {
             sprintInput = value;
-   
+            if (!value)
+                sprinting = value;
         }
 
         public void Hit(GameObject owner, Vector3 hitPoint, Vector3 hitNormal, Vector3 hitDirection, float hitDamage)
