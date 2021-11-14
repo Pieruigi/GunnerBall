@@ -96,7 +96,7 @@ namespace Zoca.AI
             Vector3 aiToBall = ballRB.position - Owner.AimOrigin.position;
             float sqrTargetDistance = aiToBall.sqrMagnitude;
             
-            if (sqrTargetDistance > Mathf.Pow(Owner.AimRange * 0.95f, 2) ||
+            if (sqrTargetDistance > Mathf.Pow(Owner.AimRange * 0.8f, 2) ||
                 (lastTargetDistance > 0 && Mathf.Pow(lastTargetDistance,2) > sqrTargetDistance))
             {
                 // Check the direction the ai is sprinting
@@ -162,7 +162,7 @@ namespace Zoca.AI
             Vector3 aiToBall = ballPos - Owner.AimOrigin.position;
             Vector3 goalToBall = ballPos - teamHelper.OpponentGoalLine.position;
             Vector3 ballToAI = -aiToBall;
-            if (Vector3.Dot(aiToBall, teamHelper.transform.forward) < 0)// || Vector3.Angle(goalToBall.normalized, ballToAI.normalized) > 80)
+            if (Vector3.Dot(aiToBall, teamHelper.transform.forward) < 0 || Vector3.Angle(goalToBall.normalized, ballToAI.normalized) > 70)
             {
                 // In front of the ball
                 // We can't shoot on goal from here, so we try to hit the ball in the bottom
@@ -217,8 +217,8 @@ namespace Zoca.AI
                 
                 //Vector3 goalToBall = ballPos - teamHelper.OpponentGoalLine.position;
                 //Vector3 ballToAI = -aiToBall;
-                if(Vector3.Angle(goalToBall.normalized, ballToAI.normalized) < 90)
-                {
+                //if(Vector3.Angle(goalToBall.normalized, ballToAI.normalized) < 90)
+                //{
                     // We can shoot on goal from here
                   //  Debug.Log("Behind the ball having shoot direction");
                     // We have a clear direction towards the goal line
@@ -231,7 +231,7 @@ namespace Zoca.AI
                     Ray ray = new Ray(origin, -goalToBall.normalized);
                     Debug.DrawRay(ray.origin, ray.direction*100, Color.yellow, 5);
                     RaycastHit hit;
-                    if(Physics.Raycast(ray, out hit, 10, LayerMask.GetMask(new string[] { Layer.Ball })))
+                    if (Physics.Raycast(ray, out hit, 10, LayerMask.GetMask(new string[] { Layer.Ball })))
                     {
                         target = hit.point;
                         GameObject g = new GameObject("Target");
@@ -257,12 +257,12 @@ namespace Zoca.AI
                     //Time.timeScale = 0f;
                     
 
-                }
-                else
-                {
+                //}
+                //else
+                //{
                     
-                    Debug.Log("Behind the ball");
-                }
+                //    Debug.Log("Behind the ball");
+                //}
             }
             //target = ballRB.position;
             return target;
