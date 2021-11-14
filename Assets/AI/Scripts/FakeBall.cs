@@ -24,7 +24,7 @@ public class FakeBall : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        rb.velocity = Vector3.right * 33;
+        //rb.velocity = Vector3.right * 13;
     }
 
     // Update is called once per frame

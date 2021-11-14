@@ -184,13 +184,14 @@ namespace Zoca.AI
             Vector3 aiToBall = ballPos - Owner.AimOrigin.position;
             Vector3 goalToBall = ballPos - teamHelper.OpponentGoalLine.position;
             Vector3 ballToAI = -aiToBall;
+            
             if (Vector3.Dot(aiToBall, teamHelper.transform.forward) < 0 || Vector3.Angle(goalToBall.normalized, ballToAI.normalized) > 70)
             {
                 // In front of the ball
-                // We can't shoot on goal from here, so we try to hit the ball in the bottom
+                // We can't shoot on goal from here, so we try to hit the ball from the bottom
                 Debug.Log("In front of the ball");
                 // Starting from the center of the ball we can aim to the right or to the left depending on the player
-                // position; at most we can hit the tangent so we can find the maximum angle this way: 
+                // position; at most we can hit the tangent so that we can find the maximum angle this way: 
                 // ballRadius = ballDist * cosB; A = 90 - B; A is the angle we need
                 Vector3 dir = aiToBall;
                 
@@ -200,6 +201,8 @@ namespace Zoca.AI
                 // Gived the direction between the ai and the all we can rotate between 0 and A ( or -A, depends
                 // on the position )
 
+                // angleDir = 1 if ai is in front of the ball
+                float angleDir = Vector3.Dot(aiToBall, teamHelper.transform.forward) < 0 ? 1 : -1;
 
                 // Check whether the ai is to the right or to the left
                 float teamSign = -Mathf.Sign(Vector3.Dot(aiToBall, Vector3.forward));
@@ -208,13 +211,15 @@ namespace Zoca.AI
                 {
                     
                     // To the left
-                    newDir = Quaternion.AngleAxis(teamSign * angleA/2, Vector3.up) * aiToBall;
+                    newDir = Quaternion.AngleAxis(teamSign * angleA * 0.85f * angleDir, Vector3.up) * aiToBall;
                 }
                 else
                 {
                     // To the right
-                    newDir = Quaternion.AngleAxis(-angleA/2*teamSign, Vector3.up) * aiToBall;
+                    newDir = Quaternion.AngleAxis(-angleA * 0.85f * teamSign * angleDir, Vector3.up) * aiToBall;
                 }
+
+               // newDir *= angleDir;
 
                 // Apply rotation to the direction
                 Debug.DrawRay(Owner.AimOrigin.position, newDir * 10, Color.black, 5);
@@ -226,13 +231,13 @@ namespace Zoca.AI
                 // Stretch down the target point
                 target += Vector3.down * UnityEngine.Random.Range(1f, 6f) * ballRadius;
                 // Connect the new point to the center of the ball
-                target = target - ball.transform.position;
+                target = target - ballRB.position;
                 // Get the intersection
-                target = ball.transform.position + target.normalized * ballRadius;
+                target = ballRB.position + target.normalized * ballRadius;
 
-                target = ballRB.position;
-                Debug.DrawRay(Owner.AimOrigin.position, (target-Owner.AimOrigin.position).normalized * 10, Color.grey, 5);
-              
+                //target = ballRB.position;
+                Debug.DrawRay(Owner.AimOrigin.position, (target-Owner.AimOrigin.position).normalized * 30, Color.grey, 5);
+                //Time.timeScale = 0;
             }
             else
             {

@@ -106,8 +106,8 @@ namespace Zoca
             damage = TestPlayerStats.WeaponDamage;
             fireRate = TestPlayerStats.WeaponFireRate;
             fireRange = TestPlayerStats.WeaponFireRange;
-            
 
+            
 #endif
 
             ///////////////////
@@ -275,7 +275,7 @@ namespace Zoca
                         //superShotCharge = Mathf.Clamp(superShotCharge, superShotCharge + 1, superShotChargeReady);
                         IncreaseSuperShotCharge();
                     }
-                    
+                   
                 }
             }
             

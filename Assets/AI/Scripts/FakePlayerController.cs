@@ -199,7 +199,8 @@ public class FakePlayerController : MonoBehaviour
         bool hit = Physics.Raycast(ray, out info, fireWeapon.FireRange * 2);
         if(hit)
         {
-            ballRB.AddForce(-info.normal * 80, ForceMode.VelocityChange);
+            Time.timeScale = 0;
+            ballRB.AddForce(-info.normal * 20, ForceMode.VelocityChange);
         }
     }
 
