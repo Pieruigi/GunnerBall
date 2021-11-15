@@ -430,10 +430,10 @@ namespace Zoca
 
                 if (shooting)
                 {
-                    Debug.Log("Update - shooting...");
+                    //Debug.Log("Update - shooting...");
                     if (!startPaused && !freezed && !goalPaused)
                     {
-                        Debug.Log("Update - shooting 2...");
+                        //Debug.Log("Update - shooting 2...");
                         object[] parameters;
                         //Collider hitCollider;
                         // Returns true if the weapon is ready to shoot, otherwise returns false
@@ -632,8 +632,7 @@ namespace Zoca
 
         public void Shoot(bool value)
         {
-            Debug.Log("Shoot:" + gameObject.name);
-
+           
             // Always set the super shoot false
             superShoot = false;
 
@@ -645,8 +644,7 @@ namespace Zoca
                 return;
             }
 
-            Debug.Log("Set shooting:" + value);
-
+            
             if (value)
             {
 

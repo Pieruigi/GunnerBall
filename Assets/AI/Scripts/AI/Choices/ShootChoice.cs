@@ -81,24 +81,8 @@ namespace Zoca.AI
             // Ball is the target
             target = ballRB.position;
 
-            //if (!hasTarget)
-            //{
-            //    Vector3 playerToBall = ballRB.position - Owner.transform.position;
-
-            //    bool defensivePosition = Vector3.Dot(playerToBall, teamHelper.transform.forward) < 0;
-            //    bool onTheRight = Vector3.Dot(playerToBall, Vector3.right) < 0;
-
-            //    hasTarget = true;
-            //    target = ballRB.position;
-            //}
-
-            // Check the distance
-            //Vector3 aiToBall = ballRB.position - Owner.AimOrigin.position;
-            //float sqrTargetDistance = aiToBall.sqrMagnitude;
-
+            
             Vector3 aiToBall = ballRB.position - Owner.AimOrigin.position;
-            //float sqrTargetDistance = aiToBall.sqrMagnitude;
-            //if (sqrTargetDistance > Mathf.Pow(Owner.AimRange * 0.9f, 2))
             if (IsTooFarAway())
             {
                 // Check the direction the ai is sprinting
@@ -125,6 +109,8 @@ namespace Zoca.AI
                 // Adjust aim
                 target = GetTargetToAim(attacking);
 
+                //AddError(ref target);
+
                 // Aim the target
                 Owner.LookAt(target);
                 Owner.MoveTo(target);
@@ -144,6 +130,18 @@ namespace Zoca.AI
            
 
             
+        }
+
+        void AddError(ref Vector3 target)
+        {
+            float maxError = 0.35f;
+            float factor = 0.1f; // The higher the more the error grows
+            float ballSpeed = ballRB.velocity.magnitude;
+            Vector3 error = new Vector3(UnityEngine.Random.Range(-maxError, maxError), UnityEngine.Random.Range(-maxError, maxError), UnityEngine.Random.Range(-maxError, maxError));
+
+            error *= ballSpeed * factor;
+            
+            target += error;
         }
 
         bool IsTooFarAway()
@@ -176,10 +174,7 @@ namespace Zoca.AI
         {
             Vector3 ballPos = ballRB.position;
             Vector3 target = ballPos;
-            // The shoot it will take place in 100 millis, so we need to adjust the position
-            //target += ballRB.velocity * 0.1f;
-
-
+           
             // Check if the ai is behind or in front of the ball
             Vector3 aiToBall = ballPos - Owner.AimOrigin.position;
             Vector3 goalToBall = ballPos - teamHelper.OpponentGoalLine.position;
@@ -189,7 +184,6 @@ namespace Zoca.AI
             {
                 // In front of the ball
                 // We can't shoot on goal from here, so we try to hit the ball from the bottom
-                Debug.Log("In front of the ball");
                 // Starting from the center of the ball we can aim to the right or to the left depending on the player
                 // position; at most we can hit the tangent so that we can find the maximum angle this way: 
                 // ballRadius = ballDist * cosB; A = 90 - B; A is the angle we need
@@ -197,7 +191,6 @@ namespace Zoca.AI
                 
                 float angleB = Mathf.Acos(ballRadius / dir.magnitude) * Mathf.Rad2Deg;
                 float angleA = 90 - angleB;
-                Debug.Log("AngleA:" + angleA);
                 // Gived the direction between the ai and the all we can rotate between 0 and A ( or -A, depends
                 // on the position )
 
@@ -219,8 +212,6 @@ namespace Zoca.AI
                     newDir = Quaternion.AngleAxis(-angleA * 0.85f * teamSign * angleDir, Vector3.up) * aiToBall;
                 }
 
-               // newDir *= angleDir;
-
                 // Apply rotation to the direction
                 Debug.DrawRay(Owner.AimOrigin.position, newDir * 10, Color.black, 5);
                 target = Owner.AimOrigin.position + newDir;
@@ -235,23 +226,13 @@ namespace Zoca.AI
                 // Get the intersection
                 target = ballRB.position + target.normalized * ballRadius;
 
-                //target = ballRB.position;
                 Debug.DrawRay(Owner.AimOrigin.position, (target-Owner.AimOrigin.position).normalized * 30, Color.grey, 5);
                 //Time.timeScale = 0;
             }
             else
             {
                
-                // Behind the ball
-                
-                //Vector3 goalToBall = ballPos - teamHelper.OpponentGoalLine.position;
-                //Vector3 ballToAI = -aiToBall;
-                //if(Vector3.Angle(goalToBall.normalized, ballToAI.normalized) < 90)
-                //{
                     // We can shoot on goal from here
-                  //  Debug.Log("Behind the ball having shoot direction");
-                    // We have a clear direction towards the goal line
-                    //Debug.Log("Behind the ball, aiming goal line");
                     // Find the direction to shoot in goal
                     Vector3 dirV = goalToBall + goalToBall.normalized * (ballRadius + 0.5f);
                     Vector3 origin = teamHelper.OpponentGoalLine.position + dirV;
@@ -263,8 +244,6 @@ namespace Zoca.AI
                     if (Physics.Raycast(ray, out hit, 10, LayerMask.GetMask(new string[] { Layer.Ball })))
                     {
                         target = hit.point;
-                        //GameObject g = new GameObject("Target");
-                        //g.transform.position = target;
                         
                         // We need now to adjust aim by taking into account the actual ball velocity ( ex. if the ball
                         // is moving to the right it could keep moving to the right even after we shoot )
@@ -275,8 +254,7 @@ namespace Zoca.AI
                         simVel = simVel.magnitude * Vector3.Lerp(simVel.normalized, -goalToBall.normalized, 0.5f);
                         Debug.DrawRay(ray.origin, simVel, Color.blue, 5);
                         // Get the velocity we must apply to the ball in order to reach the target velocity; 
-                        // velToApply = targetVel - simulatedVel
-                        Vector3 velDirToApply = -2*goalToBall.normalized - simVel.normalized;
+                        Vector3 velDirToApply = -2*goalToBall.normalized - simVel.normalized; // Approximation
                         Debug.DrawRay(ray.origin, velDirToApply*100, Color.white, 5);
                         // Compute the target point
                         target = ballRB.position - velDirToApply * ballRadius;
@@ -286,14 +264,11 @@ namespace Zoca.AI
                     //Time.timeScale = 0f;
                     
 
-                //}
-                //else
-                //{
-                    
-                //    Debug.Log("Behind the ball");
-                //}
+               
             }
-            //target = ballRB.position;
+
+            AddError(ref target);
+            //Time.timeScale = 0f;
             return target;
         }
     }

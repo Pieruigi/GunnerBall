@@ -196,7 +196,7 @@ namespace Zoca
         /// <returns></returns>
         public virtual bool TryShoot(bool superShot, out object[] parameters)
         {
-            Debug.Log("FireWeapon - TryShoot().");
+            //Debug.Log("FireWeapon - TryShoot().");
             parameters = null;
 
             // Local player only
@@ -241,7 +241,6 @@ namespace Zoca
             ownerCollider.enabled = false;
             Debug.DrawRay(ray.origin, ray.direction * (fireRange + owner.PlayerCamera.DistanceAdjustment), Color.red, 30);
             bool hit = Physics.Raycast(ray, out info, fireRange + owner.PlayerCamera.DistanceAdjustment);
-            Debug.Log("cameraDistanceAdjust:" + owner.PlayerCamera.DistanceAdjustment);
            
             ownerCollider.enabled = true;
             if (hit)

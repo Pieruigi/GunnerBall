@@ -12,7 +12,7 @@ namespace Zoca.AI
     {
         #region inspector
         [SerializeField]
-        float reactionTime = 0.1f;
+        float reactionTime = 0.5f;
 
         [SerializeField]
         Team team = Team.Blue;
@@ -169,7 +169,7 @@ namespace Zoca.AI
             }
 
 
-            //if ((DateTime.UtcNow - lastReaction).TotalSeconds > reactionTime)
+            if ((DateTime.UtcNow - lastReaction).TotalSeconds > reactionTime)
             {
                 EvaluateChoices(); // Update choices weights
 
@@ -183,13 +183,13 @@ namespace Zoca.AI
                     //currentChoice?.StartPerformingAction();
                 }
 
-                //currentChoice?.PerformAction(); // Perform action
+                currentChoice?.PerformAction(); // Perform action
 
                 //Debug.Log("CurrentChoice:" + currentChoice);
                 //PrintLog(); /// Only for test
             }
 
-            currentChoice?.PerformAction(); // Perform action
+            //currentChoice?.PerformAction(); // Perform action
         }
         IEnumerator StopShooting()
         {
