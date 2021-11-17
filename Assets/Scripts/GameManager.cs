@@ -123,7 +123,7 @@ namespace Zoca
             // Set the default character
             Debug.LogFormat("PUN - Setting default character id.");
             PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.CharacterId, 0);
-            //PlayerCustomPropertyUtility.SynchronizePlayerCustomProperties(PhotonNetwork.LocalPlayer);
+            PlayerCustomPropertyUtility.SynchronizePlayerCustomProperties(PhotonNetwork.LocalPlayer);
 
             if (PhotonNetwork.OfflineMode)
             {
@@ -271,9 +271,11 @@ namespace Zoca
                 // local player
                 if (!PhotonNetwork.OfflineMode) // Online mode
                 {
-                    
+                    Debug.Log("Starting online mode...");
+
                     if (!PlayerController.LocalPlayer) // Local player is null
                     {
+                        
                         int cId = (int)PlayerCustomPropertyUtility.GetLocalPlayerCustomProperty(PlayerCustomPropertyKey.CharacterId);
                         //cId++; // To load prototype
                         //if (!PlayerCustomPropertyUtility.TryGetPlayerCustomProperty<int>(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.CharacterId, ref cId))
@@ -287,6 +289,7 @@ namespace Zoca
 
                         // Spawn the networked local player ( only support 1vs1 at the moment )
                         // Get the player team
+                        
                         Team team = (Team)PlayerCustomPropertyUtility.GetLocalPlayerCustomProperty(PlayerCustomPropertyKey.TeamColor);
                         //if (!PlayerCustomPropertyUtility.TryGetPlayerCustomProperty<Team>(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.TeamColor, ref team))
                         //{
@@ -329,8 +332,10 @@ namespace Zoca
 
 
                 }
-                else // Offline mode: for test, means we are testing the arena from the editor
+                else // Offline mode for single player
                 {
+                    Debug.Log("Starting offline mode...");
+
                     // Hide cursor
                     Cursor.lockState = CursorLockMode.Locked;
 
@@ -407,6 +412,10 @@ namespace Zoca
                 //Debug.LogFormat("GameManager - Not in game, camera instance: {0}", PlayerCamera.Instance);
                 //if (PlayerCamera.Instance)
                 //    Destroy(PlayerCamera.Instance.gameObject);
+
+                // Destroy player if exists
+                if(PlayerController.LocalPlayer)
+                    Destroy(PlayerController.LocalPlayer);
 
             }
             Debug.LogFormat("GameManager - scene loaded [Name:{0}]; inGame:{1}", scene.name, inGame);

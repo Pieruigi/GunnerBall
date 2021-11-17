@@ -278,7 +278,7 @@ namespace Zoca
                 
 
                 // Avoid to destroy the player 
-                //DontDestroyOnLoad(gameObject);
+                DontDestroyOnLoad(gameObject);
 
 
 
@@ -569,6 +569,7 @@ namespace Zoca
 
         public void EnterGoalArea(GoalArea goalArea)
         {
+            
             if (inGoalArea)
                 return;
             

@@ -95,7 +95,8 @@ namespace Zoca.AI
         {
 
             // Get the ball
-            ball = GameObject.FindGameObjectWithTag(Tag.Ball).transform;
+            //if(GameObject.FindGameObjectWithTag(Tag.Ball))
+            //    ball = GameObject.FindGameObjectWithTag(Tag.Ball).transform;
 
             // Init ( most is fake )
             players = new List<PlayerAI>(GameObject.FindObjectsOfType<PlayerAI>()).FindAll(p => p.Team == team);
@@ -196,6 +197,14 @@ namespace Zoca.AI
         #region public
         public Transform GetTheClosestFormationHelper()
         {
+            if (ball == null)
+            {
+                if (!GameObject.FindGameObjectWithTag(Tag.Ball))
+                    return null;
+                ball = GameObject.FindGameObjectWithTag(Tag.Ball).transform;
+            }
+                
+
             if (!closestFormationHelper)
             {
                 // Compute

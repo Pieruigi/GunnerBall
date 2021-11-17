@@ -138,6 +138,8 @@ namespace Zoca.AI
         // Start is called before the first frame update
         void Start()
         {
+            if (deactivated)
+                return;
             choices = new List<Choice>();
             choices.Add(new IdleChoice(this));
             choices.Add(new ShootChoice(this));

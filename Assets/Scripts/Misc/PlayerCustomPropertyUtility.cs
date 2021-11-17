@@ -40,7 +40,10 @@ namespace Zoca
 
         public static object GetPlayerCustomProperty(Player player, string key)
         {
-            
+
+            Debug.Log("GetPlayerCustomProperty - player:" + player);
+            Debug.Log("GetPlayerCustomProperty - key:" + key);
+            Debug.Log("GetPlayerCustomProperty - keyValue:" + player.CustomProperties[key]);
             if (!player.CustomProperties.ContainsKey(key))
                 return null;
 
