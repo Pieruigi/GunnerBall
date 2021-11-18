@@ -64,6 +64,7 @@ namespace Zoca
                 // Connect to the photon network first
                 Debug.LogFormat("PUN - Connecting to Photon network...");
                 PhotonNetwork.GameVersion = gameVersion;
+                Debug.LogFormat("PUN - GameVersion: " + PhotonNetwork.GameVersion);
                 PhotonNetwork.ConnectUsingSettings();
             }
         }

@@ -142,10 +142,10 @@ namespace Zoca
                 // The room is not full but we want to test it
                 LoadArena();
             }
-            else
-            {
-                RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
-            }
+            //else
+            //{
+            //    RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
+            //}
         }
 #endif
         /// <summary>
@@ -312,7 +312,8 @@ namespace Zoca
                             spawnPoint = LevelManager.Instance.RedTeamSpawnPoints[id];
                         }
                         // Spawn local player
-                        PhotonNetwork.Instantiate(System.IO.Path.Combine(ResourceFolder.Characters, playerPrefab.name), spawnPoint.position, spawnPoint.rotation);
+                        GameObject p = PhotonNetwork.Instantiate(System.IO.Path.Combine(ResourceFolder.Characters, playerPrefab.name), spawnPoint.position, spawnPoint.rotation);
+                        p.name += "_" + actorNumber;
                     }
 
                     

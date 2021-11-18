@@ -191,7 +191,7 @@ namespace Zoca
             // I guess because we are using character controller; so we check for 
             // collision with all the players here.
             CheckPlayersCollision();
-            Debug.LogFormat("Ball speed:" + rb.velocity.magnitude);
+            
             if (PhotonNetwork.IsMasterClient)
                 return;
 
