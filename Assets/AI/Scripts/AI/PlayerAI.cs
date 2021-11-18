@@ -243,6 +243,7 @@ namespace Zoca.AI
 
         public void Activate()
         {
+            Debug.Log("PlayerAI - Activate()");
             deactivated = false;
         }
 

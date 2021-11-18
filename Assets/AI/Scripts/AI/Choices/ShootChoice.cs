@@ -21,6 +21,7 @@ namespace Zoca.AI
      
         Rigidbody ballRB;
         float lastTargetDistance = -1;
+        float maxAimError = 0.35f;
 
         public ShootChoice(PlayerAI owner) : base(owner) 
         {
@@ -134,10 +135,9 @@ namespace Zoca.AI
 
         void AddError(ref Vector3 target)
         {
-            float maxError = 0.35f;
             float factor = 0.1f; // The higher the more the error grows
             float ballSpeed = ballRB.velocity.magnitude;
-            Vector3 error = new Vector3(UnityEngine.Random.Range(-maxError, maxError), UnityEngine.Random.Range(-maxError, maxError), UnityEngine.Random.Range(-maxError, maxError));
+            Vector3 error = new Vector3(UnityEngine.Random.Range(-maxAimError, maxAimError), UnityEngine.Random.Range(-maxAimError, maxAimError), UnityEngine.Random.Range(-maxAimError, maxAimError));
 
             error *= ballSpeed * factor;
             
