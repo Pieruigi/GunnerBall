@@ -9,27 +9,69 @@ namespace Zoca
     public class Drone : MonoBehaviour
     {
         [SerializeField]
-        Transform waypointGroup;
+        Transform pathGroup;
 
+        [SerializeField]
+        List<Transform> screws;
+
+        [SerializeField]
+        float rotationSpeed = 10f;
+
+        List<Vector3>[] pathArray;
+
+        Tween tween;
+
+        int currentPathIndex = 0;
         
         // Start is called before the first frame update
         void Start()
         {
-            List<Vector3> wps = new List<Vector3>();
+            if (pathGroup)
+            {
+                // Create the path array
+                pathArray = new List<Vector3>[pathGroup.childCount];
 
-            for (int i=0; i<waypointGroup.childCount; i++)
-                wps.Add(waypointGroup.GetChild(i).position);
+                // For each path fill the waypoint list
+                for (int i = 0; i < pathArray.Length; i++)
+                {
+                    // Init the waypoint list
+                    pathArray[i] = new List<Vector3>();
 
-            // Add the first to close the path
-            //wps.Add(wps[0]);
+                    // Fill in the list
+                    Transform path = pathGroup.GetChild(i);
+                    for (int j = 0; j < path.childCount; j++)
+                        pathArray[i].Add(path.GetChild(j).position);
+                }
 
-            Tween t = gameObject.transform.DOPath(wps.ToArray(), 20, PathType.CatmullRom, PathMode.Full3D);
-            t.SetEase(Ease.InOutCubic).SetLoops(-1, LoopType.Yoyo);
+
+                List<Vector3> wps = pathArray[currentPathIndex];
+                tween = gameObject.transform.DOPath(wps.ToArray(), 20, PathType.CatmullRom, PathMode.Full3D).OnComplete(HandleOnPathComplete);
+            }
+           
+            
+            foreach(Transform screw in screws)
+            {
+                // Set a random starting angle
+                screw.RotateAround(screw.position, screw.up, Random.Range(-180f, 180f));
+                
+            }
+            
+            //tween.SetEase(Ease.InOutBack);
 
         }
 
         // Update is called once per frame
         void Update()
+        {
+            foreach (Transform screw in screws)
+            {
+                // Set a random starting angle
+                screw.RotateAround(screw.position, screw.up, rotationSpeed*Time.deltaTime);
+
+            }
+        }
+
+        void HandleOnPathComplete()
         {
 
         }
