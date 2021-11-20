@@ -12,6 +12,9 @@ namespace Zoca
         PathContainer pathContainer;
 
         [SerializeField]
+        float moveSpeed = 1;
+
+        [SerializeField]
         float idleTimeMin = 10;
 
         [SerializeField]
@@ -33,13 +36,17 @@ namespace Zoca
 
         int currentPathIndex = 0;
         bool back = false;
+
+        [SerializeField]
         Transform target;
+
+        Transform model;
         
         // Start is called before the first frame update
         void Start()
         {
             // Start tweening
-            Tween(GetWaypoints(pathContainer.GetPath(currentPathIndex), back), pathContainer.GetPath(currentPathIndex).Time, Random.Range(idleTimeMin, idleTimeMax));
+            Tween(GetWaypoints(pathContainer.GetPath(currentPathIndex), back), Random.Range(idleTimeMin, idleTimeMax));
 
             // Start the target updating coroutine
             StartCoroutine(UpdateTarget());
@@ -47,9 +54,11 @@ namespace Zoca
             // Set a random starting angle for each screw
             foreach (Transform screw in screws)
                 screw.RotateAround(screw.position, screw.up, Random.Range(-180f, 180f));
-            
-            
 
+            // Set the asset
+            model = transform.GetChild(0);
+
+            
         }
 
         // Update is called once per frame
@@ -61,8 +70,18 @@ namespace Zoca
 
         }
 
+        private void LateUpdate()
+        {
+            // Look at the target
+            if (target)
+            {
+                model.LookAt(target);
+            }
+        }
+
         void HandleOnPathComplete()
         {
+            Debug.Log("Completed");
             // Set the next path
             if (!back) // Forward
             {
@@ -93,7 +112,7 @@ namespace Zoca
 
            
             // Start tweening
-            Tween(GetWaypoints(pathContainer.GetPath(currentPathIndex), back), pathContainer.GetPath(currentPathIndex).Time, Random.Range(idleTimeMin, idleTimeMax));
+            Tween(GetWaypoints(pathContainer.GetPath(currentPathIndex), back), Random.Range(idleTimeMin, idleTimeMax));
         }
 
         Vector3[] GetWaypoints(PathContainer.Path path, bool back)
@@ -106,11 +125,12 @@ namespace Zoca
 
         }
 
-        void Tween(Vector3[] waypoints, float time, float delay)
+        void Tween(Vector3[] waypoints, float delay)
         {
-            tween = gameObject.transform.DOPath(waypoints, time, PathType.CatmullRom, PathMode.Full3D).OnComplete(HandleOnPathComplete);
-            tween.SetDelay(delay).SetEase(Ease.InOutFlash).SetSpeedBased();
 
+            tween = gameObject.transform.DOPath(waypoints, 1, PathType.CatmullRom, PathMode.Full3D).OnComplete(HandleOnPathComplete);
+            tween.SetDelay(delay).SetEase(Ease.InOutFlash).SetSpeedBased();
+            tween.timeScale = moveSpeed;
             
         }
 
@@ -138,6 +158,7 @@ namespace Zoca
                 if(availableTargets.Count > 0)
                 {
                     target = availableTargets[Random.Range(0, availableTargets.Count)];
+                    model.DOLookAt(target.position, -1);
                 }
 
                 yield return new WaitForSeconds(Random.Range(targetTimeMin, targetTimeMax));

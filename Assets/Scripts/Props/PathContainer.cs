@@ -9,19 +9,13 @@ namespace Zoca
         [System.Serializable]
         public class Path
         {
-            public float Time
-            {
-                get { return time; }
-            }
-
+          
             public List<Transform> Waypoints
             {
                 get { return waypoints; }
             }
 
-            [SerializeField]
-            float time = 30; // The time it will take to move along the path
-
+         
             [SerializeField]
             List<Transform> waypoints;
 
