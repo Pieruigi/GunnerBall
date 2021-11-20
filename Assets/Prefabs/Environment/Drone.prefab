@@ -44,12 +44,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e046e00aa79c8b4ab547360d67bc495, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pathGroup: {fileID: 0}
+  pathContainer: {fileID: 0}
+  moveSpeed: 1
+  idleTimeMin: 1
+  idleTimeMax: 3
+  targetTimeMin: 100
+  targetTimeMax: 300
   screws:
   - {fileID: 5861432822261041644}
   - {fileID: 7782640011371080652}
   - {fileID: 6482167228722343200}
   - {fileID: 642484870114283953}
+  rotationSpeed: 1080
+  target: {fileID: 0}
 --- !u!1001 &8601795405792828268
 PrefabInstance:
   m_ObjectHideFlags: 0
