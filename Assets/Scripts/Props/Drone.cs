@@ -45,8 +45,14 @@ namespace Zoca
         // Start is called before the first frame update
         void Start()
         {
+            // Get waypoints
+            Vector3[] wps = GetWaypoints(pathContainer.GetPath(currentPathIndex), back);
+
+            // Set the starting position
+            transform.position = wps[0];
+
             // Start tweening
-            Tween(GetWaypoints(pathContainer.GetPath(currentPathIndex), back), Random.Range(idleTimeMin, idleTimeMax));
+            Tween(wps, Random.Range(idleTimeMin, idleTimeMax));
 
             // Start the target updating coroutine
             StartCoroutine(UpdateTarget());
