@@ -9,13 +9,13 @@ namespace Zoca.UI
     
     public class MatchTimer : MonoBehaviour
     {
-        [SerializeField]
+        
         Text timerText;
 
         
         private void Awake()
         {
-            
+            timerText = GetComponent<Text>();
         }
 
         // Start is called before the first frame update

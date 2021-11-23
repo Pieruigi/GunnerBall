@@ -46,8 +46,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pathContainer: {fileID: 0}
   moveSpeed: 1
-  idleTimeMin: 1
-  idleTimeMax: 3
+  idleTimeMin: 10
+  idleTimeMax: 30
   targetTimeMin: 100
   targetTimeMax: 300
   screws:
@@ -55,7 +55,7 @@ MonoBehaviour:
   - {fileID: 7782640011371080652}
   - {fileID: 6482167228722343200}
   - {fileID: 642484870114283953}
-  rotationSpeed: 1080
+  rotationSpeed: 2160
   target: {fileID: 0}
 --- !u!1001 &8601795405792828268
 PrefabInstance:

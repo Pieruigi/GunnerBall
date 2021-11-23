@@ -369,6 +369,7 @@ GameObject:
   - component: {fileID: 8409923118901962246}
   - component: {fileID: 7315274930428893159}
   - component: {fileID: 5376797258160433373}
+  - component: {fileID: 7207801772143327950}
   m_Layer: 5
   m_Name: Cover
   m_TagString: Untagged
@@ -433,6 +434,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &7207801772143327950
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5376923471887967779}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c858a64e056b68c43969321d9989ed30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blueSprite: {fileID: 21300000, guid: 313ecc8a34a1b1e40bd2f085c7b89583, type: 3}
+  redSprite: {fileID: 21300000, guid: 40154df67b2fdcc438825d75513e22fc, type: 3}
 --- !u!1 &5434699164606081832
 GameObject:
   m_ObjectHideFlags: 0
@@ -444,6 +459,7 @@ GameObject:
   - component: {fileID: 2680084436863878142}
   - component: {fileID: 8024352005245268746}
   - component: {fileID: 6979046610931367676}
+  - component: {fileID: 313722253780084196}
   m_Layer: 5
   m_Name: CoverGlow
   m_TagString: Untagged
@@ -508,6 +524,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &313722253780084196
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5434699164606081832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c858a64e056b68c43969321d9989ed30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blueSprite: {fileID: 21300000, guid: 3201e25377e56334c9f72f41616e2e6f, type: 3}
+  redSprite: {fileID: 21300000, guid: e5da3abb23475e649af1a5089e2dfeb6, type: 3}
 --- !u!1 &9084179308396647455
 GameObject:
   m_ObjectHideFlags: 0

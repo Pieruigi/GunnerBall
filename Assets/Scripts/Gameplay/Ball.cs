@@ -247,14 +247,14 @@ namespace Zoca
             // Change the ball emission color depending on the team the player
             // who hit the ball belongs to.
             Team ownerTeam;
-            if (PhotonNetwork.OfflineMode)
-            {
-                ownerTeam = Team.Blue;
-            }
-            else
-            {
+            //if (PhotonNetwork.OfflineMode)
+            //{
+            //    ownerTeam = Team.Blue;
+            //}
+            //else
+            //{
                 ownerTeam = (Team)PlayerCustomPropertyUtility.GetPlayerCustomProperty(hitOwner.GetComponent<PhotonView>().Owner, PlayerCustomPropertyKey.TeamColor);
-            }
+            //}
 
 #if !FX_DISABLED
             // Get the material by team
