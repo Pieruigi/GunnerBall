@@ -1371,7 +1371,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1996033372774866031, guid: 5a7de440507a3c440b87a0230b827025, type: 3}
       propertyPath: m_RootOrder
-      value: 11
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 1996033372774866031, guid: 5a7de440507a3c440b87a0230b827025, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2283,6 +2283,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1978515025700865554, guid: d15f498662bcc3d4594963855e5f5229, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: d6f7075f14e3343459734aa865a93ef6, type: 2}
     - target: {fileID: 4428754154621899215, guid: d15f498662bcc3d4594963855e5f5229, type: 3}
       propertyPath: m_Name
       value: Flag (2)
@@ -6096,7 +6100,7 @@ Light:
   m_Type: 0
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 600
+  m_Intensity: 200
   m_Range: 76.3
   m_SpotAngle: 90.80197
   m_InnerSpotAngle: 50.15245
@@ -7308,7 +7312,7 @@ Light:
   m_Type: 0
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 600
+  m_Intensity: 200
   m_Range: 76.3
   m_SpotAngle: 90.80197
   m_InnerSpotAngle: 50.15245
@@ -9033,7 +9037,7 @@ Light:
   m_Type: 0
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 600
+  m_Intensity: 200
   m_Range: 76.3
   m_SpotAngle: 90.80197
   m_InnerSpotAngle: 50.15245
@@ -9561,7 +9565,7 @@ Transform:
   - {fileID: 1803409042}
   - {fileID: 1178724628}
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1345816151
 GameObject:
@@ -12454,7 +12458,7 @@ Light:
   m_Type: 0
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 600
+  m_Intensity: 200
   m_Range: 76.3
   m_SpotAngle: 90.80197
   m_InnerSpotAngle: 50.15245
@@ -15128,6 +15132,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1978515025700865554, guid: d15f498662bcc3d4594963855e5f5229, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: d6f7075f14e3343459734aa865a93ef6, type: 2}
     - target: {fileID: 4428754154621899215, guid: d15f498662bcc3d4594963855e5f5229, type: 3}
       propertyPath: m_Name
       value: Flag
