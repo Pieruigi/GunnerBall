@@ -341,10 +341,12 @@ namespace Zoca
                     Cursor.lockState = CursorLockMode.Locked;
 
                     // Add default custom properties
+                    int cId = 1;
                     PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.TeamColor, Team.Blue);
-                    PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.CharacterId, 0);
+                    PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.CharacterId, cId);
                     // Get character resource
-                    GameObject playerPrefab = Resources.LoadAll<PlayerController>(ResourceFolder.Characters)[0].gameObject;
+                    
+                    GameObject playerPrefab = Resources.LoadAll<PlayerController>(ResourceFolder.Characters)[cId].gameObject;
                     Debug.LogFormat("Character found: {0}", playerPrefab.name);
                     Debug.LogFormat("Spawning {0} on photon network...", playerPrefab.name);
                     // Create local player

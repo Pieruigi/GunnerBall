@@ -890,6 +890,8 @@ namespace Zoca
 
         public void OnSuperShoot(InputAction.CallbackContext context)
         {
+            return;
+
             if (!photonView.IsMine || (PhotonNetwork.OfflineMode && photonView.Owner != PhotonNetwork.MasterClient))
                 return;
 
