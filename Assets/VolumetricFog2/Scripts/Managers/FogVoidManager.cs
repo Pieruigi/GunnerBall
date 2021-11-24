@@ -40,6 +40,19 @@ namespace VolumetricFogAndMist2 {
             }
         }
 
+        private void Update()
+        {
+            if (trackingCenter == null)
+            {
+                Camera cam = null;
+                Tools.CheckCamera(ref cam);
+                if (cam != null)
+                {
+                    trackingCenter = cam.transform;
+                }
+            }
+        }
+
         void SubmitFogVoidData() {
 
             int k = 0;

@@ -1,4 +1,5 @@
 //#define TEST_AI
+using Photon.Pun;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -129,6 +130,7 @@ namespace Zoca.AI
             deactivated = false;
 #else
             playerController = GetComponent<PlayerController>();
+
 #endif
 
           
@@ -138,6 +140,8 @@ namespace Zoca.AI
         // Start is called before the first frame update
         void Start()
         {
+            // Set the waypoint index
+
             if (deactivated)
                 return;
             choices = new List<Choice>();

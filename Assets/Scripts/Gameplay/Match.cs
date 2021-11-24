@@ -64,6 +64,7 @@ namespace Zoca
             get { return targetTime; }
         }
 
+      
 
         private void Awake()
         {
@@ -81,6 +82,7 @@ namespace Zoca
                 oldState = (byte)RoomCustomPropertyUtility.GetCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchOldState);
                 blueTeamScore = (byte)RoomCustomPropertyUtility.GetCurrentRoomCustomProperty(RoomCustomPropertyKey.BlueTeamScore);
                 redTeamScore = (byte)RoomCustomPropertyUtility.GetCurrentRoomCustomProperty(RoomCustomPropertyKey.RedTeamScore);
+               
             }
             else
             {

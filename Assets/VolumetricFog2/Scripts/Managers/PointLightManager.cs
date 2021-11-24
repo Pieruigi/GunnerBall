@@ -49,6 +49,20 @@ namespace VolumetricFogAndMist2 {
             }
         }
 
+        private void Update()
+        {
+            if (!trackingCenter)
+            {
+                Camera cam = null;
+                Tools.CheckCamera(ref cam);
+                if (cam != null)
+                {
+                    trackingCenter = cam.transform;
+                }
+            }
+                
+        }
+
         private void LateUpdate() {
             TrackPointLights();
             SubmitPointLightData();

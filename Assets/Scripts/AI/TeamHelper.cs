@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -98,7 +99,7 @@ namespace Zoca.AI
             //if(GameObject.FindGameObjectWithTag(Tag.Ball))
             //    ball = GameObject.FindGameObjectWithTag(Tag.Ball).transform;
 
-            // Init ( most is fake )
+            // Get the number of ai playing in this team
             players = new List<PlayerAI>(GameObject.FindObjectsOfType<PlayerAI>()).FindAll(p => p.Team == team);
             playersPerTeam = players.Count;
             for(int i=0; i<playersPerTeam; i++)
@@ -112,16 +113,15 @@ namespace Zoca.AI
             foreach (GameObject f in formationPrefabs)
                 Debug.LogFormat("[Formation {0} loaded.]", f.name);
 
+            // Get the formation prefab index
+            formationIndex = formationPrefabs.FindIndex(f => f.name.StartsWith(string.Format("{0}_", PhotonNetwork.CurrentRoom.MaxPlayers/2)));
+
             // Create the formation game object
             SetFormationObject(formationPrefabs[formationIndex]);
 
             //OrderHelpersByBallDistance();
 
-            // Compute the positions the players should keep around the ball
-            for (int i=0; i<playersPerTeam; i++)
-            {
-                
-            }
+         
         }
 
         void SetFormationObject(GameObject formationPrefab)

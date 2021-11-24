@@ -387,6 +387,8 @@ namespace Zoca
                             spawnPoint = LevelManager.Instance.RedTeamSpawnPoints[spawnPointId];
                         }
 
+                        spawnPointId++;
+
                         GameObject newPlayerObject = PhotonNetwork.InstantiateRoomObject(System.IO.Path.Combine(ResourceFolder.Characters, playerPrefab.name), spawnPoint.position, spawnPoint.rotation);
                         //GameObject newPlayerObject = GameObject.Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
                         newPlayerObject.GetComponent<PlayerAI>().Activate();

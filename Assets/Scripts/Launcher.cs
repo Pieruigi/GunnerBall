@@ -158,27 +158,7 @@ namespace Zoca
         /// </summary>
         public override void OnJoinedRoom()
         {
-            //Debug.LogFormat("PUN - Room joined [Name:{0}].", PhotonNetwork.CurrentRoom.Name);
-
-            // Set the team
-            // We fill the blue team with the first players, and the red team with the last ones.
-            //Debug.LogFormat("PUN - local player actor number: {0}", PhotonNetwork.LocalPlayer.ActorNumber);
-            ////if (PhotonNetwork.LocalPlayer.ActorNumber == 1)
-            //if (PhotonNetwork.LocalPlayer.ActorNumber <= PhotonNetwork.CurrentRoom.MaxPlayers / 2)
-            //{
-            //    //PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.TeamColor, Team.Blue);
-            //    PlayerCustomPropertyUtility.AddOrUpdateLocalPlayerCustomProperty(PlayerCustomPropertyKey.TeamColor, Team.Blue);
-            //}
-            //else
-            //{
-            //    //PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.TeamColor, Team.Red);
-            //    PlayerCustomPropertyUtility.AddOrUpdateLocalPlayerCustomProperty(PlayerCustomPropertyKey.TeamColor, Team.Red);
-            //}
-
-            //// Set the default character
-            //Debug.LogFormat("PUN - Setting default character id.");
-            //PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.CharacterId, 0);
-            //PlayerCustomPropertyUtility.SynchronizePlayerCustomProperties(PhotonNetwork.LocalPlayer);
+          
         }
         #endregion
 
