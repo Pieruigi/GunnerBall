@@ -341,7 +341,7 @@ namespace Zoca
                     Cursor.lockState = CursorLockMode.Locked;
 
                     // Add default custom properties
-                    int cId = 2;
+                    int cId = 0;
                     PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.TeamColor, Team.Blue);
                     PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.CharacterId, cId);
                     // Get character resource
