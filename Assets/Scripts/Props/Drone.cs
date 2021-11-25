@@ -32,6 +32,7 @@ namespace Zoca
         [SerializeField]
         float rotationSpeed = 10f;
 
+       
         Tween tween;
 
         int currentPathIndex = 0;
