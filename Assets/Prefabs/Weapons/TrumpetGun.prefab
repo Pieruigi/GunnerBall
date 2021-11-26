@@ -179,6 +179,21 @@ MonoBehaviour:
   fireRange: 10
   shootParticle: {fileID: 7754388655319059619}
   audioSource: {fileID: 3838290037625214981}
+--- !u!114 &3172599917322482607
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6129840816511224642}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55b8ae18fa3c30747b8fd2c2081c0c54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blueMaterial: {fileID: 2100000, guid: 1fdaeccf4268b30409a2be64c715b9de, type: 2}
+  redMaterial: {fileID: 2100000, guid: 2eac467610e958f4f9dab8ff1d42b874, type: 2}
+  materialId: 0
 --- !u!1001 &5172001568536066830
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -349,12 +364,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -119.728
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 6352ea1dc147e9649b0c8b61be2e657a, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 1fdaeccf4268b30409a2be64c715b9de, type: 2}
+    - target: {fileID: -7511558181221131132, guid: 6352ea1dc147e9649b0c8b61be2e657a, type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 1fdaeccf4268b30409a2be64c715b9de, type: 2}
     - target: {fileID: 919132149155446097, guid: 6352ea1dc147e9649b0c8b61be2e657a, type: 3}
       propertyPath: m_Name
       value: Trumpet_Gun
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6352ea1dc147e9649b0c8b61be2e657a, type: 3}
+--- !u!1 &6129840816511224642 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 6352ea1dc147e9649b0c8b61be2e657a, type: 3}
+  m_PrefabInstance: {fileID: 6471945820858660371}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6798818134500823544 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 6352ea1dc147e9649b0c8b61be2e657a, type: 3}
