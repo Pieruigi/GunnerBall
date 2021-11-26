@@ -7,7 +7,7 @@ namespace Zoca
     public class DroneEmitter : MonoBehaviour
     {
         [SerializeField]
-        Renderer emitter;
+        Renderer[] emitters;
 
         [SerializeField]
         int materialId;
@@ -17,14 +17,24 @@ namespace Zoca
 
         private void Awake()
         {
+            Color randomColor = GetRandomColor();
+
+            
+
             // Clone material
-            Material[] mats = emitter.materials;
-            mats[materialId] = new Material(mats[materialId]);
-            emitter.materials = mats;
+            foreach(Renderer emitter in emitters)
+            {
+                Material[] mats = emitter.materials;
+                mats[materialId] = new Material(mats[materialId]);
+                emitter.materials = mats;
 
-            // Set random color
+                // Set random color
+                mats[materialId].SetColor("_EmissionColor", randomColor);
+            }
+            
 
-            mats[materialId].SetColor("_EmissionColor", GetRandomColor());
+
+            
         }
 
         // Start is called before the first frame update
