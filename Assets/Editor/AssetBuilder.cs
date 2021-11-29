@@ -31,8 +31,8 @@ namespace Zoca.Editor
             
             string name = "/empty.asset";
             
-            string folder = System.IO.Path.Combine("Assets/Resources", ResourceFolder.Collections);
-            folder = System.IO.Path.Combine("Assets/Resources", ResourceFolder.Characters);
+            string folder = System.IO.Path.Combine("Assets/Resources", Character.CollectionFolder);
+            //folder = System.IO.Path.Combine(folder, ResourceFolder.Collections);
 
             if (!System.IO.Directory.Exists(folder))
                 System.IO.Directory.CreateDirectory(folder);

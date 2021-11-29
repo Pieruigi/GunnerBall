@@ -6,14 +6,19 @@ namespace Zoca.Collections
 {
     public class Character : ScriptableObject
     {
-        [SerializeField]
-        string id;
+
+        public static readonly string CollectionFolder = ResourceFolder.Collections + "/Characters";
+
+        public static readonly string GameAssetFolder = ResourceFolder.GameAssets + "/Characters";
 
         [SerializeField]
-        string _name;
+        GameObject gameAsset;
 
-        [SerializeField]
-        GameObject asset;
+        
+        public GameObject GameAsset
+        {
+            get { return gameAsset; }
+        }
     }
 
 }

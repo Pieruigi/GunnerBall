@@ -9,11 +9,17 @@ namespace Zoca
 
     public class ResourceFolder
     {
-        public static readonly string Characters = "Characters";
-        public static readonly string Balls = "Balls";
+        // Base folders
+        public static readonly string Collections = "Collections";
+        public static readonly string GameAssets = "GameAssets";
+
+        // Sepcific folders
+        public static readonly string Balls = GameAssets + "/Balls";
         public static readonly string Sprites = "Sprites";
         public static readonly string TeamFormations = "AI/Formations";
-        public static readonly string Collections = "Collections";
+
+
+        
     }
 
     public class Tag
