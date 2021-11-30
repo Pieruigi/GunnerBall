@@ -11,6 +11,7 @@ namespace Zoca
     {
         public static readonly string TeamColor = "tc";
         public static readonly string CharacterId = "cid";
+        public static readonly string WeaponId = "wid";
     }
 
     public class PlayerCustomPropertyUtility

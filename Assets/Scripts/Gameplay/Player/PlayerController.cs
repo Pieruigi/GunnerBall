@@ -183,6 +183,10 @@ namespace Zoca
             get { return fireWeapon; }
         }
 
+        [SerializeField]
+        FireWeapon[] weapons;
+        
+
         [Header("Fx")]
         [SerializeField]
         ParticleSystem freezeParticle;
@@ -216,12 +220,6 @@ namespace Zoca
 #endif
         #endregion
 
-        //#region ai 
-        //Vector3 destination;
-        //bool hasDestination = false;
-        //float minDistSqr = 4f;
-        //#endregion
-
         AnimationController animationController;
 
         private void Awake()
@@ -229,8 +227,7 @@ namespace Zoca
             // Get the character controller
             cc = GetComponent<CharacterController>();
 
-            // Set the fireweapon owner
-            fireWeapon.SetOwner(this);
+            SetCurrentFireWeapon();
 
             healthDefault = health;
             sprintSpeed = maxSpeed * sprintMultiplier;
@@ -239,7 +236,7 @@ namespace Zoca
             animationController = GetComponent<AnimationController>();
 
             // Init player camera
-            // Camera is helpful for the aiming system even if the player is not the local one
+            // Camera is also needed by the aiming system for ais
             playerCamera.SetPlayerController(this);
 
             // Store initial position
@@ -271,15 +268,6 @@ namespace Zoca
                 LocalPlayer = gameObject;
 
                 Local = this;
-
-                //// Init player camera
-                //playerCamera.SetPlayerController(this);
-
-                //// Store initial position
-                //startPosition = transform.position;
-                //startRotation = transform.rotation;
-
-                
 
                 // Avoid to destroy the player 
                 DontDestroyOnLoad(gameObject);
@@ -544,7 +532,7 @@ namespace Zoca
             }
         }
 
-
+       
 
         public void LookAt(Vector3 target)
         {
@@ -955,7 +943,23 @@ namespace Zoca
             //Destroy(playerCamera.gameObject);
         }
 
-        
+        void SetCurrentFireWeapon()
+        {
+            // Set all weapons off
+            foreach(FireWeapon weapon in weapons)
+            {
+                weapon.gameObject.SetActive(false);
+            }
+
+            // Get the fireweapon id from the player properties
+            int weaponId = (int)PlayerCustomPropertyUtility.GetPlayerCustomProperty(photonView.Owner, PlayerCustomPropertyKey.WeaponId);
+            // Set the weapon
+            fireWeapon = weapons[weaponId];
+            // Activate the current weapon
+            fireWeapon.gameObject.SetActive(true);
+            // Set the fireweapon owner
+            fireWeapon.SetOwner(this);
+        }
 
         //private void OnCollisionEnter(Collision collision)
         //{

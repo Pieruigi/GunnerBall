@@ -123,19 +123,22 @@ namespace Zoca
 
             // Set the default character
             Debug.LogFormat("PUN - Setting default character id.");
-            PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.CharacterId, 3);
+            PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.CharacterId, 2);
+            // Set weapon 
+            PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.WeaponId, 1);
+            // Save player properties
             PlayerCustomPropertyUtility.SynchronizePlayerCustomProperties(PhotonNetwork.LocalPlayer);
 
             if (PhotonNetwork.OfflineMode)
             {
-                RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchStateTimestamp, (float)PhotonNetwork.Time);
-                RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchState, (byte)MatchState.Paused);
-                RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchOldState, (byte)MatchState.None);
-                RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchTimeElapsed, 0f);
-                RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.BlueTeamScore, (byte)0);
-                RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.RedTeamScore, (byte)0);
-                RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
-
+                //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchStateTimestamp, (float)PhotonNetwork.Time);
+                //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchState, (byte)MatchState.Paused);
+                //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchOldState, (byte)MatchState.None);
+                //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchTimeElapsed, 0f);
+                //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.BlueTeamScore, (byte)0);
+                //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.RedTeamScore, (byte)0);
+                //RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
+                InitRoomCustomProperties();
 
                 // Close the room to avoid other players to join our test 
                 PhotonNetwork.CurrentRoom.IsOpen = false;
@@ -171,23 +174,18 @@ namespace Zoca
                     //if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
                     {
                         // A match starting time is needed to set countdown
-                        RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchStateTimestamp, (float)PhotonNetwork.Time);
-                        RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchState, (byte)MatchState.Paused);
-                        RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchOldState, (byte)MatchState.None);
-                        RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchTimeElapsed, 0f);
-                        RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.BlueTeamScore, (byte)0);
-                        RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.RedTeamScore, (byte)0);
-                        RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
+                        //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchStateTimestamp, (float)PhotonNetwork.Time);
+                        //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchState, (byte)MatchState.Paused);
+                        //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchOldState, (byte)MatchState.None);
+                        //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchTimeElapsed, 0f);
+                        //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.BlueTeamScore, (byte)0);
+                        //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.RedTeamScore, (byte)0);
+                        //RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
+                        InitRoomCustomProperties();
 
                         // Close the room to avoid other players to join
                         PhotonNetwork.CurrentRoom.IsOpen = false;
-
-                        //PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.StartTime] = (float)PhotonNetwork.Time;
-                        //PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.MatchState] = MatchState.Starting;
-                        //PhotonNetwork.CurrentRoom.CustomProperties[RoomCustomPropertyKey.MatchElapsed] = 0f;
-
-                        //PhotonNetwork.CurrentRoom.SetCustomProperties(PhotonNetwork.CurrentRoom.CustomProperties);
-
+                                             
                         // The room is full, load the arena
                         LoadArena();
 
@@ -276,37 +274,24 @@ namespace Zoca
 
                     if (!PlayerController.LocalPlayer) // Local player is null
                     {
-                        
+                        // Get the character id set in the lobby ( default character has been set on JoinRoom() )
                         int cId = (int)PlayerCustomPropertyUtility.GetLocalPlayerCustomProperty(PlayerCustomPropertyKey.CharacterId);
-                        //cId++; // To load prototype
-                        //if (!PlayerCustomPropertyUtility.TryGetPlayerCustomProperty<int>(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.CharacterId, ref cId))
-                        //{
-                        //    Debug.LogErrorFormat("GameManager - Empty property for local player: [{0}]", PlayerCustomPropertyKey.CharacterId);
-                        //}
+                        
                         Debug.LogFormat("Loading local player character [CharacterId:{0}].", cId);
-                        // Load caracter prefabs
+                        // Load the character prefab ( the descriptor holding the asset prefab )
                         Character[] collection = Resources.LoadAll<Character>(Character.CollectionFolder);
-
-
-                        //GameObject playerPrefab = Resources.LoadAll<PlayerController>(ResourceFolder.Characters)[(int)cId].gameObject;
+                        // Get the game asset from the descriptor
                         GameObject playerPrefab = collection[cId].GameAsset;
 
                         Debug.LogFormat("Character found: {0}", playerPrefab.name);
                         Debug.LogFormat("Spawning {0} on photon network...", playerPrefab.name);
 
-                        // Spawn the networked local player ( only support 1vs1 at the moment )
-                        // Get the player team
-                        
+                        // Get the local player team
                         Team team = (Team)PlayerCustomPropertyUtility.GetLocalPlayerCustomProperty(PlayerCustomPropertyKey.TeamColor);
-                        //if (!PlayerCustomPropertyUtility.TryGetPlayerCustomProperty<Team>(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.TeamColor, ref team))
-                        //{
-                        //    Debug.LogErrorFormat("PlayerController - property is empty: {0}", PlayerCustomPropertyKey.TeamColor);
-                        //}
-
+                     
                         // Get the spawn point depending on the team the player belongs to
                         Transform spawnPoint = null;
                         int teamPlayers = PhotonNetwork.CurrentRoom.MaxPlayers / 2;
-                        //int actorNumber = PlayerController.Local.photonView.Owner.ActorNumber;
                         int actorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
                         if (team == Team.Blue)
                         {
@@ -318,7 +303,7 @@ namespace Zoca
                             int id = actorNumber % (2*teamPlayers);
                             spawnPoint = LevelManager.Instance.RedTeamSpawnPoints[id];
                         }
-                        // Spawn local player
+                        // Spawn local player on network
                         GameObject p = PhotonNetwork.Instantiate(System.IO.Path.Combine(Character.GameAssetFolder, playerPrefab.name), spawnPoint.position, spawnPoint.rotation);
                         p.name += "_" + actorNumber;
                     }
@@ -347,20 +332,16 @@ namespace Zoca
                     // Hide cursor
                     Cursor.lockState = CursorLockMode.Locked;
 
-                    // Add default custom properties
+                    // Get the local player character info id
                     int cId = (int)PlayerCustomPropertyUtility.GetLocalPlayerCustomProperty(PlayerCustomPropertyKey.CharacterId);
                     
-                    //PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.TeamColor, Team.Blue);
-                    //PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.CharacterId, cId);
-                    // Get character resource
-
-                    // Load caracter prefabs
+                    // Load descriptor
                     Character[] collection = Resources.LoadAll<Character>(Character.CollectionFolder);
-                    //GameObject playerPrefab = Resources.LoadAll<PlayerController>(ResourceFolder.GetCharacterCollectionFolder())[cId].gameObject;
+                    // Get prefab from descriptor
                     GameObject playerPrefab = collection[cId].GameAsset;
                     Debug.LogFormat("Character found: {0}", playerPrefab.name);
                     Debug.LogFormat("Spawning {0} on photon network...", playerPrefab.name);
-                    // Create local player
+                    // Create the local player
                     Transform spawnPoint = LevelManager.Instance.BlueTeamSpawnPoints[0];
                     //Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
                     PhotonNetwork.Instantiate(System.IO.Path.Combine(Character.GameAssetFolder, playerPrefab.name), spawnPoint.position, spawnPoint.rotation);
@@ -382,7 +363,7 @@ namespace Zoca
                     int spawnPointId = 1;
                     for(int i=0; i<count; i++)
                     {
-                        //PhotonNetwork.CurrentRoom.AddPlayer();
+                        
                         Player newPlayer = Player.CreateOfflinePlayer(i + 2);
                         PhotonNetwork.CurrentRoom.AddPlayer(newPlayer);
                         if(i+1 < PhotonNetwork.CurrentRoom.MaxPlayers / 2)
@@ -402,10 +383,8 @@ namespace Zoca
                         spawnPointId++;
 
                         GameObject newPlayerObject = PhotonNetwork.InstantiateRoomObject(System.IO.Path.Combine(Character.GameAssetFolder, playerPrefab.name), spawnPoint.position, spawnPoint.rotation);
-                        //GameObject newPlayerObject = GameObject.Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
                         newPlayerObject.GetComponent<PlayerAI>().Activate();
                         newPlayerObject.GetComponent<PlayerAI>().Team = (Team)PlayerCustomPropertyUtility.GetPlayerCustomProperty(newPlayer, PlayerCustomPropertyKey.TeamColor);
-                        //newPlayerObject.GetComponent<PlayerAI>().ActorId = i + 2;
                         newPlayerObject.GetComponent<PhotonView>().OwnerActorNr = i + 2;
                         
 
@@ -438,13 +417,20 @@ namespace Zoca
             Debug.LogFormat("GameManager - scene loaded [Name:{0}]; inGame:{1}", scene.name, inGame);
         }
 
+        void InitRoomCustomProperties()
+        {
+            RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchStateTimestamp, (float)PhotonNetwork.Time);
+            RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchState, (byte)MatchState.Paused);
+            RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchOldState, (byte)MatchState.None);
+            RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchTimeElapsed, 0f);
+            RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.BlueTeamScore, (byte)0);
+            RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.RedTeamScore, (byte)0);
+            RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
+        }
+
         public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
         {
-            //Debug.LogFormat("GameManager - OnRoomPropertiesUpdate");
-            //foreach(string key in propertiesThatChanged.Keys)
-            //{
-            //    Debug.LogFormat("GameManager - {0}:{1}", key, propertiesThatChanged[key]);
-            //}
+            
         }
 #endregion
     }
