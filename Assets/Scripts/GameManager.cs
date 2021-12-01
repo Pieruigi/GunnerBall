@@ -121,11 +121,20 @@ namespace Zoca
                 PlayerCustomPropertyUtility.AddOrUpdateLocalPlayerCustomProperty(PlayerCustomPropertyKey.TeamColor, Team.Red);
             }
 
+            int localCharacterId = 0;
+            int localWeaponId = 0;
+            if (PhotonNetwork.OfflineMode)
+            {
+                // Use the OfflineMatchData structure
+                localCharacterId = OfflineMatchData.Instance.LocalPlayerCharacterId;
+                localWeaponId = OfflineMatchData.Instance.LocalPlayerWeaponId;
+            }
+
             // Set the default character
             Debug.LogFormat("PUN - Setting default character id.");
-            PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.CharacterId, 2);
+            PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.CharacterId, localCharacterId);
             // Set weapon 
-            PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.WeaponId, 1);
+            PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.WeaponId, localWeaponId);
             // Save player properties
             PlayerCustomPropertyUtility.SynchronizePlayerCustomProperties(PhotonNetwork.LocalPlayer);
 
@@ -361,12 +370,27 @@ namespace Zoca
                     Team playerTeam = (Team)PlayerCustomPropertyUtility.GetLocalPlayerCustomProperty(PlayerCustomPropertyKey.TeamColor);
                     Team opponentTeam = playerTeam == Team.Blue ? Team.Red : Team.Blue;
                     int spawnPointId = 1;
+                    int aiCharacterId, aiWeaponId;
+                    
                     for(int i=0; i<count; i++)
                     {
-                        
+                        // Get character and weapon id
+                        aiCharacterId = OfflineMatchData.Instance.AiCharacterIds[i];
+                        aiWeaponId = OfflineMatchData.Instance.AiWeaponIds[i];
+
+                        // Load avatar
+                        collection = Resources.LoadAll<Character>(Character.CollectionFolder);
+                        // Get the game asset from the descriptor
+                        playerPrefab = collection[aiCharacterId].GameAsset;
+
                         Player newPlayer = Player.CreateOfflinePlayer(i + 2);
                         PhotonNetwork.CurrentRoom.AddPlayer(newPlayer);
-                        if(i+1 < PhotonNetwork.CurrentRoom.MaxPlayers / 2)
+
+                        // Set character id and weapon id data
+                        PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(newPlayer, PlayerCustomPropertyKey.CharacterId, aiCharacterId);
+                        PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(newPlayer, PlayerCustomPropertyKey.WeaponId, aiWeaponId);
+
+                        if (i+1 < PhotonNetwork.CurrentRoom.MaxPlayers / 2)
                         {
                             PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(newPlayer, PlayerCustomPropertyKey.TeamColor, playerTeam);
                             spawnPoint = LevelManager.Instance.BlueTeamSpawnPoints[spawnPointId];

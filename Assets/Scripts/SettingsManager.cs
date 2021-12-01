@@ -67,7 +67,7 @@ namespace Zoca
             {
                 Instance = this;
 
-         
+
                 // Resolution is handled by the engine settings so we don't need
                 // to save it
 
