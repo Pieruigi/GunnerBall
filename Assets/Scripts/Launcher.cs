@@ -14,6 +14,7 @@ namespace Zoca
         int expectedMaxPlayers = 2;
         string roomName = null;
         float matchLength = 300;
+        bool joinRandom = false;
         #endregion
 
         bool connecting = false;
@@ -40,6 +41,16 @@ namespace Zoca
         public void QuickMatch(int expectedMaxPlayers)
         {
             PhotonNetwork.OfflineMode = false;
+            joinRandom = true;
+            this.expectedMaxPlayers = expectedMaxPlayers;
+
+            Connect();
+        }
+
+        public void CreateMatch(int expectedMaxPlayers)
+        {
+            PhotonNetwork.OfflineMode = false;
+            joinRandom = false;
             this.expectedMaxPlayers = expectedMaxPlayers;
 
             Connect();
@@ -71,8 +82,21 @@ namespace Zoca
 
         public void Join()
         {
-            // We must read the choosen join mode first
-            PhotonNetwork.JoinRandomRoom(null, (byte)expectedMaxPlayers);
+            if (joinRandom)
+            {
+                // We must read the choosen join mode first
+                PhotonNetwork.JoinRandomRoom(null, (byte)expectedMaxPlayers);
+            }
+            else
+            {
+                // Create a specific room
+                RoomOptions roomOptions = new RoomOptions() { MaxPlayers = (byte)expectedMaxPlayers };
+                roomOptions.CustomRoomPropertiesForLobby = new string[] { RoomCustomPropertyKey.MatchLength };
+                roomOptions.CustomRoomProperties = new ExitGames.Client.Photon.Hashtable();
+                roomOptions.CustomRoomProperties.Add(RoomCustomPropertyKey.MatchLength, (int)matchLength);
+
+                PhotonNetwork.CreateRoom(null, roomOptions);
+            }
         }
 
         public void LaunchOffline(int maxPlayers)
