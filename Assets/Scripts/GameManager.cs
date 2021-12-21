@@ -194,6 +194,7 @@ namespace Zoca
 
                         // Close the room to avoid other players to join
                         PhotonNetwork.CurrentRoom.IsOpen = false;
+                        PhotonNetwork.CurrentRoom.IsVisible = false;
                                              
                         // The room is full, load the arena
                         LoadArena();
@@ -264,7 +265,8 @@ namespace Zoca
         public override void OnLeftRoom()
         {
             Debug.LogFormat("PUN - Left room.");
-            SceneManager.LoadScene("MainScene");
+            if(inGame)
+                SceneManager.LoadScene("MainScene");
         }
 
        
