@@ -95,7 +95,7 @@ namespace Zoca
                 roomOptions.CustomRoomProperties = new ExitGames.Client.Photon.Hashtable();
                 roomOptions.CustomRoomProperties.Add(RoomCustomPropertyKey.MatchLength, (int)matchLength);
 
-                PhotonNetwork.CreateRoom(null, roomOptions);
+                PhotonNetwork.CreateRoom(PhotonNetwork.NickName, roomOptions);
             }
         }
 

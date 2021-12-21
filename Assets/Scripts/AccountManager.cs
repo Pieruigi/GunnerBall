@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using UnityEngine;
 #if !DISABLESTEAMWORKS
 using Steamworks;
+using Photon.Pun;
 #endif
 
 namespace Zoca
@@ -21,6 +22,7 @@ namespace Zoca
             {
                 string name = SteamFriends.GetPersonaName();
                 Debug.LogFormat("My name: {0}", name);
+                PhotonNetwork.NickName = name;
             }
 #endif
         }
