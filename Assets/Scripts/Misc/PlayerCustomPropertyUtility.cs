@@ -12,6 +12,7 @@ namespace Zoca
         public static readonly string TeamColor = "tc";
         public static readonly string CharacterId = "cid";
         public static readonly string WeaponId = "wid";
+        public static readonly string Ready = "rd"; // byte
     }
 
     public class PlayerCustomPropertyUtility
@@ -56,7 +57,19 @@ namespace Zoca
             return GetPlayerCustomProperty(PhotonNetwork.LocalPlayer, key);
         }
 
+        public static bool TryGetLocalPlayerCustomProperty(string key, out object ret)
+        {
+            return TryGetPlayerCustomProperty(PhotonNetwork.LocalPlayer, key, out ret);
+        }
 
+        public static bool TryGetPlayerCustomProperty(Player player, string key, out object ret)
+        {
+            ret = GetPlayerCustomProperty(player, key);
+            if (ret != null)
+                return true;
+
+            return false;
+        }
     }
 
 }

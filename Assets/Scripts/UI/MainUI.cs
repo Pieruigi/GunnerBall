@@ -31,6 +31,9 @@ namespace Zoca.UI
         Transform roomListContent;
 
         [SerializeField]
+        Button readyButton;
+
+        [SerializeField]
         Text debugText;
 
         [SerializeField]
@@ -51,7 +54,7 @@ namespace Zoca.UI
         private void Awake()
         {
             buttonLeaveRoom.interactable = false;
-            
+            //readyButton.interactable = false;
         }
 
         // Start is called before the first frame update
@@ -69,7 +72,7 @@ namespace Zoca.UI
             button2vs2.onClick.AddListener(() => CreateRoom(4));
             buttonLeaveRoom.onClick.AddListener(() => { PhotonNetwork.LeaveRoom(); });
             joinLobbyButton.onClick.AddListener(() => { Launcher.Instance.JoinDefaultLobby(); });
-
+            readyButton.onClick.AddListener(() => { GameManager.Instance.SetLocalPlayerReady(true); });
 
             UpdateRoomNameField();
             UpdateNumOfPlayersField();
@@ -223,7 +226,16 @@ namespace Zoca.UI
 
         }
 
-       
+        public override void OnPlayerEnteredRoom(Player newPlayer)
+        {
+            UpdateNumOfPlayersField();
+        }
+
+        public override void OnPlayerLeftRoom(Player otherPlayer)
+        {
+            UpdateNumOfPlayersField();
+        }
+
         #endregion
     }
 

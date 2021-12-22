@@ -16,6 +16,7 @@ namespace Zoca
         public static readonly string BlueTeamScore = "bts"; // byte
         public static readonly string RedTeamScore = "rts"; // byte
         
+        
     }
 
     public class RoomCustomPropertyUtility
