@@ -24,17 +24,18 @@ namespace Zoca.UI
         [SerializeField]
         GameObject lobbyPanel;
 
-        Launcher launcher;
+        //Launcher launcher;
         GameObject roomListTemplate;
         DateTime lastRoomListUpdate;
         float roomListUpdateTime = 2.5f;
         List<GameObject> rooms = new List<GameObject>();
+        bool refreshRooms = false;
         #endregion
 
         #region private methods
         private void Start()
         {
-            launcher = FindObjectOfType<Launcher>();
+            //launcher = FindObjectOfType<Launcher>();
 
             // Get the room list element template and deactivate it
             roomListTemplate = roomListContent.GetChild(0).gameObject;
@@ -44,13 +45,27 @@ namespace Zoca.UI
             // Set callbacks
             button1vs1.onClick.AddListener(() => CreateRoom(2));
             button2vs2.onClick.AddListener(() => CreateRoom(4));
-            
+
+          
         }
 
         private void Update()
         {
         
         }
+
+        public override void OnEnable()
+        {
+            base.OnEnable();
+
+            // Enable buttons
+            EnableButtons(true);
+
+            // Clear room list
+            ClearRoomList();
+         
+        }
+        
 
         void ClearRoomList()
         {
@@ -67,7 +82,10 @@ namespace Zoca.UI
         {
             button1vs1.interactable = value;
             button2vs2.interactable = value;
+
         }
+
+    
         #endregion
 
         #region public methods
@@ -75,7 +93,7 @@ namespace Zoca.UI
         {
             EnableButtons(false);
 
-            launcher.CreateRoom(maxPlayers);
+            Launcher.Instance.CreateRoom(maxPlayers);
         }
         #endregion
 
@@ -83,9 +101,7 @@ namespace Zoca.UI
         #region pun callbacks
         public override void OnCreatedRoom()
         {
-            // Show lobby
-            lobbyPanel.SetActive(true);
-            gameObject.SetActive(false);
+
         }
 
         public override void OnCreateRoomFailed(short returnCode, string message)
@@ -96,10 +112,37 @@ namespace Zoca.UI
             // Show some error message
         }
 
+        public override void OnJoinedRoom()
+        {
+            // Show lobby
+            lobbyPanel.SetActive(true);
+            gameObject.SetActive(false);
+        }
+
+        public override void OnJoinRoomFailed(short returnCode, string message)
+        {
+            // Reset buttons
+            EnableButtons(true);
+
+        }
+
+        /// <summary>
+        /// Entering a room interrupts receiving room list updates from lobbies, so once we exit
+        /// we must rejoin the default lobby in order to get the full list again.
+        /// </summary>
+        public override void OnConnectedToMaster()
+        {
+            PhotonNetwork.JoinLobby();
+        }
+
+        /// <summary>
+        /// This methods send back changes on the room list.
+        /// It doesn't returns the entire list, but only rooms that have been created or destroyed.
+        /// </summary>
+        /// <param name="roomList"></param>
         public override void OnRoomListUpdate(List<RoomInfo> roomList)
         {
-                      
-
+           
             // We can't simply clear all the rooms, we must check if the room already exists
             foreach (RoomInfo roomInfo in roomList)
             {
@@ -115,24 +158,22 @@ namespace Zoca.UI
                 }
                 else
                 {
-                    Debug.Log("Checking for room:" + roomInfo.Name);
                     // If doesn't exist then add to the list
-                    Debug.Log("Rooms.Count:" + rooms.Count);
-                    if(rooms.Count > 0)
-                        Debug.Log("Rooms.Count:" + rooms[0].GetComponent<RoomListElement>());
-
+                    
+                    
                     GameObject room = rooms.Find(r => r.GetComponent<RoomListElement>().RoomInfo.Name == roomInfo.Name);
-                    Debug.Log("Room" + room);
+                    
                     if (!room)
                     {
-                        Debug.Log("Room not found:" + roomInfo.Name);
                         room = GameObject.Instantiate(roomListTemplate, roomListContent, false);
-                        room.GetComponent<RoomListElement>().Init(roomInfo);
-                        Debug.Log("Init RoomInfo:" + roomInfo.Name);
+                        
                         room.SetActive(true);
-                        room.GetComponent<Button>().onClick.AddListener(() => { launcher.JoinRoom(roomInfo.Name); });
+                        room.GetComponent<Button>().onClick.AddListener(() => { Launcher.Instance.JoinRoom(roomInfo.Name); });
                         rooms.Add(room);
                     }
+                    
+                    // We init the room even if exists in order to update data
+                    room.GetComponent<RoomListElement>().Init(roomInfo);
                 }
             }
             

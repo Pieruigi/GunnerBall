@@ -11,14 +11,27 @@ namespace Zoca.Collections
 
         public static readonly string GameAssetFolder = ResourceFolder.GameAssets + "/Characters";
 
-        [SerializeField]
-        GameObject gameAsset;
+        public Sprite Avatar
+        {
+            get { return avatar; }
+        }
 
-        
         public GameObject GameAsset
         {
             get { return gameAsset; }
         }
+
+        [SerializeField]
+        Sprite avatar;
+
+        [SerializeField]
+        string _name;
+
+        [SerializeField]
+        GameObject gameAsset;
+
+        
+        
     }
 
 }
