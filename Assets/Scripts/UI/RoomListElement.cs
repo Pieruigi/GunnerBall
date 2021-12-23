@@ -8,6 +8,11 @@ namespace Zoca.UI
 {
     public class RoomListElement : MonoBehaviour
     {
+        public RoomInfo RoomInfo
+        {
+            get { return roomInfo; }
+        }
+
         [SerializeField]
         TMP_Text roomNameField;
 
@@ -31,6 +36,7 @@ namespace Zoca.UI
 
         public void Init(RoomInfo roomInfo)
         {
+            this.roomInfo = roomInfo;
             roomNameField.text = roomInfo.Name;
             playerCountField.text = string.Format("{0}/{1}", roomInfo.PlayerCount, roomInfo.MaxPlayers);
         }
