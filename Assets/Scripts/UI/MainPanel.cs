@@ -18,6 +18,11 @@ namespace Zoca.UI
         [SerializeField]
         Button button2vs2;
 
+
+        [SerializeField]
+        Button buttonTestOffline;
+
+
         [SerializeField]
         Transform roomListContent;
 
@@ -45,8 +50,12 @@ namespace Zoca.UI
             // Set callbacks
             button1vs1.onClick.AddListener(() => CreateRoom(2));
             button2vs2.onClick.AddListener(() => CreateRoom(4));
+#if UNITY_EDITOR
+            buttonTestOffline.onClick.AddListener(() => { PhotonNetwork.Disconnect(); Launcher.Instance.LaunchOffline(2); });
+#else
+            Destroy(buttonTestOffline.gameObject);
+#endif
 
-          
         }
 
         private void Update()

@@ -1,4 +1,4 @@
-
+//#define TEST_SOLO
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -220,6 +220,7 @@ namespace Zoca
                         Debug.LogFormat("GameManager - Scene manager: {0}; Ball created:{1}", LevelManager.Instance, Ball.Instance);
                     }
 
+                   
                     // Spawn the AIs
                     int count = PhotonNetwork.CurrentRoom.MaxPlayers - 1;
                     Team playerTeam = (Team)PlayerCustomPropertyUtility.GetLocalPlayerCustomProperty(PlayerCustomPropertyKey.TeamColor);
@@ -306,6 +307,8 @@ namespace Zoca
         /// </summary>
         public override void OnJoinedRoom()
         {
+
+
             // Try to set the start timer
             if (PhotonNetwork.IsMasterClient && !inGame)
             {
@@ -361,7 +364,9 @@ namespace Zoca
                 // The room is not full but we want to test it
                 LoadArena();
             }
-           
+
+
+
         }
 
         /// <summary>
@@ -393,9 +398,9 @@ namespace Zoca
                     Debug.LogFormat("PUN - IsMasterClient: {0}", PhotonNetwork.IsMasterClient);
                     Debug.LogFormat("PUN - Current room max players: {0}", PhotonNetwork.CurrentRoom.MaxPlayers);
                     Debug.LogFormat("PUN - Current room current players: {0}", PhotonNetwork.CurrentRoom.PlayerCount);
-                    if (PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers)
+                    //if (PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers)
                    
-                    {
+                    //{
                         
                         //InitRoomCustomProperties();
 
@@ -407,7 +412,7 @@ namespace Zoca
                         //LoadArena();
 
                         
-                    }
+                    //}
 
                 }
 
