@@ -29,7 +29,7 @@ namespace Zoca
 
         #region private fields
         bool inGame = false;
-        float startTime = 5f;
+        float startTime = 25f;
         float startElapsed = 0;
         bool roomIsFull = false;
         bool loading = false;
@@ -307,11 +307,11 @@ namespace Zoca
         public override void OnJoinedRoom()
         {
             // Try to set the start timer
-            if (PhotonNetwork.IsMasterClient && inGame)
+            if (PhotonNetwork.IsMasterClient && !inGame)
             {
+                startElapsed = 0;
                 if (PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers)
                 {
-                    startElapsed = 0;
                     roomIsFull = true;
                 }
             }
@@ -373,9 +373,9 @@ namespace Zoca
             // Try to set the start timer
             if (PhotonNetwork.IsMasterClient && !inGame)
             {
+                startElapsed = 0;
                 if (PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers)
                 {
-                    startElapsed = 0;
                     roomIsFull = true;
                 }
                     

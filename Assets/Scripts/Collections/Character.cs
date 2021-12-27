@@ -21,6 +21,11 @@ namespace Zoca.Collections
             get { return gameAsset; }
         }
 
+        public IList<Weapon> Weapons
+        {
+            get { return weapons.AsReadOnly(); }
+        }
+
         [SerializeField]
         Sprite avatar;
 
@@ -30,7 +35,8 @@ namespace Zoca.Collections
         [SerializeField]
         GameObject gameAsset;
 
-        
+        [SerializeField]
+        List<Weapon> weapons;
         
     }
 

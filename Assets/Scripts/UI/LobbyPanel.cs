@@ -34,6 +34,12 @@ namespace Zoca.UI
         Button prevCharacterButton;
 
         [SerializeField]
+        Button nextWeaponButton;
+
+        [SerializeField]
+        Button prevWeaponButton;
+
+        [SerializeField]
         Image weaponImage;
 
         [SerializeField]
@@ -43,7 +49,7 @@ namespace Zoca.UI
         List<Character> characters = new List<Character>();
         int currentCharacterId;
 
-        List<Weapon> weapons = new List<Weapon>();
+        //List<Weapon> weapons = new List<Weapon>();
         int currentWeaponId;
         #endregion
 
@@ -54,8 +60,13 @@ namespace Zoca.UI
             buttonLeaveRoom.onClick.AddListener(() => { PhotonNetwork.LeaveRoom(); });
             readyButton.onClick.AddListener(() => { GameManager.Instance.SetLocalPlayerReady(true); });
 
+            // Add character button listener
             nextCharacterButton.onClick.AddListener(NextCharacter);
             prevCharacterButton.onClick.AddListener(PrevCharacter);
+
+            // Add weapon button listener
+            nextWeaponButton.onClick.AddListener(NextWeapon);
+            prevWeaponButton.onClick.AddListener(PrevWeapon);
 
             gameObject.SetActive(false);
         }
@@ -116,7 +127,14 @@ namespace Zoca.UI
 
             // Set avatar
             characterImage.sprite = characters[currentCharacterId].Avatar;
+
+            // Reset weapons
+            currentWeaponId = 0;
+            weaponImage.sprite = characters[currentCharacterId].Weapons[currentWeaponId].Icon;
+
+
             // Set character
+            PlayerCustomPropertyUtility.AddOrUpdateLocalPlayerCustomProperty(PlayerCustomPropertyKey.WeaponId, currentWeaponId);
             PlayerCustomPropertyUtility.AddOrUpdateLocalPlayerCustomProperty(PlayerCustomPropertyKey.CharacterId, currentCharacterId);
             PlayerCustomPropertyUtility.SynchronizeLocalPlayerCustomProperties();
         }
@@ -129,18 +147,50 @@ namespace Zoca.UI
 
             // Set avatar
             characterImage.sprite = characters[currentCharacterId].Avatar;
+
+            // Reset weapons
+            currentWeaponId = 0;
+            weaponImage.sprite = characters[currentCharacterId].Weapons[currentWeaponId].Icon;
+
+
             // Set character
+            PlayerCustomPropertyUtility.AddOrUpdateLocalPlayerCustomProperty(PlayerCustomPropertyKey.WeaponId, currentWeaponId);
             PlayerCustomPropertyUtility.AddOrUpdateLocalPlayerCustomProperty(PlayerCustomPropertyKey.CharacterId, currentCharacterId);
             PlayerCustomPropertyUtility.SynchronizeLocalPlayerCustomProperties();
         }
 
-        
+        void NextWeapon()
+        {
+            // Move to the next weapon
+            currentWeaponId++;
+            if (currentWeaponId == characters[currentCharacterId].Weapons.Count)
+                currentWeaponId = 0;
+
+            // Set the new icon
+            weaponImage.sprite = characters[currentCharacterId].Weapons[currentWeaponId].Icon;
+
+            PlayerCustomPropertyUtility.AddOrUpdateLocalPlayerCustomProperty(PlayerCustomPropertyKey.WeaponId, currentWeaponId);
+            PlayerCustomPropertyUtility.SynchronizeLocalPlayerCustomProperties();
+        }
+
+        void PrevWeapon()
+        {
+            // Move to the next weapon
+            currentWeaponId--;
+            if (currentWeaponId < 0)
+                currentWeaponId = characters[currentCharacterId].Weapons.Count-1;
+
+            // Set the new icon
+            weaponImage.sprite = characters[currentCharacterId].Weapons[currentWeaponId].Icon;
+
+            PlayerCustomPropertyUtility.AddOrUpdateLocalPlayerCustomProperty(PlayerCustomPropertyKey.WeaponId, currentWeaponId);
+            PlayerCustomPropertyUtility.SynchronizeLocalPlayerCustomProperties();
+        }
 
         void LoadResources()
         {
             characters.Clear();
-            weapons.Clear();
-
+            
             // Load characters
             characters = new List<Character>(Resources.LoadAll<Character>(Character.CollectionFolder));
 
@@ -149,8 +199,10 @@ namespace Zoca.UI
             characterImage.sprite = characters[currentCharacterId].Avatar;
 
             // Load weapons
+            currentWeaponId = (int)PlayerCustomPropertyUtility.GetLocalPlayerCustomProperty(PlayerCustomPropertyKey.WeaponId);
+            weaponImage.sprite = characters[currentWeaponId].Weapons[currentWeaponId].Icon;
 
-            // Set default weapon
+            
         }
 
         #endregion

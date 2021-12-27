@@ -24,12 +24,12 @@ namespace Zoca.Editor
         }
 
 
-        [MenuItem("Assets/Create/Collections/Character")]
-        public static void CreateItem()
+        [MenuItem("Assets/Create/Collection/Character")]
+        public static void CreateCharacter()
         {
             Character asset = ScriptableObject.CreateInstance<Character>();
             
-            string name = "/empty.asset";
+            string name = "/character.asset";
             
             string folder = System.IO.Path.Combine("Assets/Resources", Character.CollectionFolder);
             //folder = System.IO.Path.Combine(folder, ResourceFolder.Collections);
@@ -46,7 +46,27 @@ namespace Zoca.Editor
             Selection.activeObject = asset;
         }
 
-    
+        [MenuItem("Assets/Create/Collection/Weapon")]
+        public static void CreateWeapon()
+        {
+            Weapon asset = ScriptableObject.CreateInstance<Weapon>();
+
+            string name = "/weapon.asset";
+
+            string folder = System.IO.Path.Combine("Assets/Resources", Weapon.CollectionFolder);
+            
+            if (!System.IO.Directory.Exists(folder))
+                System.IO.Directory.CreateDirectory(folder);
+
+            AssetDatabase.CreateAsset(asset, folder + name);
+
+            AssetDatabase.SaveAssets();
+
+            EditorUtility.FocusProjectWindow();
+
+            Selection.activeObject = asset;
+        }
+
     }
 
 }
