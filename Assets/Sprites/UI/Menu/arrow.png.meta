@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: c8268c15f36621346a256ea86e6ee5b7
+guid: 7d1c6d424280f2949a711e9e2248ce62
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 649223268058989734
-    second: Button_0
+      213: -765150924802650856
+    second: arrow_0
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -50,11 +50,11 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
-  spriteBorder: {x: 41, y: 52, z: 58, w: 51}
+  spriteBorder: {x: 75, y: 52, z: 46, w: 47}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
-  spriteTessellationDetail: 0
+  spriteTessellationDetail: -1
   textureType: 8
   textureShape: 1
   singleChannelComponent: 0
@@ -68,7 +68,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 256
+    maxTextureSize: 128
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -80,7 +80,7 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
     buildTarget: Standalone
-    maxTextureSize: 256
+    maxTextureSize: 128
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -92,7 +92,7 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
     buildTarget: iPhone
-    maxTextureSize: 256
+    maxTextureSize: 128
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -104,7 +104,7 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
     buildTarget: Android
-    maxTextureSize: 256
+    maxTextureSize: 128
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -118,13 +118,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Button_0
+      name: arrow_0
       rect:
         serializedVersion: 2
-        x: 42
-        y: 45
-        width: 876
-        height: 269
+        x: 74
+        y: 53
+        width: 208
+        height: 234
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -132,27 +132,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 6a403906f11820900800000000000000
-      internalID: 649223268058989734
+      spriteID: 81d839fa943a165f0800000000000000
+      internalID: -765150924802650856
       vertices: []
       indices: 
       edges: []
       weights: []
-    outline:
-    - - {x: -447.5, y: 137.5}
-      - {x: -447.5, y: -74.5}
-      - {x: -387.5, y: -135.5}
-      - {x: 431.5, y: -135.5}
-      - {x: 432.5, y: -134.5}
-      - {x: 432.5, y: 54.5}
-      - {x: 401.5, y: 137.5}
-    physicsShape:
-    - - {x: -446.5, y: 128.5}
-      - {x: -450.5, y: -61.5}
-      - {x: -374.5, y: -129.5}
-      - {x: 427.5, y: -123.5}
-      - {x: 427.5, y: 35.5}
-      - {x: 359.5, y: 123.5}
+    outline: []
+    physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
     internalID: 0

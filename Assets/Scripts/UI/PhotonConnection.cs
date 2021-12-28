@@ -10,6 +10,9 @@ namespace Zoca.UI
         [SerializeField]
         GameObject panel;
 
+        [SerializeField]
+        Transform image;
+
         private void Awake()
         {
             panel.SetActive(true);
@@ -24,7 +27,10 @@ namespace Zoca.UI
         // Update is called once per frame
         void Update()
         {
-
+            if (panel.activeSelf)
+            {
+                image.Rotate(new Vector3(0, 0, 100 * Time.deltaTime));
+            }
         }
 
         public override void OnConnectedToMaster()
