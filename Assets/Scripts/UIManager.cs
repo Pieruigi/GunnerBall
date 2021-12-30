@@ -79,7 +79,7 @@ namespace Zoca
             
         }
 
-        void OpenPlayerLeftUI()
+        void OpenPlayerLeftUI(string playerName)
         {
             // Does nothing if already hidden
             MessageBox.Hide();
@@ -88,7 +88,8 @@ namespace Zoca
             CloseAll();
 
             // Open end game ui
-            opponentLeftUI.SetActive(true);
+            //opponentLeftUI.SetActive(true);
+            opponentLeftUI.GetComponent<OpponentLeft>().Show(playerName);
 
             // Show cursor
             GeneralUtility.ShowCursor(true);
@@ -112,7 +113,7 @@ namespace Zoca
         void CloseAll()
         {
             endGameUI.SetActive(false);
-            opponentLeftUI.SetActive(false);
+            //opponentLeftUI.SetActive(false);
         }
 
  
@@ -129,13 +130,13 @@ namespace Zoca
             // left and the game is closed
             if (GameManager.Instance.InGame)
             {
-                OpenPlayerLeftUI();
+                OpenPlayerLeftUI(otherPlayer.NickName);
             }
         }
 
         void PauseGame()
         {
-            if (leavingRoom || MessageBox.IsVisible() || endGameUI.activeSelf || opponentLeftUI.activeSelf)
+            if (leavingRoom || MessageBox.IsVisible() || endGameUI.activeSelf)// || opponentLeftUI.activeSelf)
                 return;
             
             Debug.Log("Paused game");

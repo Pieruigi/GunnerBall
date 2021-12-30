@@ -52,7 +52,9 @@ namespace Zoca.UI
                 message = "Do you want to leave the game?";
             }
             MessageBox.Show(MessageBox.Type.YesNo, message, OnLeaveGameYes, OnLeaveGameNo);
-            
+
+            if (GameManager.Instance.InGame)
+                GetComponentInParent<GameMenu>().Close();
         }
 
         #region private

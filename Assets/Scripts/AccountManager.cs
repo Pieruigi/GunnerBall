@@ -24,6 +24,10 @@ namespace Zoca
                 Debug.LogFormat("My name: {0}", name);
                 PhotonNetwork.NickName = name;
             }
+            else
+            {
+                PhotonNetwork.NickName = "Unknown";
+            }
 #endif
         }
 

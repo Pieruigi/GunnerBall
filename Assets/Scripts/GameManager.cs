@@ -353,6 +353,8 @@ namespace Zoca
             // Save player properties
             PlayerCustomPropertyUtility.SynchronizePlayerCustomProperties(PhotonNetwork.LocalPlayer);
 
+
+
             // Offline mode
             if (PhotonNetwork.OfflineMode)
             {

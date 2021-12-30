@@ -35,6 +35,7 @@ namespace Zoca.UI
         float roomListUpdateTime = 2.5f;
         List<GameObject> rooms = new List<GameObject>();
         bool refreshRooms = false;
+        bool showLobby = false;
         #endregion
 
         #region private methods
@@ -61,6 +62,17 @@ namespace Zoca.UI
         private void Update()
         {
         
+        }
+
+        private void LateUpdate()
+        {
+            if (showLobby)
+            {
+                showLobby = false;
+                // Show lobby
+                lobbyPanel.SetActive(true);
+                gameObject.SetActive(false);
+            }
         }
 
         public override void OnEnable()
@@ -94,6 +106,13 @@ namespace Zoca.UI
 
         }
 
+        IEnumerator OpenLobbyDelayed()
+        {
+            yield return new WaitForEndOfFrame();
+
+            lobbyPanel.SetActive(true);
+            gameObject.SetActive(false);
+        }
     
         #endregion
 
@@ -123,9 +142,10 @@ namespace Zoca.UI
 
         public override void OnJoinedRoom()
         {
-            // Show lobby
-            lobbyPanel.SetActive(true);
-            gameObject.SetActive(false);
+            // We wait until the frame completed in order to have the player custom properties 
+            // set up in the game manager.
+            //showLobby = true;
+            StartCoroutine(OpenLobbyDelayed());
         }
 
         public override void OnJoinRoomFailed(short returnCode, string message)
