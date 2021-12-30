@@ -8,23 +8,13 @@ namespace Zoca.UI
     public class ControlsSettingsMenu : MonoBehaviour
     {
         [SerializeField]
-        OptionSelector mouseSensitivityOption;
+        OptionSlider mouseSensitivityOption;
 
-
-       
-        #region internal fields
-        int mouseSensitivityId = -1;
-        int oldMouseSensitivityId = -1;
-        #endregion
 
         private void Awake()
         {
-            mouseSensitivityOption.OnChange += delegate (int id) 
+            mouseSensitivityOption.OnChange += delegate (float value) 
             {
-                // Set the new id
-                mouseSensitivityId = id;
-                // Get value
-                float value = float.Parse(mouseSensitivityOption.GetOption(id));
                 // Set new value
                 SettingsManager.Instance.SetMouseSensitivity(value);
             };
@@ -71,20 +61,8 @@ namespace Zoca.UI
             // Set label
             mouseSensitivityOption.SetLabel("Mouse Sensitivity");
 
-            // Create option list
-            List<string> options = new List<string>();
-            for(int i=1; i<=10; i++)
-            {
-                options.Add(i.ToString());
-            }
-
-            // Set option list
-            mouseSensitivityOption.SetOptions(options);
-
-            // Set current id
-            mouseSensitivityId = (int)SettingsManager.Instance.MouseSensitivity-1;
-            oldMouseSensitivityId = mouseSensitivityId;
-            mouseSensitivityOption.SetCurrentOptionId(mouseSensitivityId);
+            
+            mouseSensitivityOption.InitValue(SettingsManager.Instance.MouseSensitivity);
         }
 
        

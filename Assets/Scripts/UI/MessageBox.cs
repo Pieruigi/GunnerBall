@@ -24,7 +24,7 @@ namespace Zoca.UI
         private Button noButton;
 
         [SerializeField]
-        private Text msgText;
+        private TMP_Text msgText;
 
         [SerializeField]
         private Image panelImage;

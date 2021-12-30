@@ -59,7 +59,7 @@ namespace Zoca
         //
         // Controls
         //
-        float mouseSensitivityDefault = 5f;
+        float mouseSensitivityDefault = 6f;
         float mouseSensitivity;
         
        
@@ -99,7 +99,7 @@ namespace Zoca
                 InitAudioSettings();
 
                 // Read settings
-                //InitControlsSettings();
+                InitControlsSettings();
 
                 // Input action rebinding if needed
                 //InitKeyboardBinding();
@@ -142,7 +142,7 @@ namespace Zoca
             if (!saveEnabled)
                 return;
 
-            PlayerPrefs.SetString(MouseSensitivityKey, value.ToString());
+            PlayerPrefs.SetFloat(MouseSensitivityKey, value);
             PlayerPrefs.Save();
         }
 
@@ -206,7 +206,7 @@ namespace Zoca
         void InitControlsSettings()
         {
             // Mouse sensitivity
-            mouseSensitivity = float.Parse(PlayerPrefs.GetString(MouseSensitivityKey, mouseSensitivityDefault.ToString()));
+            mouseSensitivity = PlayerPrefs.GetFloat(MouseSensitivityKey, mouseSensitivityDefault);
         }
 
         void InitKeyboardBinding()
