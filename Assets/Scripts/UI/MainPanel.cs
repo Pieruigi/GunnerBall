@@ -49,8 +49,16 @@ namespace Zoca.UI
             roomListTemplate.SetActive(false);
 
             // Set callbacks
-            button1vs1.onClick.AddListener(() => CreateRoom(2));
-            button2vs2.onClick.AddListener(() => CreateRoom(4));
+            button1vs1.onClick.AddListener(() => {
+                if (PhotonNetwork.InLobby)
+                    CreateRoom(2);
+            } );
+            button2vs2.onClick.AddListener(() =>
+            {
+                if (PhotonNetwork.InLobby)
+                    CreateRoom(4);
+            });
+            
 #if UNITY_EDITOR
             buttonTestOffline.onClick.AddListener(() => { PhotonNetwork.Disconnect(); Launcher.Instance.LaunchOffline(2); });
 #else
@@ -63,6 +71,8 @@ namespace Zoca.UI
         {
         
         }
+
+      
 
         private void LateUpdate()
         {

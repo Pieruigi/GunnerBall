@@ -14,6 +14,23 @@ namespace Zoca
 {
     public class AccountManager : MonoBehaviour
     {
+        #region properties
+        public static AccountManager Instance { get; private set; }
+        #endregion
+
+        private void Awake()
+        {
+            if (!Instance)
+            {
+                Instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+        }
+
         // Start is called before the first frame update
         void Start()
         {

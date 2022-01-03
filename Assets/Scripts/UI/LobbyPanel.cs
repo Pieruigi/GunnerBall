@@ -109,7 +109,8 @@ namespace Zoca.UI
         {
             if (PhotonNetwork.InRoom)
             {
-                roomNameField.text = PhotonNetwork.CurrentRoom.Name;
+                //roomNameField.text = PhotonNetwork.CurrentRoom.Name;
+                roomNameField.text = (string)RoomCustomPropertyUtility.GetCurrentRoomCustomProperty(RoomCustomPropertyKey.PlayerCreator);
             }
             else
             {
