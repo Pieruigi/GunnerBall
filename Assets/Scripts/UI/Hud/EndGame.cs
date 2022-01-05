@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,13 +9,13 @@ namespace Zoca.UI
     public class EndGame : MonoBehaviour
     {
         [SerializeField]
-        Text winnerText;
+        TMP_Text winnerText;
 
         [SerializeField]
-        Text blueScoreText;
+        TMP_Text blueScoreText;
 
         [SerializeField]
-        Text redScoreText;
+        TMP_Text redScoreText;
 
        
         string winnerString;
@@ -43,17 +44,17 @@ namespace Zoca.UI
             // Set winner text
             if (blueScore == redScore)
             {
-                winnerString = "Draw";
+                winnerString = "You Draw";
             }
             else
             {
                 if (blueScore > redScore)
                 {
-                    winnerString = "Blue Team Wins";
+                    winnerString = "<color=#00C8FF>Blue</color> Wins";
                 }
                 else
                 {
-                    winnerString = "Red Team Wins";
+                    winnerString = "<color=red>Red</color> Wins";
                 }
             }
 

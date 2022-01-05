@@ -89,7 +89,7 @@ namespace Zoca
             roomOptions.CustomRoomProperties.Add(RoomCustomPropertyKey.MatchLength, (int)matchLength);
             roomOptions.CustomRoomProperties.Add(RoomCustomPropertyKey.PlayerCreator, (string) PhotonNetwork.NickName);
 
-            PhotonNetwork.CreateRoom(PhotonNetwork.NickName, roomOptions);
+            PhotonNetwork.CreateRoom(null, roomOptions);
 
         }
 

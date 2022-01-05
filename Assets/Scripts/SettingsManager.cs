@@ -59,7 +59,7 @@ namespace Zoca
         //
         // Controls
         //
-        float mouseSensitivityDefault = 6f;
+        float mouseSensitivityDefault = 11f;
         float mouseSensitivity;
         
        

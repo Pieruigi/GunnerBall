@@ -102,7 +102,7 @@ namespace Zoca
 
         #region look
         Vector2 lookInput;
-        float lookSensitivityMul = 10f;
+        float lookSensitivityMul = 5f;
         float yawSpeed = 720;
         float yawSpeedOnSprint = 20;
         float pitchSpeed = 240;

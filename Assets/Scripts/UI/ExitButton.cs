@@ -45,11 +45,11 @@ namespace Zoca.UI
             // Ask the player first
             if(GameManager.Instance.InGame)
             {
-                message = "Do you want to leave the match?";
+                message = "Quit match?";
             }
             else
             {
-                message = "Do you want to leave the game?";
+                message = "Quit game?";
             }
             MessageBox.Show(MessageBox.Type.YesNo, message, OnLeaveGameYes, OnLeaveGameNo);
 
