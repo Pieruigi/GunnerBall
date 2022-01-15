@@ -20,7 +20,7 @@ namespace Zoca.UI
 
 
         [SerializeField]
-        Button buttonTestOffline;
+        Button buttonOfflineTraining;
 
 
         [SerializeField]
@@ -36,6 +36,7 @@ namespace Zoca.UI
         List<GameObject> rooms = new List<GameObject>();
         bool refreshRooms = false;
         bool showLobby = false;
+        bool launchTrainingSession = false;
         #endregion
 
         #region private methods
@@ -58,12 +59,8 @@ namespace Zoca.UI
                 if (PhotonNetwork.InLobby)
                     CreateRoom(4);
             });
-            
-#if UNITY_EDITOR
-            buttonTestOffline.onClick.AddListener(() => { PhotonNetwork.Disconnect(); Launcher.Instance.LaunchOffline(2); });
-#else
-            Destroy(buttonTestOffline.gameObject);
-#endif
+            buttonOfflineTraining.onClick.AddListener(() => { launchTrainingSession = true; PhotonNetwork.Disconnect(); });
+
 
         }
 
@@ -76,13 +73,13 @@ namespace Zoca.UI
 
         private void LateUpdate()
         {
-            if (showLobby)
-            {
-                showLobby = false;
-                // Show lobby
-                lobbyPanel.SetActive(true);
-                gameObject.SetActive(false);
-            }
+            //if (showLobby)
+            //{
+            //    showLobby = false;
+            //    // Show lobby
+            //    lobbyPanel.SetActive(true);
+            //    gameObject.SetActive(false);
+            //}
         }
 
         public override void OnEnable()
@@ -154,8 +151,8 @@ namespace Zoca.UI
         {
             // We wait until the frame completed in order to have the player custom properties 
             // set up in the game manager.
-            //showLobby = true;
-            StartCoroutine(OpenLobbyDelayed());
+            if(!PhotonNetwork.OfflineMode)
+                StartCoroutine(OpenLobbyDelayed());
         }
 
         public override void OnJoinRoomFailed(short returnCode, string message)
@@ -217,6 +214,16 @@ namespace Zoca.UI
             }
             
 
+        }
+
+        public override void OnDisconnected(DisconnectCause cause)
+        {
+            base.OnDisconnected(cause);
+            if (launchTrainingSession)
+            {
+                launchTrainingSession = false;
+                Launcher.Instance.LaunchOffline(2);
+            }
         }
         #endregion
     }

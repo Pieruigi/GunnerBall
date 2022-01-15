@@ -10,7 +10,7 @@ namespace Zoca.UI
        
         private void Awake()
         {
-            string txt = "Prototype - WIP - Version {0}";
+            string txt = "Alpha {0}";
             GetComponent<Text>().text = string.Format(txt, Application.version);
         }
 

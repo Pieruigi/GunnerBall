@@ -102,6 +102,12 @@ namespace Zoca.AI
             {
                 Owner.Sprint(false);
 
+                // If the player is too closed get back
+                if (IsTooClose())
+                {
+                    Owner.MoveTo(Owner.transform.position - Owner.transform.forward * 2);
+                }
+
                 // Check where is the ball in the field
                 Vector3 ballToOppGoalLine = teamHelper.OpponentGoalLine.position - ballRB.position;
                 Vector3 ballToOwnedGoalLine = teamHelper.OwnedGoalLine.position - ballRB.position;
@@ -162,6 +168,16 @@ namespace Zoca.AI
                 return true;
 
             return false;
+        }
+
+        bool IsTooClose()
+        {
+            // Get the distance between the player and the dall
+            Vector3 aiToBall = ballRB.position - Owner.AimOrigin.position;
+            if (aiToBall.sqrMagnitude > Mathf.Pow(2, 2))
+                return false;
+            else
+                return true;
         }
 
         void Reset()

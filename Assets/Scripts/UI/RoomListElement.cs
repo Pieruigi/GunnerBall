@@ -37,7 +37,7 @@ namespace Zoca.UI
         public void Init(RoomInfo roomInfo)
         {
             this.roomInfo = roomInfo;
-            roomNameField.text = roomInfo.Name;
+            roomNameField.text = (string) roomInfo.CustomProperties[RoomCustomPropertyKey.PlayerCreator];
             playerCountField.text = string.Format("{0}/{1}", roomInfo.PlayerCount, roomInfo.MaxPlayers);
         }
     }

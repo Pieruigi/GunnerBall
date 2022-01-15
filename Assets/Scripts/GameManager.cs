@@ -103,7 +103,7 @@ namespace Zoca
             string level = "Arena{0}vs{0}";
             if (!PhotonNetwork.OfflineMode)
             {
-                PhotonNetwork.LoadLevel(string.Format(level, PhotonNetwork.CurrentRoom.MaxPlayers / 2));
+                PhotonNetwork.LoadLevel(string.Format(level, 1));
             }
             else
             {
@@ -157,14 +157,37 @@ namespace Zoca
                         Transform spawnPoint = null;
                         int teamPlayers = PhotonNetwork.CurrentRoom.MaxPlayers / 2;
                         int actorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
+
+                        // Get the other player
+                        Player other = null;
+                        foreach(int key in PhotonNetwork.CurrentRoom.Players.Keys)
+                        {
+                            if (PhotonNetwork.CurrentRoom.Players[key] == PhotonNetwork.LocalPlayer)
+                                continue;
+                            Team t = (Team)PlayerCustomPropertyUtility.GetPlayerCustomProperty(PhotonNetwork.CurrentRoom.Players[key], PlayerCustomPropertyKey.TeamColor);
+                            if (t == team)
+                            {
+                                other = PhotonNetwork.CurrentRoom.Players[key];
+                                break;
+                            };
+
+                        }
+
                         if (team == Team.Blue)
                         {
-                            int id = actorNumber % teamPlayers;
+                            
+                                //int id = actorNumber % teamPlayers;
+                            int id = 0;
+                            if (other != null && actorNumber > other.ActorNumber)
+                                id = 1;
                             spawnPoint = LevelManager.Instance.BlueTeamSpawnPoints[id];
                         }
                         else
                         {
-                            int id = actorNumber % (2 * teamPlayers);
+                            //int id = actorNumber % (2 * teamPlayers);
+                            int id = 0;
+                            if (other != null && actorNumber > other.ActorNumber)
+                                id = 1;
                             spawnPoint = LevelManager.Instance.RedTeamSpawnPoints[id];
                         }
                         // Spawn local player on network
@@ -292,6 +315,11 @@ namespace Zoca
                 // Destroy player if exists
                 if (PlayerController.LocalPlayer)
                     Destroy(PlayerController.LocalPlayer);
+
+                // Destroy player camera
+                GameObject camera = GameObject.FindGameObjectWithTag(Tag.PlayerCamera);
+                if (camera)
+                    Destroy(camera);
 
             }
             Debug.LogFormat("GameManager - scene loaded [Name:{0}]; inGame:{1}", scene.name, inGame);

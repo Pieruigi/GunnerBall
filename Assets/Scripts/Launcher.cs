@@ -83,7 +83,7 @@ namespace Zoca
 
 
             RoomOptions roomOptions = new RoomOptions() { MaxPlayers = (byte)expectedMaxPlayers };
-            roomOptions.CustomRoomPropertiesForLobby = new string[] { RoomCustomPropertyKey.MatchLength };
+            roomOptions.CustomRoomPropertiesForLobby = new string[] { RoomCustomPropertyKey.PlayerCreator };
             roomOptions.IsVisible = true;
             roomOptions.CustomRoomProperties = new ExitGames.Client.Photon.Hashtable();
             roomOptions.CustomRoomProperties.Add(RoomCustomPropertyKey.MatchLength, (int)matchLength);
@@ -138,6 +138,7 @@ namespace Zoca
             
             RoomOptions roomOptions = new RoomOptions() { MaxPlayers = (byte)maxPlayers };
             roomOptions.CustomRoomPropertiesForLobby = new string[] { RoomCustomPropertyKey.MatchLength };
+
             roomOptions.CustomRoomProperties = new ExitGames.Client.Photon.Hashtable();
             roomOptions.CustomRoomProperties.Add(RoomCustomPropertyKey.MatchLength, (int)matchLength);
 
@@ -213,6 +214,17 @@ namespace Zoca
         public override void OnJoinedRoom()
         {
           
+        }
+
+        
+        public override void OnLeftRoom()
+        {
+            // When you leave training room
+            if (PhotonNetwork.OfflineMode || !PhotonNetwork.InLobby)
+            {
+                PhotonNetwork.OfflineMode = false;
+                ConnectAndJoinDefaultLobby();
+            }    
         }
 
         #endregion
