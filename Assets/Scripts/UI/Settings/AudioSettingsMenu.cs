@@ -53,7 +53,7 @@ namespace Zoca.UI
 
         void HandleOnMasterVolumeChange(float value)
         {
-
+            SettingsManager.Instance.SetMasterVolume(value);
         }
     }
 
