@@ -8,9 +8,178 @@ using UnityEngine.UI;
 
 namespace Zoca.UI
 {
-    public class MainPanel: MonoBehaviourPunCallbacks
+    public class OnlinePanel: MonoBehaviourPunCallbacks
     {
+        #region private fields
+        [SerializeField]
+        Button button1vs1;
 
+        [SerializeField]
+        Button button2vs2;
+
+        [SerializeField]
+        Transform roomListContent;
+
+      
+
+        GameObject roomListTemplate;
+        DateTime lastRoomListUpdate;
+        List<GameObject> rooms = new List<GameObject>();
+        #endregion
+
+        #region private methods
+        private void Start()
+        {
+            //launcher = FindObjectOfType<Launcher>();
+
+            // Get the room list element template and deactivate it
+            roomListTemplate = roomListContent.GetChild(0).gameObject;
+            roomListTemplate.transform.parent = roomListContent.parent;
+            roomListTemplate.SetActive(false);
+
+            // Set callbacks
+            button1vs1.onClick.AddListener(() => {
+                if (PhotonNetwork.InLobby)
+                    OpenMapSelector(2);
+                    //CreateRoom(2);
+            });
+            button2vs2.onClick.AddListener(() =>
+            {
+                if (PhotonNetwork.InLobby)
+                    OpenMapSelector(4);
+                //CreateRoom(4);
+            });
+
+            gameObject.SetActive(false);
+
+        }
+
+        private void Update()
+        {
+          
+        }
+
+        public override void OnEnable()
+        {
+            base.OnEnable();
+
+            // Enable buttons
+            EnableButtons(true);
+
+            // Clear room list
+            ClearRoomList();
+
+            // Join lobby
+            if (Launcher.Instance)
+            {
+                // Open the connection panel
+                if(ConnectionPanel.Instance)
+                    ConnectionPanel.Instance.Show(true);
+
+                // Join default lobby
+                Launcher.Instance.JoinDefaultLobby();
+            }
+                
+        }
+
+        void OpenMapSelector(int numOfPlayers)
+        {
+            Debug.Log("Opening map selector...");
+        }
+
+        void EnableButtons(bool value)
+        {
+            button1vs1.interactable = value;
+            button2vs2.interactable = value;
+
+        }
+
+        
+
+        void ClearRoomList()
+        {
+
+            foreach (GameObject room in rooms)
+                Destroy(room);
+
+            rooms.Clear();
+        }
+        #endregion
+
+        #region public methods
+
+        /// <summary>
+        /// Entering a room interrupts receiving room list updates from lobbies, so once we exit
+        /// we must rejoin the default lobby in order to get the full list again.
+        /// </summary>
+        public override void OnConnectedToMaster()
+        {
+            ConnectionPanel.Instance.Show(true);
+            PhotonNetwork.JoinLobby();
+        }
+
+        public override void OnDisconnected(DisconnectCause cause)
+        {
+            base.OnDisconnected(cause);
+            ConnectionPanel.Instance.Show(false);
+        }
+
+        public override void OnJoinedLobby()
+        {
+            base.OnJoinedLobby();
+            ConnectionPanel.Instance.Show(false);
+        }
+
+        /// <summary>
+        /// This methods send back changes on the room list.
+        /// It doesn't returns the entire list, but only rooms that have been created or destroyed.
+        /// </summary>
+        /// <param name="roomList"></param>
+        public override void OnRoomListUpdate(List<RoomInfo> roomList)
+        {
+
+            // We can't simply clear all the rooms, we must check if the room already exists
+            foreach (RoomInfo roomInfo in roomList)
+            {
+                if (roomInfo.RemovedFromList || !roomInfo.IsOpen || !roomInfo.IsVisible)
+                {
+                    // If exists remove it
+                    GameObject room = rooms.Find(r => r.GetComponent<RoomListElement>().RoomInfo.Name == roomInfo.Name);
+                    if (room)
+                    {
+                        rooms.Remove(room);
+                        Destroy(room);
+                    }
+                }
+                else
+                {
+                    // If doesn't exist then add to the list
+
+
+                    GameObject room = rooms.Find(r => r.GetComponent<RoomListElement>().RoomInfo.Name == roomInfo.Name);
+
+                    if (!room)
+                    {
+                        room = GameObject.Instantiate(roomListTemplate, roomListContent, false);
+
+                        room.SetActive(true);
+                        room.GetComponent<Button>().onClick.AddListener(() => { Launcher.Instance.JoinRoom(roomInfo.Name); });
+                        rooms.Add(room);
+                    }
+
+                    // We init the room even if exists in order to update data
+                    room.GetComponent<RoomListElement>().Init(roomInfo);
+                }
+            }
+
+
+        }
+
+        #endregion
+
+
+
+#if OLD
         #region private fields
         [SerializeField]
         Button button1vs1;
@@ -226,77 +395,10 @@ namespace Zoca.UI
             }
         }
         #endregion
-    }
 
-
-}
-
-#if OLD
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace Zoca.UI
-{
-    public class MainMenu : MonoBehaviour
-    {
-        [SerializeField]
-        List<GameObject> popUpObjects;
-
-        float showTime;
-
-        private void Awake()
-        {
-            // Set the cursor visible 
-            Cursor.lockState = CursorLockMode.None;
-
-            ShowObjects(false);
-        }
-
-        // Start is called before the first frame update
-        void Start()
-        {
-            
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-            if(showTime > 0)
-            {
-                showTime -= Time.deltaTime;
-
-                // Not yet
-                if (showTime > 0)
-                    return;
-
-
-                // Show or hide button
-                ShowObjects(true);
-
-            }
-        }
-
-        private void OnEnable()
-        {
-            showTime = 1;
-        }
-
-        private void OnDisable()
-        {
-            showTime = 0;
-            ShowObjects(false);
-        }
-
-
-        void ShowObjects(bool value)
-        {
-            foreach (GameObject o in popUpObjects)
-            {
-                o.SetActive(value);
-            }
-        }
-    }
-
-}
 #endif
+    }
+
+
+}
+

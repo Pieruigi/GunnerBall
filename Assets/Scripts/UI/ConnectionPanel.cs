@@ -5,8 +5,10 @@ using UnityEngine;
 
 namespace Zoca.UI
 {
-    public class PhotonConnection : MonoBehaviourPunCallbacks
+    public class ConnectionPanel : MonoBehaviourPunCallbacks
     {
+        public static ConnectionPanel Instance { get; private set; }
+
         [SerializeField]
         GameObject panel;
 
@@ -15,7 +17,16 @@ namespace Zoca.UI
 
         private void Awake()
         {
-            panel.SetActive(true);
+            if(!Instance)
+            {
+                Instance = this;
+                panel.SetActive(false);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+            
         }
 
         // Start is called before the first frame update
@@ -33,9 +44,9 @@ namespace Zoca.UI
             }
         }
 
-        public override void OnConnectedToMaster()
+        public void Show(bool value)
         {
-            panel.SetActive(false);
+            panel.SetActive(value);
         }
     }
 

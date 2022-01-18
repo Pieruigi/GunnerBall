@@ -34,7 +34,7 @@ namespace Zoca
                 // Join default lobby on awake.
                 // We must wait for the client to join the default lobby in order to create or join
                 // any room.
-                JoinDefaultLobby();
+                //JoinDefaultLobby();
                 DontDestroyOnLoad(gameObject);
             }
             else
@@ -107,7 +107,7 @@ namespace Zoca
         /// <summary>
         /// Connect player and try to launch a quick game
         /// </summary>
-        public void ConnectAndJoinDefaultLobby()
+        void ConnectAndJoinDefaultLobby()
         {
             connecting = true;
            
