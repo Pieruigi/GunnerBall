@@ -74,7 +74,7 @@ namespace Zoca
         /// Creates a room 
         /// </summary>
         /// <param name="expectedMaxPlayers"></param>
-        public void CreateRoom(int expectedMaxPlayers)
+        public void CreateRoom(int expectedMaxPlayers, int mapId)
         {
             
 
@@ -83,11 +83,12 @@ namespace Zoca
 
 
             RoomOptions roomOptions = new RoomOptions() { MaxPlayers = (byte)expectedMaxPlayers };
-            roomOptions.CustomRoomPropertiesForLobby = new string[] { RoomCustomPropertyKey.PlayerCreator };
+            roomOptions.CustomRoomPropertiesForLobby = new string[] { RoomCustomPropertyKey.PlayerCreator, RoomCustomPropertyKey.MapId };
             roomOptions.IsVisible = true;
             roomOptions.CustomRoomProperties = new ExitGames.Client.Photon.Hashtable();
             roomOptions.CustomRoomProperties.Add(RoomCustomPropertyKey.MatchLength, (int)matchLength);
             roomOptions.CustomRoomProperties.Add(RoomCustomPropertyKey.PlayerCreator, (string) PhotonNetwork.NickName);
+            roomOptions.CustomRoomProperties.Add(RoomCustomPropertyKey.MapId, (byte)mapId);
 
             PhotonNetwork.CreateRoom(null, roomOptions);
 

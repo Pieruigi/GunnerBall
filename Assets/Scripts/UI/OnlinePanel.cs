@@ -20,7 +20,8 @@ namespace Zoca.UI
         [SerializeField]
         Transform roomListContent;
 
-      
+        [SerializeField]
+        GameObject mapSelectorPanel;
 
         GameObject roomListTemplate;
         DateTime lastRoomListUpdate;
@@ -85,6 +86,8 @@ namespace Zoca.UI
         void OpenMapSelector(int numOfPlayers)
         {
             Debug.Log("Opening map selector...");
+            mapSelectorPanel.GetComponent<MapSelectorPanel>().Open(true, numOfPlayers);
+            gameObject.SetActive(false);
         }
 
         void EnableButtons(bool value)

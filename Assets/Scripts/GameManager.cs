@@ -100,16 +100,22 @@ namespace Zoca
         /// </summary>
         void LoadArena()
         {
-            string level = "Arena{0}vs{0}";
+            // Get the map id from the custom properties
+            int mapId = (byte)RoomCustomPropertyUtility.GetCurrentRoomCustomProperty(RoomCustomPropertyKey.MapId);
+
+            string mapName = MapManager.Instance.GetMap(mapId).Name;
+
+            //string level = "Arena{0}vs{0}";
             if (!PhotonNetwork.OfflineMode)
             {
-                PhotonNetwork.LoadLevel(string.Format(level, 1));
+                PhotonNetwork.LoadLevel(string.Format(mapName, 1));
             }
             else
             {
-                PhotonNetwork.LoadLevel(string.Format(level, 1));
+                PhotonNetwork.LoadLevel(string.Format(mapName, 1));
             }
         }
+
 
         void InitRoomCustomProperties()
         {

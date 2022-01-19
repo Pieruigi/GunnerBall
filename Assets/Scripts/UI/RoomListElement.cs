@@ -19,6 +19,9 @@ namespace Zoca.UI
         [SerializeField]
         TMP_Text playerCountField;
 
+        [SerializeField]
+        TMP_Text mapNameField;
+
      
         RoomInfo roomInfo;
 
@@ -38,6 +41,7 @@ namespace Zoca.UI
         {
             this.roomInfo = roomInfo;
             roomNameField.text = (string) roomInfo.CustomProperties[RoomCustomPropertyKey.PlayerCreator];
+            mapNameField.text = MapManager.Instance.GetMap((byte)roomInfo.CustomProperties[RoomCustomPropertyKey.MapId]).Name;
             playerCountField.text = string.Format("{0}/{1}", roomInfo.PlayerCount, roomInfo.MaxPlayers);
         }
     }
