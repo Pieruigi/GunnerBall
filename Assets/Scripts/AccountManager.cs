@@ -16,13 +16,42 @@ namespace Zoca
     {
         #region properties
         public static AccountManager Instance { get; private set; }
+
+        public string PlayerName
+        {
+            get { return playerName; }
+        }
         #endregion
 
+
+
+        #region private fields
+        string playerName = null;
+        #endregion
+
+        #region private methods
         private void Awake()
         {
             if (!Instance)
             {
                 Instance = this;
+
+#if !DISABLESTEAMWORKS
+                if (SteamManager.Initialized)
+                {
+                    playerName = SteamFriends.GetPersonaName();
+                    //SteamFriends.GetLargeFriendAvatar(SteamFriends.ge)
+                    Debug.LogFormat("My name: {0}", name);
+                    PhotonNetwork.NickName = name;
+
+
+                }
+                else
+                {
+                    PhotonNetwork.NickName = "Unknown";
+                }
+#endif
+
                 DontDestroyOnLoad(gameObject);
             }
             else
@@ -34,18 +63,7 @@ namespace Zoca
         // Start is called before the first frame update
         void Start()
         {
-#if !DISABLESTEAMWORKS
-            if (SteamManager.Initialized)
-            {
-                string name = SteamFriends.GetPersonaName();
-                Debug.LogFormat("My name: {0}", name);
-                PhotonNetwork.NickName = name;
-            }
-            else
-            {
-                PhotonNetwork.NickName = "Unknown";
-            }
-#endif
+
         }
 
         // Update is called once per frame
@@ -53,6 +71,8 @@ namespace Zoca
         {
 
         }
+
+        #endregion
     }
 
 }

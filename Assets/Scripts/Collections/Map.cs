@@ -11,7 +11,8 @@ namespace Zoca.Collections
         
         public int Id
         {
-            get { return id; }
+            //get { return id; }
+            get { return int.Parse(name.Split('.')[0]); }
         }
 
         public string Name
@@ -19,11 +20,19 @@ namespace Zoca.Collections
             get { return _name; }
         }
 
-        [SerializeField]
-        int id;
+        public Sprite ImageSprite
+        {
+            get { return imageSprite; }
+        }
+
+        //[SerializeField]
+        //int id;
 
         [SerializeField]
         string _name;
+
+        [SerializeField]
+        Sprite imageSprite;
     }
 
 }

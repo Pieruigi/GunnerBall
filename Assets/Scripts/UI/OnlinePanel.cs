@@ -107,6 +107,8 @@ namespace Zoca.UI
 
             rooms.Clear();
         }
+
+        
         #endregion
 
         #region public methods
