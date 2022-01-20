@@ -10,6 +10,7 @@ using UnityEngine.Events;
 using Zoca.AI;
 using Zoca.Collections;
 using System;
+using Steamworks;
 
 namespace Zoca
 {
@@ -357,6 +358,11 @@ namespace Zoca
             Debug.LogFormat("PUN - local player actor number: {0}", PhotonNetwork.LocalPlayer.ActorNumber);
             // Reset ready flag
             SetLocalPlayerReady(false);
+
+#if !DISABLESTEAMWORKS
+            // Set the user id
+            //PlayerCustomPropertyUtility.AddOrUpdateLocalPlayerCustomProperty(PlayerCustomPropertyKey.PlayerId, SteamFriends.)
+#endif
 
             //if (PhotonNetwork.LocalPlayer.ActorNumber == 1)
             if (PhotonNetwork.LocalPlayer.ActorNumber <= PhotonNetwork.CurrentRoom.MaxPlayers / 2)

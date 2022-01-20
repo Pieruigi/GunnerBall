@@ -23,6 +23,9 @@ namespace Zoca.UI
         [SerializeField]
         GameObject mapSelectorPanel;
 
+        [SerializeField]
+        GameObject lobbyPanel;
+
         GameObject roomListTemplate;
         DateTime lastRoomListUpdate;
         List<GameObject> rooms = new List<GameObject>();
@@ -87,7 +90,7 @@ namespace Zoca.UI
         {
             Debug.Log("Opening map selector...");
             mapSelectorPanel.GetComponent<MapSelectorPanel>().Open(true, numOfPlayers);
-            gameObject.SetActive(false);
+            //gameObject.SetActive(false);
         }
 
         void EnableButtons(bool value)
@@ -97,7 +100,13 @@ namespace Zoca.UI
 
         }
 
-        
+        IEnumerator OpenLobbyDelayed()
+        {
+            yield return new WaitForEndOfFrame();
+
+            lobbyPanel.SetActive(true);
+            gameObject.SetActive(false);
+        }
 
         void ClearRoomList()
         {
@@ -108,10 +117,17 @@ namespace Zoca.UI
             rooms.Clear();
         }
 
-        
+
         #endregion
 
         #region public methods
+
+        public void CreateRoom(int maxPlayers, int mapId)
+        {
+            EnableButtons(false);
+
+            Launcher.Instance.CreateRoom(maxPlayers, mapId);
+        }
 
         /// <summary>
         /// Entering a room interrupts receiving room list updates from lobbies, so once we exit
@@ -133,6 +149,14 @@ namespace Zoca.UI
         {
             base.OnJoinedLobby();
             ConnectionPanel.Instance.Show(false);
+        }
+
+        public override void OnJoinedRoom()
+        {
+            // We wait until the frame completed in order to have the player custom properties 
+            // set up in the game manager.
+            if (!PhotonNetwork.OfflineMode)
+                StartCoroutine(OpenLobbyDelayed());
         }
 
         /// <summary>

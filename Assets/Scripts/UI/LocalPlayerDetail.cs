@@ -20,7 +20,7 @@ namespace Zoca.UI
             playerText.text = AccountManager.Instance.PlayerName;
 
             Texture2D avatar;
-            if(AccountManager.Instance.TryGetLocalPlayerAvatarAsTexture2D(out avatar))
+            if(SteamUtility.TryGetLocalPlayerAvatarAsTexture2D(out avatar))
             {
                 Debug.Log("Texture found");
                 playerImage.sprite = Sprite.Create(avatar, new Rect(0, 0, avatar.width, avatar.height), Vector2.zero*0.5f);

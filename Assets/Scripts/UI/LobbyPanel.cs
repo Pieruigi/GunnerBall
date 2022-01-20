@@ -45,6 +45,12 @@ namespace Zoca.UI
         [SerializeField]
         GameObject mainPanel;
 
+        [SerializeField]
+        TMP_Text testPlayerName;
+
+        [SerializeField]
+        Image testPlayerAvatar;
+
 
         List<Character> characters = new List<Character>();
         int currentCharacterId;
@@ -229,6 +235,9 @@ namespace Zoca.UI
         public override void OnPlayerLeftRoom(Player otherPlayer)
         {
             UpdateNumOfPlayersField();
+
+            // Test name and avatar
+            testPlayerName.text = otherPlayer.NickName;
         }
         #endregion
     }

@@ -83,8 +83,8 @@ namespace Zoca.UI
         {
             base.OnEnable();
             // Load map collection
-            maps = new List<Map>(Resources.LoadAll<Map>(Map.CollectionFolder));
-
+            //maps = new List<Map>(Resources.LoadAll<Map>(Map.CollectionFolder));
+            maps = new List<Map>(MapManager.Instance.GetAvailableMaps());
             // Show content
         }
 
@@ -123,9 +123,11 @@ namespace Zoca.UI
 
         public void CreateRoom()
         {
-            EnableButtons(false);
+            //EnableButtons(false);
 
-            Launcher.Instance.CreateRoom(maxPlayers, maps[selectedMapIndex].Id);
+            //Launcher.Instance.CreateRoom(maxPlayers, maps[selectedMapIndex].Id);
+            transform.root.GetComponentInChildren<OnlinePanel>().CreateRoom(maxPlayers, maps[selectedMapIndex].Id);
+            //gameObject.SetActive(false);
         }
 
         void EnableButtons(bool value)
@@ -162,11 +164,13 @@ namespace Zoca.UI
             this.maxPlayers = maxPlayers;
 
             // Load all maps
-            maps = new List<Map>(Resources.LoadAll<Map>(Map.CollectionFolder));
+            //maps = new List<Map>(Resources.LoadAll<Map>(Map.CollectionFolder));
+            maps = new List<Map>(MapManager.Instance.GetAvailableMaps());
 
             // Set the first map as the current one
             selectedMapIndex = 0;
             mapImage.sprite = maps[selectedMapIndex].ImageSprite;
+            
 
             // Activate panel
             panel.SetActive(true);

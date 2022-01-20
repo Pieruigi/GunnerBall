@@ -41,7 +41,11 @@ namespace Zoca.UI
         {
             this.roomInfo = roomInfo;
             roomNameField.text = (string) roomInfo.CustomProperties[RoomCustomPropertyKey.PlayerCreator];
-            mapNameField.text = MapManager.Instance.GetMap((byte)roomInfo.CustomProperties[RoomCustomPropertyKey.MapId]).Name;
+            int mapId = (byte)roomInfo.CustomProperties[RoomCustomPropertyKey.MapId];
+            
+            Debug.Log("MapId:"+ mapId);
+            Debug.Log("Map:" + MapManager.Instance.GetMap(mapId));
+            mapNameField.text = MapManager.Instance.GetMap(mapId).Name;
             playerCountField.text = string.Format("{0}/{1}", roomInfo.PlayerCount, roomInfo.MaxPlayers);
         }
     }

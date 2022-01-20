@@ -46,6 +46,11 @@ namespace Zoca
         {
             return maps.Find(m => m.Id == mapId);
         }
+
+        public IList<Map> GetAvailableMaps()
+        {
+            return maps.AsReadOnly();
+        }
         #endregion
     }
 

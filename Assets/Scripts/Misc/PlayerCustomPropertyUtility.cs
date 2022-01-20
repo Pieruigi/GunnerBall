@@ -13,6 +13,7 @@ namespace Zoca
         public static readonly string CharacterId = "cid";
         public static readonly string WeaponId = "wid";
         public static readonly string Ready = "rd"; // byte
+        public static readonly string PlayerId = "pid"; // ulong
     }
 
     public class PlayerCustomPropertyUtility
