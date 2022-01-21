@@ -1,3 +1,4 @@
+#if !DISABLESTEAMWORKS
 using Steamworks;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,7 +15,9 @@ namespace Zoca
 
         public static bool TryGetPlayerAvatarAsTexture2D(ulong userId, out Texture2D texture)
         {
-            var avatarInt = SteamFriends.GetMediumFriendAvatar(SteamUser.GetSteamID());
+            CSteamID steamId = new CSteamID(userId);
+
+            var avatarInt = SteamFriends.GetMediumFriendAvatar(steamId);
 
             texture = null;
             uint ImageWidth;
@@ -44,3 +47,4 @@ namespace Zoca
     }
 
 }
+#endif

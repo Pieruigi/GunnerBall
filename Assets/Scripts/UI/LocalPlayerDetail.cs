@@ -23,7 +23,7 @@ namespace Zoca.UI
             if(SteamUtility.TryGetLocalPlayerAvatarAsTexture2D(out avatar))
             {
                 Debug.Log("Texture found");
-                playerImage.sprite = Sprite.Create(avatar, new Rect(0, 0, avatar.width, avatar.height), Vector2.zero*0.5f);
+                playerImage.sprite = Sprite.Create(avatar, new Rect(0, 0, avatar.width, avatar.height), Vector2.zero);
             }
         }
 

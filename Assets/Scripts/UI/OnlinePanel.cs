@@ -128,6 +128,9 @@ namespace Zoca.UI
 
             Launcher.Instance.CreateRoom(maxPlayers, mapId);
         }
+        #endregion
+
+        #region pun callbacks
 
         /// <summary>
         /// Entering a room interrupts receiving room list updates from lobbies, so once we exit
@@ -157,6 +160,13 @@ namespace Zoca.UI
             // set up in the game manager.
             if (!PhotonNetwork.OfflineMode)
                 StartCoroutine(OpenLobbyDelayed());
+        }
+
+        public override void OnCreateRoomFailed(short returnCode, string message)
+        {
+            // Reset buttons
+            EnableButtons(true);
+
         }
 
         /// <summary>

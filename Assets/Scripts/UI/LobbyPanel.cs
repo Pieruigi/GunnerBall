@@ -226,10 +226,26 @@ namespace Zoca.UI
             mainPanel.SetActive(true);
             gameObject.SetActive(false);
         }
+        
 
         public override void OnPlayerEnteredRoom(Player newPlayer)
         {
             UpdateNumOfPlayersField();
+
+            // Test name and avatar
+            testPlayerName.text = newPlayer.NickName;
+
+            // Get the user id
+#if !DISABLESTEAMWORKS
+            Debug.Log("Getting user id...");
+            long userId = (long)PlayerCustomPropertyUtility.GetPlayerCustomProperty(newPlayer, PlayerCustomPropertyKey.UserId);
+            Debug.Log("User id: " + userId);
+            Texture2D avatar;
+            if(SteamUtility.TryGetPlayerAvatarAsTexture2D((ulong)userId, out avatar))
+            {
+                testPlayerAvatar.sprite = Sprite.Create(avatar, new Rect(0, 0, avatar.width, avatar.height), Vector2.zero);
+            }
+#endif
         }
 
         public override void OnPlayerLeftRoom(Player otherPlayer)
@@ -237,7 +253,7 @@ namespace Zoca.UI
             UpdateNumOfPlayersField();
 
             // Test name and avatar
-            testPlayerName.text = otherPlayer.NickName;
+            testPlayerName.text = "Empty";
         }
         #endregion
     }

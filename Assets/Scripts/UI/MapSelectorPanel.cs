@@ -8,6 +8,12 @@ using Zoca.Collections;
 
 namespace Zoca.UI
 {
+    /// <summary>
+    /// This panel is open as a popup over the online panel in order to let the player who
+    /// is creating a new room to choose the map.
+    /// NB: the online panel is not going to be closed so it still receives rooms update until
+    /// you press the create button.
+    /// </summary>
     public class MapSelectorPanel : MonoBehaviourPunCallbacks
     {
         #region actions
@@ -82,8 +88,7 @@ namespace Zoca.UI
         public override void OnEnable()
         {
             base.OnEnable();
-            // Load map collection
-            //maps = new List<Map>(Resources.LoadAll<Map>(Map.CollectionFolder));
+            // Get available maps for this player
             maps = new List<Map>(MapManager.Instance.GetAvailableMaps());
             // Show content
         }
@@ -123,11 +128,14 @@ namespace Zoca.UI
 
         public void CreateRoom()
         {
-            //EnableButtons(false);
+            EnableButtons(false);
 
             //Launcher.Instance.CreateRoom(maxPlayers, maps[selectedMapIndex].Id);
-            transform.root.GetComponentInChildren<OnlinePanel>().CreateRoom(maxPlayers, maps[selectedMapIndex].Id);
-            //gameObject.SetActive(false);
+            if(online)
+                transform.root.GetComponentInChildren<OnlinePanel>().CreateRoom(maxPlayers, maps[selectedMapIndex].Id);
+            //else
+                //transform.root.GetComponentInChildren<OfflinePanel>().CreateRoom(maxPlayers, maps[selectedMapIndex].Id);
+            
         }
 
         void EnableButtons(bool value)
@@ -164,7 +172,7 @@ namespace Zoca.UI
             this.maxPlayers = maxPlayers;
 
             // Load all maps
-            //maps = new List<Map>(Resources.LoadAll<Map>(Map.CollectionFolder));
+            // Get all the available maps for this player
             maps = new List<Map>(MapManager.Instance.GetAvailableMaps());
 
             // Set the first map as the current one
@@ -180,7 +188,11 @@ namespace Zoca.UI
         #region pun callbacks
         public override void OnCreatedRoom()
         {
+            // Reset buttons
+            EnableButtons(true);
 
+            // Close
+            gameObject.SetActive(false);
         }
 
         public override void OnCreateRoomFailed(short returnCode, string message)
@@ -188,7 +200,8 @@ namespace Zoca.UI
             // Reset buttons
             EnableButtons(true);
 
-            // Show some error message
+            // Close
+            gameObject.SetActive(false);
         }
 
         public override void OnJoinedRoom()

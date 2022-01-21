@@ -361,7 +361,9 @@ namespace Zoca
 
 #if !DISABLESTEAMWORKS
             // Set the user id
-            //PlayerCustomPropertyUtility.AddOrUpdateLocalPlayerCustomProperty(PlayerCustomPropertyKey.PlayerId, SteamFriends.)
+            Debug.Log("Setting user id...:"+SteamUser.GetSteamID().m_SteamID);
+            PlayerCustomPropertyUtility.AddOrUpdateLocalPlayerCustomProperty(PlayerCustomPropertyKey.UserId, (long)SteamUser.GetSteamID().m_SteamID);
+            Debug.Log("User id set");
 #endif
 
             //if (PhotonNetwork.LocalPlayer.ActorNumber == 1)

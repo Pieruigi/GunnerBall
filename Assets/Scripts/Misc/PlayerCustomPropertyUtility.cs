@@ -13,7 +13,12 @@ namespace Zoca
         public static readonly string CharacterId = "cid";
         public static readonly string WeaponId = "wid";
         public static readonly string Ready = "rd"; // byte
-        public static readonly string PlayerId = "pid"; // ulong
+
+        /// <summary>
+        /// Steam: long ( the user id is ulong, but photon only support long )
+        /// </summary>
+        public static readonly string UserId = "uid"; 
+
     }
 
     public class PlayerCustomPropertyUtility

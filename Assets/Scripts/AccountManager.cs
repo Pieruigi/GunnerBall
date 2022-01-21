@@ -43,7 +43,6 @@ namespace Zoca
                     //SteamFriends.GetLargeFriendAvatar(SteamFriends.ge)
                     PhotonNetwork.NickName = playerName;
 
-
                 }
                 else
                 {
