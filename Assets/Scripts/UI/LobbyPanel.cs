@@ -46,10 +46,16 @@ namespace Zoca.UI
         GameObject mainPanel;
 
         [SerializeField]
-        TMP_Text testPlayerName;
+        GameObject blueTeamPanel;
 
         [SerializeField]
-        Image testPlayerAvatar;
+        GameObject redTeamPanel;
+
+        //[SerializeField]
+        //TMP_Text testPlayerName;
+
+        //[SerializeField]
+        //Image testPlayerAvatar;
 
 
         List<Character> characters = new List<Character>();
@@ -57,6 +63,9 @@ namespace Zoca.UI
 
         //List<Weapon> weapons = new List<Weapon>();
         int currentWeaponId;
+
+        List<LobbyPlayer> bluePlayers;
+        List<LobbyPlayer> redPlayers;
         #endregion
 
         #region private methods
@@ -74,6 +83,11 @@ namespace Zoca.UI
             nextWeaponButton.onClick.AddListener(NextWeapon);
             prevWeaponButton.onClick.AddListener(PrevWeapon);
 
+            // Init player lists
+            bluePlayers = new List<LobbyPlayer>(blueTeamPanel.GetComponentsInChildren<LobbyPlayer>());
+            redPlayers = new List<LobbyPlayer>(redTeamPanel.GetComponentsInChildren<LobbyPlayer>());
+            
+            // Deactivate
             gameObject.SetActive(false);
         }
 
@@ -94,10 +108,89 @@ namespace Zoca.UI
             UpdateRoomNameField();
             UpdateNumOfPlayersField();
 
+            // Init red and blue teams
+            ResetTeams();
+
+            // Set teams
+            foreach(Player p in PhotonNetwork.CurrentRoom.Players.Values)
+            {
+                SetTeamPlayer(p);
+            }
+
             // Load characters and weapons
             LoadResources();
         }
         
+        void ResetTeams()
+        {
+            // Get the max number of players
+            int count = PhotonNetwork.CurrentRoom.MaxPlayers / 2;
+            // Init each team list
+            for (int i = 0; i < bluePlayers.Count; i++)
+            {
+                if (i >= count)
+                {
+                    // Lock both blue and red players
+                    bluePlayers[i].Lock();
+                    redPlayers[i].Lock();
+                }
+                else
+                {
+                    // Clear both blue and red players
+                    bluePlayers[i].Clear();
+                    redPlayers[i].Clear();
+                }
+
+            }
+        }
+
+        void SetTeamPlayer(Player player)
+        {
+            // Get the team of the player
+            Team team = (Team)PlayerCustomPropertyUtility.GetPlayerCustomProperty(player, PlayerCustomPropertyKey.TeamColor);
+            LobbyPlayer lp = team == Team.Blue ? bluePlayers.Find(p => p.IsEmpty && !p.IsLocked) : redPlayers.Find(p => p.IsEmpty && !p.IsLocked);
+            
+            // It shouldn't happen this
+            if (lp == null)
+            {
+                Debug.LogErrorFormat("No room for the player...");
+                return;
+            }
+            // Add the new player
+            lp.Init(player);
+        }
+
+        IEnumerator SetTeamPlayerDelayed(Player player)
+        {
+            yield return new WaitForSeconds(1);
+            bool found = false;
+            foreach(Player p in PhotonNetwork.CurrentRoom.Players.Values)
+            {
+                if(p == player)
+                {
+                    found = true;
+                    break;
+                }
+            }
+            if(found)
+                SetTeamPlayer(player);
+        }
+
+        /// <summary>
+        /// Clear the corresponding lobby player
+        /// </summary>
+        /// <param name="p"></param>
+        void ResetTeamPlayer(Player player)
+        {
+            // Get the corresponding lobby player element
+            LobbyPlayer lp = bluePlayers.Find(p => p.Player == player);
+            if (!lp)
+                lp = redPlayers.Find(p => p.Player == player);
+
+            // Clear
+            lp.Clear();
+        }
+
         void UpdateNumOfPlayersField()
         {
             if (PhotonNetwork.InRoom)
@@ -212,10 +305,12 @@ namespace Zoca.UI
             
         }
 
+       
+
         #endregion
 
         #region pun callbacks
-        
+
         public override void OnCreateRoomFailed(short returnCode, string message)
         {
             OnLeftRoom();
@@ -223,37 +318,49 @@ namespace Zoca.UI
 
         public override void OnLeftRoom()
         {
+            // Reset the lobby team
+            ResetTeamPlayer(PhotonNetwork.LocalPlayer);
+
             mainPanel.SetActive(true);
             gameObject.SetActive(false);
         }
         
+        
 
         public override void OnPlayerEnteredRoom(Player newPlayer)
         {
+            // Set the new player 
+            //SetTeamPlayer(newPlayer);
+            StartCoroutine(SetTeamPlayerDelayed(newPlayer));
+
+            // Update number of players
             UpdateNumOfPlayersField();
 
-            // Test name and avatar
-            testPlayerName.text = newPlayer.NickName;
+//            // Test name and avatar
+//            testPlayerName.text = newPlayer.NickName;
 
-            // Get the user id
-#if !DISABLESTEAMWORKS
-            Debug.Log("Getting user id...");
-            long userId = (long)PlayerCustomPropertyUtility.GetPlayerCustomProperty(newPlayer, PlayerCustomPropertyKey.UserId);
-            Debug.Log("User id: " + userId);
-            Texture2D avatar;
-            if(SteamUtility.TryGetPlayerAvatarAsTexture2D((ulong)userId, out avatar))
-            {
-                testPlayerAvatar.sprite = Sprite.Create(avatar, new Rect(0, 0, avatar.width, avatar.height), Vector2.zero);
-            }
-#endif
+//            // Get the user id
+//#if !DISABLESTEAMWORKS
+//            Debug.Log("Getting user id...");
+//            long userId = (long)PlayerCustomPropertyUtility.GetPlayerCustomProperty(newPlayer, PlayerCustomPropertyKey.UserId);
+//            Debug.Log("User id: " + userId);
+//            Texture2D avatar;
+//            if(SteamUtility.TryGetPlayerAvatarAsTexture2D((ulong)userId, out avatar))
+//            {
+//                testPlayerAvatar.sprite = Sprite.Create(avatar, new Rect(0, 0, avatar.width, avatar.height), Vector2.zero);
+//            }
+//#endif
         }
 
         public override void OnPlayerLeftRoom(Player otherPlayer)
         {
+            // Reset the corresponding lobby player
+            ResetTeamPlayer(otherPlayer);
+
             UpdateNumOfPlayersField();
 
             // Test name and avatar
-            testPlayerName.text = "Empty";
+            //testPlayerName.text = "Empty";
         }
         #endregion
     }

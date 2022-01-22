@@ -117,6 +117,26 @@ namespace Zoca
             }
         }
 
+        bool IsBlueTeamFull()
+        {
+            
+            int count = 0;
+            foreach(Player p in PhotonNetwork.CurrentRoom.Players.Values)
+            {
+                if (p == PhotonNetwork.LocalPlayer)
+                    continue;
+
+                if(Team.Blue == (Team)PlayerCustomPropertyUtility.GetPlayerCustomProperty(p, PlayerCustomPropertyKey.TeamColor))
+                {
+                    count++;
+                }
+            }
+
+            if (count < PhotonNetwork.CurrentRoom.MaxPlayers / 2)
+                return false;
+
+            return true;
+        }
 
         void InitRoomCustomProperties()
         {
@@ -367,7 +387,9 @@ namespace Zoca
 #endif
 
             //if (PhotonNetwork.LocalPlayer.ActorNumber == 1)
-            if (PhotonNetwork.LocalPlayer.ActorNumber <= PhotonNetwork.CurrentRoom.MaxPlayers / 2)
+
+            //if (PhotonNetwork.LocalPlayer.ActorNumber <= PhotonNetwork.CurrentRoom.MaxPlayers / 2)
+            if (!IsBlueTeamFull())
             {
                 //PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.TeamColor, Team.Blue);
                 PlayerCustomPropertyUtility.AddOrUpdateLocalPlayerCustomProperty(PlayerCustomPropertyKey.TeamColor, Team.Blue);
