@@ -104,7 +104,7 @@ namespace Zoca
         Vector2 lookInput;
         float lookSensitivityMul = 2.5f;
         float yawSpeed = 720;
-        float yawSpeedOnSprint = 20;
+        float yawSpeedOnSprint = 360;
         float pitchSpeed = 240;
         
         //public float LookSensitivity
@@ -312,20 +312,17 @@ namespace Zoca
                 }
 
                 
-                if (sprinting)
-                {
-                    // Reduce the yaw 
-                    lookAngles.x *= 0.05f;
-                }
+                //if (sprinting)
+                //{
+                //    // Reduce the yaw 
+                //    lookAngles.x *= 0.05f;
+                //}
 
-                //targetLookAngles = lookAngles;
-
+              
                 // Set yaw
-                //transform.eulerAngles += Vector3.up * lookAngles.x;
                 transform.eulerAngles = Vector3.MoveTowards(transform.eulerAngles, transform.eulerAngles + Vector3.up * lookAngles.x, Time.deltaTime * (sprinting ? yawSpeedOnSprint : yawSpeed));
 
                 // Set camera pitch
-                //currentPitch -= lookAngles.y;
                 currentPitch = Mathf.MoveTowards(currentPitch, currentPitch - lookAngles.y, Time.deltaTime * pitchSpeed);
                 currentPitch = Mathf.Clamp(currentPitch, minPitch, maxPitch);
                 playerCamera.SetPitch(currentPitch);
