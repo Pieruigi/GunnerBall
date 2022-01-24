@@ -125,11 +125,23 @@ namespace Zoca.UI
             // Init red and blue teams
             ResetTeams();
 
+            Debug.Log("Num of players:" + PhotonNetwork.CurrentRoom.PlayerCount);
+
             // Set teams
-            foreach(Player p in PhotonNetwork.CurrentRoom.Players.Values)
-            {
-                SetTeamPlayer(p);
-            }
+            //if (!PhotonNetwork.OfflineMode)
+            //{
+                foreach (Player p in PhotonNetwork.CurrentRoom.Players.Values)
+                {
+                    SetTeamPlayer(p);
+                }
+            //}
+            //else
+            //{
+            //    // Set the local player
+            //    SetTeamPlayer(PhotonNetwork.LocalPlayer);
+                
+            //}
+            
 
             // Colorize
             Team team = (Team)PlayerCustomPropertyUtility.GetLocalPlayerCustomProperty(PlayerCustomPropertyKey.TeamColor);

@@ -33,7 +33,7 @@ namespace Zoca.UI
         GameObject roomListTemplate;
         DateTime lastRoomListUpdate;
         List<GameObject> rooms = new List<GameObject>();
-        
+        bool started = false;
         #endregion
 
         #region private methods
@@ -64,6 +64,7 @@ namespace Zoca.UI
                 //CreateRoom(4);
             });
 
+            started = true;
             gameObject.SetActive(false);
 
         }
@@ -75,6 +76,9 @@ namespace Zoca.UI
 
         public override void OnEnable()
         {
+            if (!started)
+                return;
+
             Debug.Log("LauncherPanel.OnEnable() - Offline:" + PhotonNetwork.OfflineMode);
 
             base.OnEnable();

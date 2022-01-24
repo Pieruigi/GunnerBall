@@ -10,8 +10,8 @@ namespace Zoca
     public class PlayerCustomPropertyKey
     {
         public static readonly string TeamColor = "tc";
-        public static readonly string CharacterId = "cid";
-        public static readonly string WeaponId = "wid";
+        public static readonly string CharacterId = "cid"; // int
+        public static readonly string WeaponId = "wid"; // int
         public static readonly string Ready = "rd"; // byte
 
         /// <summary>

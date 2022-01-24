@@ -64,8 +64,9 @@ namespace Zoca
         void Update()
         {
             // Check the start timer
-            if (PhotonNetwork.IsMasterClient && !inGame && !loading)
+            if (PhotonNetwork.IsMasterClient && PhotonNetwork.InRoom && !inGame && !loading)
             {
+               
                 if (roomIsFull)
                 {
                     startElapsed += Time.deltaTime;
@@ -187,7 +188,7 @@ namespace Zoca
 
                         // Get the other player
                         Player other = null;
-                        foreach(int key in PhotonNetwork.CurrentRoom.Players.Keys)
+                        foreach (int key in PhotonNetwork.CurrentRoom.Players.Keys)
                         {
                             if (PhotonNetwork.CurrentRoom.Players[key] == PhotonNetwork.LocalPlayer)
                                 continue;
@@ -202,8 +203,8 @@ namespace Zoca
 
                         if (team == Team.Blue)
                         {
-                            
-                                //int id = actorNumber % teamPlayers;
+
+                            //int id = actorNumber % teamPlayers;
                             int id = 0;
                             if (other != null && actorNumber > other.ActorNumber)
                                 id = 1;
@@ -270,8 +271,10 @@ namespace Zoca
                         Debug.LogFormat("GameManager - Scene manager: {0}; Ball created:{1}", LevelManager.Instance, Ball.Instance);
                     }
 
-                   
+
                     // Spawn the AIs
+                    /*
+                     
                     int count = PhotonNetwork.CurrentRoom.MaxPlayers - 1;
                     Team playerTeam = (Team)PlayerCustomPropertyUtility.GetLocalPlayerCustomProperty(PlayerCustomPropertyKey.TeamColor);
                     Team opponentTeam = playerTeam == Team.Blue ? Team.Red : Team.Blue;
@@ -319,18 +322,55 @@ namespace Zoca
 
 
                     }
+                    */
+                    int count = PhotonNetwork.CurrentRoom.MaxPlayers;
 
-                    Debug.Log("Players.Count: " + PhotonNetwork.CurrentRoom.Players.Count);
-                    Debug.LogFormat("OfflinePlayer: {0}, team:{1}", PhotonNetwork.CurrentRoom.Players[1].NickName, PhotonNetwork.CurrentRoom.Players[1].CustomProperties[PlayerCustomPropertyKey.TeamColor]);
-                    Debug.LogFormat("OfflinePlayer: {0}, team:{1}", PhotonNetwork.CurrentRoom.Players[2].NickName, PhotonNetwork.CurrentRoom.Players[2].CustomProperties[PlayerCustomPropertyKey.TeamColor]);
+                    // Get the player 
+
+                    int blueSpawnId = 1;
+                    int redSpawnId = 0;
+                    for (int i = 0; i < PhotonNetwork.CurrentRoom.MaxPlayers; i++)
+                    {
+                        Player p = new List<Player>(PhotonNetwork.CurrentRoom.Players.Values)[i];
+                        if (p == PhotonNetwork.LocalPlayer)
+                            continue;
+
+                        // Spawn the ai
+                        Team aiTeam = (Team)PlayerCustomPropertyUtility.GetPlayerCustomProperty(p, PlayerCustomPropertyKey.TeamColor);
+                        int aiCharacterId = (int)PlayerCustomPropertyUtility.GetPlayerCustomProperty(p, PlayerCustomPropertyKey.CharacterId);
+                        int aiWeaponInd = (int)PlayerCustomPropertyUtility.GetPlayerCustomProperty(p, PlayerCustomPropertyKey.WeaponId);
+
+                        // Load avatar
+                        collection = Resources.LoadAll<Character>(Character.CollectionFolder);
+                        // Get the game asset from the descriptor
+                        playerPrefab = collection[aiCharacterId].GameAsset;
+
+                        int spawnPointId = 0;
+                        // Get the spawn point
+                        if (aiTeam == Team.Blue)
+                        {
+                            spawnPointId = blueSpawnId;
+                            spawnPoint = LevelManager.Instance.BlueTeamSpawnPoints[spawnPointId];
+                        }
+                        else
+                        {
+                            spawnPointId = redSpawnId;
+                            spawnPoint = LevelManager.Instance.RedTeamSpawnPoints[spawnPointId];
+                            redSpawnId++;
+                        }
+
+
+                        GameObject newPlayerObject = PhotonNetwork.InstantiateRoomObject(System.IO.Path.Combine(Character.GameAssetFolder, playerPrefab.name), spawnPoint.position, spawnPoint.rotation);
+                        newPlayerObject.GetComponent<PlayerAI>().Activate();
+                        newPlayerObject.GetComponent<PlayerAI>().Team = (Team)PlayerCustomPropertyUtility.GetPlayerCustomProperty(p, PlayerCustomPropertyKey.TeamColor);
+                        newPlayerObject.GetComponent<PhotonView>().OwnerActorNr = p.ActorNumber;
+                        
+                    }
 
 
                 }
-
-
-
             }
-            else
+            else // Not in game
             {
                 inGame = false;
 
@@ -427,9 +467,45 @@ namespace Zoca
 
                 // The room is not full but we want to test it
                 //LoadArena();
+
+
+                ///////////////////////////////////////////////////////////
+                ///
+                // Spawn the AIs
+
+                Character[] characters = Resources.LoadAll<Character>(Character.CollectionFolder);
+
+                int count = PhotonNetwork.CurrentRoom.MaxPlayers - 1;
+                Team playerTeam = (Team)PlayerCustomPropertyUtility.GetLocalPlayerCustomProperty(PlayerCustomPropertyKey.TeamColor);
+                Team opponentTeam = playerTeam == Team.Blue ? Team.Red : Team.Blue;
+                int aiCharacterId = 0, aiWeaponId = 0;
+
+                for (int i = 0; i < count; i++)
+                {
+                    // Get character and weapon id
+                    Player newPlayer = Player.CreateOfflinePlayer(i + 2);
+                    PhotonNetwork.CurrentRoom.AddPlayer(newPlayer);
+
+                    // Set character id and weapon id data
+                    aiCharacterId = UnityEngine.Random.Range(0, characters.Length);
+                    aiWeaponId = UnityEngine.Random.Range(0, characters[aiCharacterId].Weapons.Count);
+                    PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(newPlayer, PlayerCustomPropertyKey.CharacterId, aiCharacterId);
+                    PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(newPlayer, PlayerCustomPropertyKey.WeaponId, aiWeaponId);
+
+                    // Set team
+                    if (i + 1 < PhotonNetwork.CurrentRoom.MaxPlayers / 2)
+                        PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(newPlayer, PlayerCustomPropertyKey.TeamColor, playerTeam);
+                    else
+                        PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(newPlayer, PlayerCustomPropertyKey.TeamColor, opponentTeam);
+
+
+                    /////////////////////////////////////////////////////////////
+
+                }
+
+
+
             }
-
-
 
         }
 
@@ -516,27 +592,37 @@ namespace Zoca
                     // Only the master client can start the game
                     if (PhotonNetwork.IsMasterClient)
                     {
-                        // If the room is full and all the players are ready then starts the match
-                        if (PhotonNetwork.CurrentRoom.MaxPlayers == PhotonNetwork.CurrentRoom.Players.Count)
+                        if (!PhotonNetwork.OfflineMode)
                         {
-                            bool start = true;
-                            foreach (Player player in PhotonNetwork.CurrentRoom.Players.Values)
+                            // If the room is full and all the players are ready then starts the match
+                            if (PhotonNetwork.CurrentRoom.MaxPlayers == PhotonNetwork.CurrentRoom.Players.Count)
                             {
-                                // If there is at least one player not ready then return.
-                                if (!IsPlayerReady(player))
+                                bool start = true;
+                                foreach (Player player in PhotonNetwork.CurrentRoom.Players.Values)
                                 {
-                                    start = false;
-                                    break;
+                                    // If there is at least one player not ready then return.
+                                    if (!IsPlayerReady(player))
+                                    {
+                                        start = false;
+                                        break;
+                                    }
+
                                 }
 
-                            }
-
-                            if (start)
-                            {
-                                // Start
-                                StartMatch();
+                                if (start)
+                                {
+                                    // Start
+                                    StartMatch();
+                                }
                             }
                         }
+                        else // Offline mode
+                        {
+                            // Only need the local player to be ready
+                            if (IsLocalPlayerReady())
+                                StartMatch();
+                        }
+                        
                     }
 
                         
@@ -584,8 +670,13 @@ namespace Zoca
 
         public bool IsPlayerReady(Player player)
         {
-            object b = 0; 
-            if(PlayerCustomPropertyUtility.TryGetPlayerCustomProperty(player, PlayerCustomPropertyKey.Ready, out b))
+            //// In offline mode all the AIs are ready
+            //if(PhotonNetwork.OfflineMode && player != PhotonNetwork.LocalPlayer)
+            //    return true;
+                
+            
+            object b = 0;
+            if (PlayerCustomPropertyUtility.TryGetPlayerCustomProperty(player, PlayerCustomPropertyKey.Ready, out b))
             {
                 //Debug.LogFormat("Player {0} is ready: {1}", player.ActorNumber, (byte)b == 0 ? false : true);
                 return (byte)b == 0 ? false : true;
@@ -595,6 +686,7 @@ namespace Zoca
                 //Debug.LogFormat("Player {0} is ready: {1}", player.ActorNumber, false);
                 return false;
             }
+            
             
         }
 

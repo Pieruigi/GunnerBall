@@ -1,3 +1,4 @@
+using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
@@ -36,6 +37,9 @@ namespace Zoca.UI
         [SerializeField]
         Sprite lockedSprite;
 
+        [SerializeField]
+        Sprite aiSprite;
+
         bool empty = false;
         bool locked = false;
         Player player;
@@ -52,10 +56,7 @@ namespace Zoca.UI
 
         }
 
-        void InternalInit(Texture2D avatarTexture, string nickName)
-        {
-            
-        }
+     
 
         Texture2D GetPlayerAvatarTexture(Player player)
         {
@@ -76,12 +77,22 @@ namespace Zoca.UI
 
         public void Init(Player player)
         {
+            Debug.Log("Player init...");
             empty = false;
             locked = false;
             this.player = player;
-            Texture2D tex = GetPlayerAvatarTexture(player);
-            avatarImage.sprite = Sprite.Create( tex, new Rect(0, 0, tex.width, tex.height), Vector2.zero);
-            nickText.text = player.NickName;
+
+            if(!PhotonNetwork.OfflineMode || player == PhotonNetwork.LocalPlayer)
+            {
+                Texture2D tex = GetPlayerAvatarTexture(player);
+                avatarImage.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), Vector2.zero);
+                nickText.text = player.NickName;
+            }
+            else
+            {
+                avatarImage.sprite = aiSprite;
+                nickText.text = "CPU";
+            }
             
         }
 

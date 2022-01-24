@@ -3947,6 +3947,7 @@ MonoBehaviour:
   nickText: {fileID: 1534179139}
   emptySprite: {fileID: 21300000, guid: c78a948608da0d246a5fb6b4cf450750, type: 3}
   lockedSprite: {fileID: 21300000, guid: 2ad3a16ccedb0cb4495ca172345d75e6, type: 3}
+  aiSprite: {fileID: 21300000, guid: 10e0a55bcf08ac64682e154e6f8ab593, type: 3}
 --- !u!1 &563689648
 GameObject:
   m_ObjectHideFlags: 0
@@ -8427,6 +8428,7 @@ MonoBehaviour:
   nickText: {fileID: 225849474}
   emptySprite: {fileID: 21300000, guid: c78a948608da0d246a5fb6b4cf450750, type: 3}
   lockedSprite: {fileID: 21300000, guid: 2ad3a16ccedb0cb4495ca172345d75e6, type: 3}
+  aiSprite: {fileID: 21300000, guid: 10e0a55bcf08ac64682e154e6f8ab593, type: 3}
 --- !u!1 &1263009292
 GameObject:
   m_ObjectHideFlags: 0
@@ -11608,7 +11610,7 @@ MonoBehaviour:
   nextWeaponButton: {fileID: 1839347234}
   prevWeaponButton: {fileID: 1475060307}
   weaponImage: {fileID: 883227529}
-  mainPanel: {fileID: 539434361}
+  mainPanel: {fileID: 49034536}
   blueTeamPanel: {fileID: 1479402792}
   redTeamPanel: {fileID: 142956763}
   blueTeamColor: {r: 0, g: 0.7490196, b: 1, a: 1}
@@ -12288,6 +12290,7 @@ MonoBehaviour:
   nickText: {fileID: 1840281786}
   emptySprite: {fileID: 21300000, guid: c78a948608da0d246a5fb6b4cf450750, type: 3}
   lockedSprite: {fileID: 21300000, guid: 2ad3a16ccedb0cb4495ca172345d75e6, type: 3}
+  aiSprite: {fileID: 21300000, guid: 10e0a55bcf08ac64682e154e6f8ab593, type: 3}
 --- !u!1 &1752238918
 GameObject:
   m_ObjectHideFlags: 0
@@ -12952,6 +12955,7 @@ MonoBehaviour:
   nickText: {fileID: 1464171352}
   emptySprite: {fileID: 21300000, guid: c78a948608da0d246a5fb6b4cf450750, type: 3}
   lockedSprite: {fileID: 21300000, guid: 2ad3a16ccedb0cb4495ca172345d75e6, type: 3}
+  aiSprite: {fileID: 21300000, guid: 10e0a55bcf08ac64682e154e6f8ab593, type: 3}
 --- !u!1 &1800148247
 GameObject:
   m_ObjectHideFlags: 0
@@ -15569,7 +15573,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2753958375594183850, guid: 6d259347a4165594d973e85310bc40f4, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2753958375594183854, guid: 6d259347a4165594d973e85310bc40f4, type: 3}
       propertyPath: m_Pivot.x
