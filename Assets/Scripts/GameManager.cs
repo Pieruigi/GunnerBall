@@ -386,9 +386,7 @@ namespace Zoca
             Debug.Log("User id set");
 #endif
 
-            //if (PhotonNetwork.LocalPlayer.ActorNumber == 1)
-
-            //if (PhotonNetwork.LocalPlayer.ActorNumber <= PhotonNetwork.CurrentRoom.MaxPlayers / 2)
+            
             if (!IsBlueTeamFull())
             {
                 //PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(PhotonNetwork.LocalPlayer, PlayerCustomPropertyKey.TeamColor, Team.Blue);
@@ -402,12 +400,12 @@ namespace Zoca
 
             int localCharacterId = 0;
             int localWeaponId = 0;
-            if (PhotonNetwork.OfflineMode)
-            {
-                // Use the OfflineMatchData structure
-                localCharacterId = OfflineMatchData.Instance.LocalPlayerCharacterId;
-                localWeaponId = OfflineMatchData.Instance.LocalPlayerWeaponId;
-            }
+            //if (PhotonNetwork.OfflineMode)
+            //{
+            //    // Use the OfflineMatchData structure
+            //    localCharacterId = OfflineMatchData.Instance.LocalPlayerCharacterId;
+            //    localWeaponId = OfflineMatchData.Instance.LocalPlayerWeaponId;
+            //}
 
             // Set the default character
             Debug.LogFormat("PUN - Setting default character id.");
@@ -428,7 +426,7 @@ namespace Zoca
                 PhotonNetwork.CurrentRoom.IsOpen = false;
 
                 // The room is not full but we want to test it
-                LoadArena();
+                //LoadArena();
             }
 
 
@@ -464,21 +462,7 @@ namespace Zoca
                     Debug.LogFormat("PUN - IsMasterClient: {0}", PhotonNetwork.IsMasterClient);
                     Debug.LogFormat("PUN - Current room max players: {0}", PhotonNetwork.CurrentRoom.MaxPlayers);
                     Debug.LogFormat("PUN - Current room current players: {0}", PhotonNetwork.CurrentRoom.PlayerCount);
-                    //if (PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers)
                    
-                    //{
-                        
-                        //InitRoomCustomProperties();
-
-                        //// Close the room to avoid other players to join
-                        //PhotonNetwork.CurrentRoom.IsOpen = false;
-                        //PhotonNetwork.CurrentRoom.IsVisible = false;
-                                             
-                        //// The room is full, load the arena
-                        //LoadArena();
-
-                        
-                    //}
 
                 }
 

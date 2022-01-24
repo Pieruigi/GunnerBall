@@ -94,6 +94,24 @@ namespace Zoca
 
         }
 
+        public void CreateRoomOffline(int maxPlayers, int mapId)
+        {
+
+            PhotonNetwork.OfflineMode = true;
+            this.expectedMaxPlayers = maxPlayers;
+
+            RoomOptions roomOptions = new RoomOptions() { MaxPlayers = (byte)maxPlayers };
+            roomOptions.CustomRoomPropertiesForLobby = new string[] { RoomCustomPropertyKey.MatchLength, RoomCustomPropertyKey.MapId };
+
+            roomOptions.CustomRoomProperties = new ExitGames.Client.Photon.Hashtable();
+            roomOptions.CustomRoomProperties.Add(RoomCustomPropertyKey.MatchLength, (int)matchLength);
+            roomOptions.CustomRoomProperties.Add(RoomCustomPropertyKey.PlayerCreator, (string)PhotonNetwork.NickName);
+            roomOptions.CustomRoomProperties.Add(RoomCustomPropertyKey.MapId, (byte)mapId);
+
+            PhotonNetwork.CreateRoom(null, roomOptions);
+
+        }
+
         /// <summary>
         /// Joins a given room
         /// </summary>
@@ -132,20 +150,20 @@ namespace Zoca
 
       
 
-        public void LaunchOffline(int maxPlayers)
-        {
+        //public void LaunchOffline(int maxPlayers)
+        //{
             
-            PhotonNetwork.OfflineMode = true;
+        //    PhotonNetwork.OfflineMode = true;
             
-            RoomOptions roomOptions = new RoomOptions() { MaxPlayers = (byte)maxPlayers };
-            roomOptions.CustomRoomPropertiesForLobby = new string[] { RoomCustomPropertyKey.MatchLength };
+        //    RoomOptions roomOptions = new RoomOptions() { MaxPlayers = (byte)maxPlayers };
+        //    roomOptions.CustomRoomPropertiesForLobby = new string[] { RoomCustomPropertyKey.MatchLength };
 
-            roomOptions.CustomRoomProperties = new ExitGames.Client.Photon.Hashtable();
-            roomOptions.CustomRoomProperties.Add(RoomCustomPropertyKey.MatchLength, (int)matchLength);
+        //    roomOptions.CustomRoomProperties = new ExitGames.Client.Photon.Hashtable();
+        //    roomOptions.CustomRoomProperties.Add(RoomCustomPropertyKey.MatchLength, (int)matchLength);
 
-            PhotonNetwork.CreateRoom(null, roomOptions);
+        //    PhotonNetwork.CreateRoom(null, roomOptions);
 
-        }
+        //}
 
         #region private
         

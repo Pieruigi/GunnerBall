@@ -51,6 +51,18 @@ namespace Zoca.UI
         [SerializeField]
         GameObject redTeamPanel;
 
+        [SerializeField]
+        Color blueTeamColor;
+
+        [SerializeField]
+        Color redTeamColor;
+
+        [SerializeField]
+        List<Image> teamObjectImages;
+
+        [SerializeField]
+        Image arenaImage;
+
         //[SerializeField]
         //TMP_Text testPlayerName;
 
@@ -66,6 +78,8 @@ namespace Zoca.UI
 
         List<LobbyPlayer> bluePlayers;
         List<LobbyPlayer> redPlayers;
+
+        //bool offline = false;
         #endregion
 
         #region private methods
@@ -116,6 +130,19 @@ namespace Zoca.UI
             {
                 SetTeamPlayer(p);
             }
+
+            // Colorize
+            Team team = (Team)PlayerCustomPropertyUtility.GetLocalPlayerCustomProperty(PlayerCustomPropertyKey.TeamColor);
+            Color c = team == Team.Blue ? blueTeamColor : redTeamColor;
+            foreach(Image image in teamObjectImages)
+            {
+                image.color = c;
+            }
+
+            // Set the arena image
+            // Get the arena id
+            int mapId = (byte)RoomCustomPropertyUtility.GetCurrentRoomCustomProperty(RoomCustomPropertyKey.MapId);
+            arenaImage.sprite = MapManager.Instance.GetMap(mapId).ImageSprite;
 
             // Load characters and weapons
             LoadResources();

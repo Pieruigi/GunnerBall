@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace Zoca.UI
 {
-    public class OnlinePanel: MonoBehaviourPunCallbacks
+    public class OfflinePanel: MonoBehaviourPunCallbacks
     {
         #region private fields
         [SerializeField]

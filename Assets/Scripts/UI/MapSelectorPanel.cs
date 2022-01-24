@@ -132,9 +132,9 @@ namespace Zoca.UI
 
             //Launcher.Instance.CreateRoom(maxPlayers, maps[selectedMapIndex].Id);
             if(online)
-                transform.root.GetComponentInChildren<OnlinePanel>().CreateRoom(maxPlayers, maps[selectedMapIndex].Id);
-            //else
-                //transform.root.GetComponentInChildren<OfflinePanel>().CreateRoom(maxPlayers, maps[selectedMapIndex].Id);
+                transform.root.GetComponentInChildren<LauncherPanel>().CreateRoom(maxPlayers, maps[selectedMapIndex].Id);
+            else
+                transform.root.GetComponentInChildren<LauncherPanel>().CreateRoom(maxPlayers, maps[selectedMapIndex].Id);
             
         }
 
@@ -145,21 +145,6 @@ namespace Zoca.UI
             nextButton.interactable = value;
             prevButton.interactable = value;
 
-        }
-
-        IEnumerator OpenLobbyDelayed()
-        {
-            yield return new WaitForEndOfFrame();
-
-            // Reset buttons
-            EnableButtons(true);
-
-            if (online)
-                onlineLobbyPanel.SetActive(true);
-            else
-                offlineBackPanel.SetActive(true);
-
-            gameObject.SetActive(false);
         }
 
         #endregion
@@ -188,28 +173,25 @@ namespace Zoca.UI
         #region pun callbacks
         public override void OnCreatedRoom()
         {
+            Debug.Log("Room Created...");
             // Reset buttons
             EnableButtons(true);
 
             // Close
             gameObject.SetActive(false);
+
+
         }
 
         public override void OnCreateRoomFailed(short returnCode, string message)
         {
+            Debug.Log("Room Creation failed...");
+
             // Reset buttons
             EnableButtons(true);
 
             // Close
             gameObject.SetActive(false);
-        }
-
-        public override void OnJoinedRoom()
-        {
-            // We wait until the frame completed in order to have the player custom properties 
-            // set up in the game manager.
-            if (!PhotonNetwork.OfflineMode)
-                StartCoroutine(OpenLobbyDelayed());
         }
 
         public override void OnJoinRoomFailed(short returnCode, string message)
