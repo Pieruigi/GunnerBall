@@ -53,6 +53,9 @@ namespace Zoca.UI
         [SerializeField]
         GameObject offlineLobbyPanel;
 
+        [SerializeField]
+        GameObject comingSoonObject;
+
         GameObject backPanel;
         bool online;
         int maxPlayers;
@@ -106,6 +109,9 @@ namespace Zoca.UI
 
         void Prev()
         {
+            StartCoroutine(ShowComingSoonText());
+            return;
+
             // Select previous
             selectedMapIndex--;
             if (selectedMapIndex < 0)
@@ -117,6 +123,9 @@ namespace Zoca.UI
 
         void Next()
         {
+            StartCoroutine(ShowComingSoonText());
+            return;
+
             // Select previous
             selectedMapIndex++;
             if (selectedMapIndex > maps.Count - 1)
@@ -124,6 +133,14 @@ namespace Zoca.UI
 
             // Set image
             mapImage.sprite = maps[selectedMapIndex].ImageSprite;
+        }
+
+        IEnumerator ShowComingSoonText()
+        {
+            comingSoonObject.SetActive(true);
+            yield return new WaitForSeconds(3);
+
+            comingSoonObject.SetActive(false);
         }
 
         public void CreateRoom()
@@ -163,7 +180,8 @@ namespace Zoca.UI
             // Set the first map as the current one
             selectedMapIndex = 0;
             mapImage.sprite = maps[selectedMapIndex].ImageSprite;
-            
+
+            comingSoonObject.SetActive(false);
 
             // Activate panel
             panel.SetActive(true);
