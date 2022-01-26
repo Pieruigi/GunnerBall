@@ -60,7 +60,7 @@ namespace Zoca.UI
 
         Texture2D GetPlayerAvatarTexture(Player player)
         {
-#if !DISABLESTEAMWORKS
+#if !DISABLESTEAMWORKS && !UNITY_EDITOR
             Debug.Log("Getting user id...");
             long userId = (long)PlayerCustomPropertyUtility.GetPlayerCustomProperty(player, PlayerCustomPropertyKey.UserId);
             Debug.Log("User id: " + userId);

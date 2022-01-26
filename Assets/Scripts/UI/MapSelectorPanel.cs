@@ -109,8 +109,8 @@ namespace Zoca.UI
 
         void Prev()
         {
-            StartCoroutine(ShowComingSoonText());
-            return;
+            //StartCoroutine(ShowComingSoonText());
+            //return;
 
             // Select previous
             selectedMapIndex--;
@@ -123,8 +123,8 @@ namespace Zoca.UI
 
         void Next()
         {
-            StartCoroutine(ShowComingSoonText());
-            return;
+            //StartCoroutine(ShowComingSoonText());
+            //return;
 
             // Select previous
             selectedMapIndex++;
