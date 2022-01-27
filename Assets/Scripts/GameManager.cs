@@ -419,7 +419,7 @@ namespace Zoca
             // Reset ready flag
             SetLocalPlayerReady(false);
 
-#if !DISABLESTEAMWORKS && !UNITY_EDITOR
+#if !DISABLESTEAMWORKS// && !UNITY_EDITOR
             // Set the user id
             Debug.Log("Setting user id...:"+SteamUser.GetSteamID().m_SteamID);
             PlayerCustomPropertyUtility.AddOrUpdateLocalPlayerCustomProperty(PlayerCustomPropertyKey.UserId, (long)SteamUser.GetSteamID().m_SteamID);
