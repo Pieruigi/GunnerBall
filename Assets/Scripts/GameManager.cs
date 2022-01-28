@@ -158,6 +158,7 @@ namespace Zoca
             {
                 inGame = true;
 
+                
                 // After the scene has been loaded on this client we can instantiate the networked
                 // local player
                 if (!PhotonNetwork.OfflineMode) // Online mode
@@ -229,8 +230,14 @@ namespace Zoca
                         // The master client also needs to instantiate the networked ball
                         if (!Ball.Instance)
                         {
+                            // Get the map id from the custom properties
+                            int mapId = (byte)RoomCustomPropertyUtility.GetCurrentRoomCustomProperty(RoomCustomPropertyKey.MapId);
+
+                            Map map = MapManager.Instance.GetMap(mapId);
+
                             // For now we only have one ball ( id=0 ) in resources
-                            GameObject ballPrefab = Resources.LoadAll<Ball>(ResourceFolder.Balls)[0].gameObject;
+                            //GameObject ballPrefab = Resources.LoadAll<Ball>(ResourceFolder.Balls)[0].gameObject;
+                            GameObject ballPrefab = map.Ball;
                             PhotonNetwork.InstantiateRoomObject(System.IO.Path.Combine(ResourceFolder.Balls, ballPrefab.name), LevelManager.Instance.BallSpawnPoint.position, Quaternion.identity);
                             Debug.LogFormat("GameManager - Scene manager: {0}; Ball created:{1}", LevelManager.Instance, Ball.Instance);
                         }
@@ -261,12 +268,19 @@ namespace Zoca
                     //Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
                     PhotonNetwork.Instantiate(System.IO.Path.Combine(Character.GameAssetFolder, playerPrefab.name), spawnPoint.position, spawnPoint.rotation);
 
+
                     // Adding local ball
                     if (!Ball.Instance)
                     {
+                        // Get the map id from the custom properties
+                        int mapId = (byte)RoomCustomPropertyUtility.GetCurrentRoomCustomProperty(RoomCustomPropertyKey.MapId);
+
+                        Map map = MapManager.Instance.GetMap(mapId);
+
                         // For now we only have one ball ( id=0 ) in resources
                         Debug.Log("Ball Res Folder:" + ResourceFolder.Balls);
-                        GameObject ballPrefab = Resources.LoadAll<Ball>(ResourceFolder.Balls)[1].gameObject;
+                        //GameObject ballPrefab = Resources.LoadAll<Ball>(ResourceFolder.Balls)[1].gameObject;
+                        GameObject ballPrefab = map.Ball;
                         PhotonNetwork.InstantiateRoomObject(System.IO.Path.Combine(ResourceFolder.Balls, ballPrefab.name), LevelManager.Instance.BallSpawnPoint.position, Quaternion.identity);
                         Debug.LogFormat("GameManager - Scene manager: {0}; Ball created:{1}", LevelManager.Instance, Ball.Instance);
                     }

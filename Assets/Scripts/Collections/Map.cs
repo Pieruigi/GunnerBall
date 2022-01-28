@@ -25,6 +25,11 @@ namespace Zoca.Collections
             get { return imageSprite; }
         }
 
+        public GameObject Ball
+        {
+            get { return ball; }
+        }
+
         //[SerializeField]
         //int id;
 
@@ -33,6 +38,9 @@ namespace Zoca.Collections
 
         [SerializeField]
         Sprite imageSprite;
+
+        [SerializeField]
+        GameObject ball;
     }
 
 }

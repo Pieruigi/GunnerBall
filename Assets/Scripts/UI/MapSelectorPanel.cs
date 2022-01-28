@@ -1,6 +1,7 @@
 using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -40,6 +41,9 @@ namespace Zoca.UI
 
         [SerializeField]
         Image mapImage;
+
+        [SerializeField]
+        TMP_Text mapNameText;
 
         [SerializeField]
         Button prevButton;
@@ -119,6 +123,8 @@ namespace Zoca.UI
 
             // Set image
             mapImage.sprite = maps[selectedMapIndex].ImageSprite;
+            // Set name
+            mapNameText.text = maps[selectedMapIndex].Name;
         }
 
         void Next()
@@ -133,6 +139,8 @@ namespace Zoca.UI
 
             // Set image
             mapImage.sprite = maps[selectedMapIndex].ImageSprite;
+            // Set name
+            mapNameText.text = maps[selectedMapIndex].Name;
         }
 
         IEnumerator ShowComingSoonText()
@@ -180,6 +188,8 @@ namespace Zoca.UI
             // Set the first map as the current one
             selectedMapIndex = 0;
             mapImage.sprite = maps[selectedMapIndex].ImageSprite;
+            // Set name
+            mapNameText.text = maps[selectedMapIndex].Name;
 
             comingSoonObject.SetActive(false);
 
