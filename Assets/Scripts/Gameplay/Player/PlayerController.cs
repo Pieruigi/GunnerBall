@@ -424,7 +424,8 @@ namespace Zoca
                 // Gravity
                 if (!cc.isGrounded)
                 {
-                    ySpeed += Physics.gravity.y * Time.deltaTime;
+                    Debug.Log("Physics.gravity:" + Physics.gravity.y);
+                    ySpeed += Physics.gravity.y * 2 * Time.deltaTime;
                     //Debug.LogFormat("PlayerController - Not grounded; ySpeed; {0}", ySpeed);
                 }
                 else
