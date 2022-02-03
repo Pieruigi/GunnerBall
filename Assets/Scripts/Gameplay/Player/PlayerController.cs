@@ -41,7 +41,7 @@ namespace Zoca
         }
 
         [SerializeField]
-        float jumpSpeed = 55f;
+        float jumpSpeed = 75f;
 
         [SerializeField]
         float flyingMultiplier = 0.2f;
@@ -425,7 +425,7 @@ namespace Zoca
                 if (!cc.isGrounded)
                 {
                     Debug.Log("Physics.gravity:" + Physics.gravity.y);
-                    ySpeed += Physics.gravity.y * 2 * Time.deltaTime;
+                    ySpeed += Physics.gravity.y * Time.deltaTime;
                     //Debug.LogFormat("PlayerController - Not grounded; ySpeed; {0}", ySpeed);
                 }
                 else
