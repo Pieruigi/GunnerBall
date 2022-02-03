@@ -41,7 +41,7 @@ namespace Zoca
         }
 
         [SerializeField]
-        float jumpSpeed = 15f;
+        float jumpSpeed = 55f;
 
         [SerializeField]
         float flyingMultiplier = 0.2f;
@@ -66,6 +66,11 @@ namespace Zoca
         float lerpSpeed = 10f; // Interpolation speed to adjust network transform
 
         bool jumping = false;
+        public bool Jumping
+        {
+            get { return jumping; }
+        }
+
         float ySpeed = 0;
         bool sprinting = false;
         public bool Sprinting
@@ -342,7 +347,7 @@ namespace Zoca
                 }
                 else
                 {
-                    // You can move along y and x axis
+                    // You can move along z and x axis
                    
                     dir = transform.forward * moveInput.y + transform.right * moveInput.x;
                     //dir = new Vector3(moveInput.x, 0, moveInput.y);
@@ -374,14 +379,47 @@ namespace Zoca
                 }
 
                 // The current velocity takes into account some acceleration
-                velocity = Vector3.MoveTowards(velocity, targetVelocity, Time.deltaTime * acceleration);
+                float accMul = 1;
+                if (!cc.isGrounded)
+                    accMul *= 0.2f;
                 
+
+                velocity = Vector3.MoveTowards(velocity, targetVelocity, Time.deltaTime * acceleration * accMul);
 
 
                 if (freezed || startPaused/* || jumping*/)
                 { 
                     ySpeed = 0; 
                 }
+
+                Debug.Log("JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ:" + Jumping);
+
+                //// Gravity
+                //if (!cc.isGrounded)
+                //{
+                //    ySpeed += Physics.gravity.y * Time.deltaTime;
+                //    //Debug.LogFormat("PlayerController - Not grounded; ySpeed; {0}", ySpeed);
+                //}
+                //else
+                //{
+                //    // When player hits the ground we must reset vertical speed
+                //    if (ySpeed < 0)
+                //        ySpeed = 0;
+
+                //    jumping = false;
+                //    //Debug.LogFormat("PlayerController - Grounded; ySpeed; {0}", ySpeed);
+                //}
+
+                // Set the vertical speed
+                velocity.y = ySpeed;
+
+                // Move the character controller
+                if(velocity != Vector3.zero)
+                {
+                    //Debug.LogFormat("PlayerController - Velocity.Y:{0}", velocity.y);
+                    cc.Move(velocity * Time.deltaTime);
+                }
+
 
                 // Gravity
                 if (!cc.isGrounded)
@@ -399,19 +437,6 @@ namespace Zoca
                     //Debug.LogFormat("PlayerController - Grounded; ySpeed; {0}", ySpeed);
                 }
 
-                // Set the vertical speed
-                velocity.y = ySpeed;
-
-                // Move the character controller
-                if(velocity != Vector3.zero)
-                {
-                    //Debug.LogFormat("PlayerController - Velocity.Y:{0}", velocity.y);
-                    cc.Move(velocity * Time.deltaTime);
-                }
-
-                
-
-
 
                 //
                 // Check shooting
@@ -424,30 +449,23 @@ namespace Zoca
                     {
                         //Debug.Log("Update - shooting 2...");
                         object[] parameters;
-                        //Collider hitCollider;
+                     
                         // Returns true if the weapon is ready to shoot, otherwise returns false
                         if (fireWeapon.TryShoot(superShoot, out parameters))
                         {
-                            //if (parameters != null)
-                            //{
-                            //    Debug.LogFormat("PlayerController - Shoot parameters length: {0}", parameters.Length);
-                            //    for (int i = 0; i < parameters.Length; i++)
-                            //        Debug.LogFormat("PlayerController - Shoot parameter[{0}]: {1}", i, parameters[i]);
-                            //}
-
 
                             // Call rpc on all the clients, even the local one.
                             // By calling it via server we can balance lag.
-                            if (!PhotonNetwork.OfflineMode)
-                            {
-                                photonView.RPC("RpcShoot", RpcTarget.AllViaServer, parameters as object);
-                            }
-                            else
-                            {
-                                // In offline mode we call the weapon.Shoot() directly
-                                //fireWeapon.Shoot(parameters);
-                                photonView.RPC("RpcShoot", RpcTarget.AllViaServer, parameters as object);
-                            }
+                            photonView.RPC("RpcShoot", RpcTarget.AllViaServer, parameters as object);
+                            //if (!PhotonNetwork.OfflineMode)
+                            //{
+                            //    photonView.RPC("RpcShoot", RpcTarget.AllViaServer, parameters as object);
+                            //}
+                            //else
+                            //{
+                               
+                            //    photonView.RPC("RpcShoot", RpcTarget.AllViaServer, parameters as object);
+                            //}
 
                         }
                         
@@ -741,23 +759,14 @@ namespace Zoca
             if (!photonView.IsMine || (PhotonNetwork.OfflineMode && photonView.Owner != PhotonNetwork.MasterClient))
                 return;
 
-            /// TEST ////////////////////////////
-            /// 
-           
-
-            //////////////////////////////////
-
-
-
-           
+                   
             if (context.performed)
             {
-               
-                
+                 
                 moving = true;
                 
+                
                 moveInput = context.ReadValue<Vector2>();
-                //Move(true, context.ReadValue<Vector2>());
                 
             }
             else
@@ -765,7 +774,7 @@ namespace Zoca
                 moving = false;
                 
                 moveInput = Vector2.zero;
-                //Move(false, Vector2.zero);
+                
             }
 
         }
@@ -783,7 +792,7 @@ namespace Zoca
 
         public void OnJump(InputAction.CallbackContext context)
         {
-            return;
+            //return;
 
             if (!photonView.IsMine || (PhotonNetwork.OfflineMode && photonView.Owner != PhotonNetwork.MasterClient))
                 return;
@@ -812,19 +821,12 @@ namespace Zoca
             if (context.performed)
             {
                 Sprint(true);
-                //if (!sprintInput /*&& moveInput.x == 0 && moveInput.y > 0 */)
-                //{
-                //    //sprinting = true;
-                //    sprintInput = true;
-                //}
+          
             }
             else
             {
                 Sprint(false);
-                //if (sprintInput)
-                //{
-                //    sprintInput = false;
-                //}
+               
             }
         }
 
@@ -832,37 +834,7 @@ namespace Zoca
 
         public void OnShoot(InputAction.CallbackContext context)
         {
-            //if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
-            //    return;
-
-            //// Always set the super shoot false
-            //superShoot = false;
-
-            //// You can't shoot if you are sprinting
-            //if (sprinting)
-            //{
-            //    shooting = false;
-
-            //    return;
-            //}
-
-
-            //if (context.performed)
-            //{
-
-            //    if (!shooting)
-            //    {
-            //        shooting = true;
-            //    }
-
-            //}
-            //else
-            //{
-            //    if (shooting)
-            //    {
-            //        shooting = false;
-            //    }
-            //}
+         
 
             if (!photonView.IsMine || (PhotonNetwork.OfflineMode && photonView.Owner != PhotonNetwork.MasterClient))
                 return;
@@ -909,16 +881,7 @@ namespace Zoca
             }
         }
 
-        //public void OnSwitchCamera(InputAction.CallbackContext context)
-        //{
-        //    if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
-        //        return;
-
-        //    if (context.started && !playerCamera.IsSwitching())
-        //    {
-        //        playerCamera.Switch();
-        //    }
-        //}
+      
 
         public void OnPause(InputAction.CallbackContext context)
         {
@@ -949,7 +912,7 @@ namespace Zoca
             }
 
             // Get the fireweapon id from the player properties
-            int weaponId = (int)PlayerCustomPropertyUtility.GetPlayerCustomProperty(photonView.Owner, PlayerCustomPropertyKey.WeaponId);
+            int  weaponId = (int)PlayerCustomPropertyUtility.GetPlayerCustomProperty(photonView.Owner, PlayerCustomPropertyKey.WeaponId);
             // Set the weapon
             fireWeapon = weapons[weaponId];
             // Activate the current weapon
@@ -958,17 +921,6 @@ namespace Zoca
             fireWeapon.SetOwner(this);
         }
 
-        //private void OnCollisionEnter(Collision collision)
-        //{
-        //    if (!photonView.IsMine && !PhotonNetwork.OfflineMode)
-        //        return;
-
-        //    if (Tag.Ball.Equals(collision.transform.tag))
-        //    {
-        //        // Apply a lot of damage
-        //        Hit(collision.gameObject, Vector3.zero, Vector3.zero, 1000);
-        //    }
-        //}
 
         void CheckStamina()
         {
@@ -999,13 +951,7 @@ namespace Zoca
         [PunRPC]
         void RpcShoot(object[] parameters, PhotonMessageInfo info)
         {
-            //if (parameters != null)
-            //{
-            //    Debug.LogFormat("PlayerController - RpcShoot parameters count: {0}", parameters.Length);
-            //    for (int i = 0; i < parameters.Length; i++)
-            //        Debug.LogFormat("PlayerController - RpcShoot parameter[{0}]: {1}", i, parameters[i]);
-            //}
-            
+           
             animationController.AnimateShoot(1f);
 
             fireWeapon.Shoot(parameters);

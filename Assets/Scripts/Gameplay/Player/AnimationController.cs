@@ -30,6 +30,7 @@ namespace Zoca
 
         
         PlayerController playerController;
+        CharacterController cc;
 
         #region motion_fields
         float animSpeed;
@@ -71,7 +72,7 @@ namespace Zoca
         {
             playerController = GetComponent<PlayerController>();
             animSpeedMax = playerController.MaxSpeed * playerController.SprintMultiplier;
-
+            cc = GetComponent<CharacterController>();
             
         }
 
@@ -158,9 +159,17 @@ namespace Zoca
 
         void AnimateMotion()
         {
+            //Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+
             // Set animation
             animSpeedTarget = playerController.Velocity.magnitude / animSpeedMax;
             //float animSign = Vector3.Dot(velocity.normalized, transform.forward);
+
+            if (playerController.Jumping)
+            {
+                //Debug.Log("JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ");
+                animSpeedTarget *= 0.2f;
+            }
 
 #if !SYNC_MOVE_INPUT
             if (playerController.photonView.IsMine || PhotonNetwork.OfflineMode)
