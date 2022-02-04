@@ -57,6 +57,15 @@ namespace Zoca.UI
         [SerializeField]
         Button prevCharacterButton;
 
+        [SerializeField]
+        TMP_Text characterSpeedText;
+
+        [SerializeField]
+        TMP_Text characterStaminaText;
+
+        [SerializeField]
+        TMP_Text characterStunnedText;
+
         [Header("Weapon Detail")]
         [SerializeField]
         Button nextWeaponButton;
@@ -288,6 +297,7 @@ namespace Zoca.UI
             currentWeaponId = 0;
             weaponImage.sprite = characters[currentCharacterId].Weapons[currentWeaponId].Icon;
             SetWeaponStats(characters[currentCharacterId].Weapons[currentWeaponId]);
+            SetCharacterStats(characters[currentCharacterId]);
 
             // Set character
             PlayerCustomPropertyUtility.AddOrUpdateLocalPlayerCustomProperty(PlayerCustomPropertyKey.WeaponId, currentWeaponId);
@@ -308,6 +318,7 @@ namespace Zoca.UI
             currentWeaponId = 0;
             weaponImage.sprite = characters[currentCharacterId].Weapons[currentWeaponId].Icon;
             SetWeaponStats(characters[currentCharacterId].Weapons[currentWeaponId]);
+            SetCharacterStats(characters[currentCharacterId]);
 
             // Set character
             PlayerCustomPropertyUtility.AddOrUpdateLocalPlayerCustomProperty(PlayerCustomPropertyKey.WeaponId, currentWeaponId);
@@ -325,6 +336,7 @@ namespace Zoca.UI
             // Set the new icon
             weaponImage.sprite = characters[currentCharacterId].Weapons[currentWeaponId].Icon;
             SetWeaponStats(characters[currentCharacterId].Weapons[currentWeaponId]);
+            SetCharacterStats(characters[currentCharacterId]);
 
             PlayerCustomPropertyUtility.AddOrUpdateLocalPlayerCustomProperty(PlayerCustomPropertyKey.WeaponId, currentWeaponId);
             PlayerCustomPropertyUtility.SynchronizeLocalPlayerCustomProperties();
@@ -340,6 +352,7 @@ namespace Zoca.UI
             // Set the new icon
             weaponImage.sprite = characters[currentCharacterId].Weapons[currentWeaponId].Icon;
             SetWeaponStats(characters[currentCharacterId].Weapons[currentWeaponId]);
+            SetCharacterStats(characters[currentCharacterId]);
 
             PlayerCustomPropertyUtility.AddOrUpdateLocalPlayerCustomProperty(PlayerCustomPropertyKey.WeaponId, currentWeaponId);
             PlayerCustomPropertyUtility.SynchronizeLocalPlayerCustomProperties();
@@ -361,6 +374,7 @@ namespace Zoca.UI
             weaponImage.sprite = characters[currentCharacterId].Weapons[currentWeaponId].Icon;
 
             SetWeaponStats(characters[currentCharacterId].Weapons[currentWeaponId]);
+            SetCharacterStats(characters[currentCharacterId]);
         }
 
         void SetWeaponStats(Weapon weapon)
@@ -369,6 +383,13 @@ namespace Zoca.UI
             fireRateText.text = weapon.FireRate.ToString();
             fireRangeText.text = weapon.FireRange.ToString();
         } 
+
+        void SetCharacterStats(Character character)
+        {
+            characterSpeedText.text = character.Speed.ToString();
+            characterStaminaText.text = character.Stamina.ToString();
+            characterStunnedText.text = character.FreezingCooldown.ToString();
+        }
 
         #endregion
 

@@ -6,11 +6,14 @@ namespace Zoca.Collections
 {
     public class Character : ScriptableObject
     {
+        #region constants
 
         public static readonly string CollectionFolder = ResourceFolder.Collections + "/Characters";
 
         public static readonly string GameAssetFolder = ResourceFolder.GameAssets + "/Characters";
+        #endregion
 
+        #region properties
         public Sprite Avatar
         {
             get { return avatar; }
@@ -26,6 +29,24 @@ namespace Zoca.Collections
             get { return weapons.AsReadOnly(); }
         }
 
+        public float Speed
+        {
+            get { return gameAsset.GetComponent<PlayerController>().MaxSpeed; }
+        }
+
+        public float Stamina
+        {
+            get { return gameAsset.GetComponent<PlayerController>().Stamina; }
+        }
+
+        public float FreezingCooldown
+        {
+            get { return gameAsset.GetComponent<PlayerController>().FreezingCooldown; }
+        }
+        #endregion
+
+        #region private fields
+
         [SerializeField]
         Sprite avatar;
 
@@ -37,7 +58,7 @@ namespace Zoca.Collections
 
         [SerializeField]
         List<Weapon> weapons;
-        
+        #endregion
     }
 
 }

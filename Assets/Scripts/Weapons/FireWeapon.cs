@@ -101,14 +101,14 @@ namespace Zoca
             ///// ONLY FOR TEST
             ///
             ///////////////////
-#if UNITY_EDITOR
-            power = TestPlayerStats.WeaponFirePower;
-            damage = TestPlayerStats.WeaponDamage;
-            fireRate = TestPlayerStats.WeaponFireRate;
-            fireRange = TestPlayerStats.WeaponFireRange;
+//#if UNITY_EDITOR
+//            power = TestPlayerStats.WeaponFirePower;
+//            damage = TestPlayerStats.WeaponDamage;
+//            fireRate = TestPlayerStats.WeaponFireRate;
+//            fireRange = TestPlayerStats.WeaponFireRange;
 
             
-#endif
+//#endif
 
             ///////////////////
 

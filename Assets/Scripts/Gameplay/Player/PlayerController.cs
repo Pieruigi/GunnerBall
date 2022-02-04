@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using Zoca.AI;
+using Zoca.Collections;
 using Zoca.Interfaces;
 
 namespace Zoca
@@ -194,9 +195,11 @@ namespace Zoca
             get { return fireWeapon; }
         }
 
+        //[SerializeField]
+        //FireWeapon[] weapons;
+
         [SerializeField]
-        FireWeapon[] weapons;
-        
+        Transform[] weaponPivots; // The pivot X holds the gun X
 
         [Header("Fx")]
         [SerializeField]
@@ -263,14 +266,14 @@ namespace Zoca
                 ///// ONLY FOR TEST
                 ///
                 ///////////////////
-#if UNITY_EDITOR
-                maxSpeed = TestPlayerStats.PlayerMaxSpeed;
-                sprintMultiplier = TestPlayerStats.PlayerSprintMultiplier;
-                health = TestPlayerStats.PlayerHealth;
-                healthMax = TestPlayerStats.PlayerHealthMax;
-                freezingCooldown = TestPlayerStats.PlayerFreezingTime;
+//#if UNITY_EDITOR
+//                maxSpeed = TestPlayerStats.PlayerMaxSpeed;
+//                sprintMultiplier = TestPlayerStats.PlayerSprintMultiplier;
+//                health = TestPlayerStats.PlayerHealth;
+//                healthMax = TestPlayerStats.PlayerHealthMax;
+//                freezingCooldown = TestPlayerStats.PlayerFreezingTime;
 
-#endif
+//#endif
 
                 ///////////////////
 
@@ -912,20 +915,49 @@ namespace Zoca
 
         void SetCurrentFireWeapon()
         {
-            // Set all weapons off
-            foreach(FireWeapon weapon in weapons)
-            {
-                weapon.gameObject.SetActive(false);
-            }
+            //// Set all weapons off
+            //foreach(FireWeapon weapon in weapons)
+            //{
+            //    weapon.gameObject.SetActive(false);
+            //}
 
             // Get the fireweapon id from the player properties
             int  weaponId = (int)PlayerCustomPropertyUtility.GetPlayerCustomProperty(photonView.Owner, PlayerCustomPropertyKey.WeaponId);
+            
+            // Get the character id
+            int characterId = (int)PlayerCustomPropertyUtility.GetPlayerCustomProperty(photonView.Owner, PlayerCustomPropertyKey.CharacterId);
+
+            Debug.Log("CharacterId:" + characterId);
+            // Load character from collection
+            Character character = new List<Character>(Resources.LoadAll<Character>(Character.CollectionFolder)).Find(c => c.name.StartsWith(string.Format("{0}.", characterId+1)));
+
+            Debug.Log("Found character:" + character);
+
+            // Get the prefab
+            GameObject weaponPrefab = character.Weapons[weaponId].GameAsset;
+
+            // Create the asset
+            GameObject weaponObject = GameObject.Instantiate(weaponPrefab);
+
+            // Set the pivot as parent
+            weaponObject.transform.parent = weaponPivots[weaponId];
+            // Reset coordinates
+            weaponObject.transform.localPosition = Vector3.zero;
+            weaponObject.transform.localRotation = Quaternion.identity;
+
             // Set the weapon
-            fireWeapon = weapons[weaponId];
+            fireWeapon = weaponObject.GetComponent<FireWeapon>();
             // Activate the current weapon
             fireWeapon.gameObject.SetActive(true);
             // Set the fireweapon owner
             fireWeapon.SetOwner(this);
+
+            //// Set the weapon
+            //fireWeapon = weapons[weaponId];
+            //// Activate the current weapon
+            //fireWeapon.gameObject.SetActive(true);
+            //// Set the fireweapon owner
+            //fireWeapon.SetOwner(this);
         }
 
 

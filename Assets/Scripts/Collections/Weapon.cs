@@ -34,9 +34,16 @@ namespace Zoca.Collections
             get { return gameAsset.GetComponent<FireWeapon>().FireRange; }
         }
 
+        public GameObject GameAsset
+        {
+            get { return gameAsset; }
+        }
+
         #endregion
 
         #region private fields
+
+
         [SerializeField]
         Sprite icon;
 
