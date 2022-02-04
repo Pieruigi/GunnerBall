@@ -12,6 +12,7 @@ namespace Zoca.UI
     public class LobbyPanel : MonoBehaviourPunCallbacks
     {
         #region private fields
+        [Header("Panel Detail")]
         [SerializeField]
         Button buttonLeaveRoom;
 
@@ -19,31 +20,20 @@ namespace Zoca.UI
         Button readyButton;
 
         [SerializeField]
+        GameObject mainPanel;
+
+        [Header("Room Detail")]
+        [SerializeField]
         TMP_Text roomNameField;
 
         [SerializeField]
         TMP_Text numOfPlayersField;
 
         [SerializeField]
-        Image characterImage;
+        List<Image> teamObjectImages;
 
         [SerializeField]
-        Button nextCharacterButton;
-
-        [SerializeField]
-        Button prevCharacterButton;
-
-        [SerializeField]
-        Button nextWeaponButton;
-
-        [SerializeField]
-        Button prevWeaponButton;
-
-        [SerializeField]
-        Image weaponImage;
-
-        [SerializeField]
-        GameObject mainPanel;
+        Image arenaImage;
 
         [SerializeField]
         GameObject blueTeamPanel;
@@ -57,11 +47,38 @@ namespace Zoca.UI
         [SerializeField]
         Color redTeamColor;
 
+        [Header("Character Detail")]
         [SerializeField]
-        List<Image> teamObjectImages;
+        Image characterImage;
 
         [SerializeField]
-        Image arenaImage;
+        Button nextCharacterButton;
+
+        [SerializeField]
+        Button prevCharacterButton;
+
+        [Header("Weapon Detail")]
+        [SerializeField]
+        Button nextWeaponButton;
+
+        [SerializeField]
+        Button prevWeaponButton;
+
+        [SerializeField]
+        Image weaponImage;
+
+        [SerializeField]
+        TMP_Text firePowerText;
+
+        [SerializeField]
+        TMP_Text fireRateText;
+
+        [SerializeField]
+        TMP_Text fireRangeText;
+
+
+
+
 
         //[SerializeField]
         //TMP_Text testPlayerName;
@@ -270,7 +287,7 @@ namespace Zoca.UI
             // Reset weapons
             currentWeaponId = 0;
             weaponImage.sprite = characters[currentCharacterId].Weapons[currentWeaponId].Icon;
-
+            SetWeaponStats(characters[currentCharacterId].Weapons[currentWeaponId]);
 
             // Set character
             PlayerCustomPropertyUtility.AddOrUpdateLocalPlayerCustomProperty(PlayerCustomPropertyKey.WeaponId, currentWeaponId);
@@ -290,7 +307,7 @@ namespace Zoca.UI
             // Reset weapons
             currentWeaponId = 0;
             weaponImage.sprite = characters[currentCharacterId].Weapons[currentWeaponId].Icon;
-
+            SetWeaponStats(characters[currentCharacterId].Weapons[currentWeaponId]);
 
             // Set character
             PlayerCustomPropertyUtility.AddOrUpdateLocalPlayerCustomProperty(PlayerCustomPropertyKey.WeaponId, currentWeaponId);
@@ -307,6 +324,7 @@ namespace Zoca.UI
 
             // Set the new icon
             weaponImage.sprite = characters[currentCharacterId].Weapons[currentWeaponId].Icon;
+            SetWeaponStats(characters[currentCharacterId].Weapons[currentWeaponId]);
 
             PlayerCustomPropertyUtility.AddOrUpdateLocalPlayerCustomProperty(PlayerCustomPropertyKey.WeaponId, currentWeaponId);
             PlayerCustomPropertyUtility.SynchronizeLocalPlayerCustomProperties();
@@ -321,6 +339,7 @@ namespace Zoca.UI
 
             // Set the new icon
             weaponImage.sprite = characters[currentCharacterId].Weapons[currentWeaponId].Icon;
+            SetWeaponStats(characters[currentCharacterId].Weapons[currentWeaponId]);
 
             PlayerCustomPropertyUtility.AddOrUpdateLocalPlayerCustomProperty(PlayerCustomPropertyKey.WeaponId, currentWeaponId);
             PlayerCustomPropertyUtility.SynchronizeLocalPlayerCustomProperties();
@@ -339,12 +358,17 @@ namespace Zoca.UI
 
             // Load weapons
             currentWeaponId = (int)PlayerCustomPropertyUtility.GetLocalPlayerCustomProperty(PlayerCustomPropertyKey.WeaponId);
-            weaponImage.sprite = characters[currentWeaponId].Weapons[currentWeaponId].Icon;
+            weaponImage.sprite = characters[currentCharacterId].Weapons[currentWeaponId].Icon;
 
-            
+            SetWeaponStats(characters[currentCharacterId].Weapons[currentWeaponId]);
         }
 
-       
+        void SetWeaponStats(Weapon weapon)
+        {
+            firePowerText.text = weapon.FirePower.ToString();
+            fireRateText.text = weapon.FireRate.ToString();
+            fireRangeText.text = weapon.FireRange.ToString();
+        } 
 
         #endregion
 

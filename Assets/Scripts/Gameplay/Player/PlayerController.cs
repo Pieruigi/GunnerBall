@@ -146,7 +146,13 @@ namespace Zoca
 
         #region fight
         [SerializeField]
+        public float FreezingCooldown
+        {
+            get { return freezingCooldown; }
+        }
+        [SerializeField]
         float freezingCooldown = 4;
+
         float currentFreezingCooldown;
         bool freezed = false;
         DateTime freezedLast;
