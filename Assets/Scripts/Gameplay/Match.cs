@@ -200,10 +200,7 @@ namespace Zoca
                         player.ResetPlayer();
                     }
 
-                    //PlayerController.Local.StartPaused = true;
-                    //PlayerController.Local.GoalPaused = false;
-                    //PlayerController.LocalPlayer.GetComponent<PlayerController>().ResetPlayer();
-
+                  
                     // Set target time
                     targetTime = stateTimestamp + Constants.StartDelay;
                     break;
