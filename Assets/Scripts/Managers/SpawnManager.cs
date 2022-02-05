@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Zoca
 {
-    
+    public enum SpawnableType { PowerUp, PowerDown, Quaker, Throwable }
 
     /// <summary>
     /// We have four types of spawnable objects:
@@ -19,6 +19,7 @@ namespace Zoca
     /// </summary>
     public class SpawnManager : MonoBehaviourPunCallbacks
     {
+     
         #region properties
         public static SpawnManager Instance { get; private set; }
         #endregion
@@ -31,46 +32,27 @@ namespace Zoca
         [SerializeField]
         int spawnableMaximumNumber = 4;
 
-        [Header("PowerUp Section")]
-        [SerializeField]
-        List<Transform> powerUpSpawnPoints; // Available powerup spawn points
-
-        [SerializeField]
-        [Range(0f, 1f)]
-        float powerUpWeight = 1f;
-
-        
+            
 
         /// <summary>
         /// How time time it will take for the next powerup to spawn.
         /// </summary>
         [SerializeField]
-        float spawnTime = 20;
-
-        [Header("PowerDown Section")]
-        [SerializeField]
-        List<Transform> powerDownSpawnPoints; // Available powerdown spawn points
+        float respawnTime = 20;
 
         [SerializeField]
-        [Range(0f, 1f)]
-        float powerDownWeight = .4f;
+        List<Transform> spawnPoints = new List<Transform>();
 
-        [Header("QuakeUp Section")]
+        /// <summary>
+        /// 0: powerup
+        /// 1: powerdown
+        /// 2: quakeup
+        /// 3: throwable
+        /// </summary>
         [SerializeField]
-        List<Transform> quakeUpSpawnPoints; // Available quakeup spawn points
+        int[] weights = new int[4];
 
-        [SerializeField]
-        [Range(0f, 1f)]
-        float quakeUpWeight = .1f;
-
-        [Header("Throwable Section")]
-        [SerializeField]
-        List<Transform> throwableSpawnPoints; // Available throwable spawn points
-
-        [SerializeField]
-        [Range(0f, 1f)]
-        float throwableWeight = .5f;
-
+    
         /// <summary>
         /// All the skills you can power up given a specific character and weapon ( speed, fireRate, ecc... )
         /// </summary>
@@ -81,18 +63,7 @@ namespace Zoca
         /// </summary>
         bool spawnOnKickOff = false;
 
-        /// <summary>
-        /// 0: powerup
-        /// 1: powerdown
-        /// 2: quakeup
-        /// 3: throwable
-        /// </summary>
-        int[] weightArray;
-        
-        
-        
-        
-        
+        int[] spawnableIds;
         #endregion
 
 
@@ -107,6 +78,7 @@ namespace Zoca
 
                 // Create the weight array
                 FillWeightArray();
+
             }
             else
             {
@@ -117,9 +89,13 @@ namespace Zoca
         // Start is called before the first frame update
         void Start()
         {
-            if (PhotonNetwork.IsMasterClient) 
+            if (PhotonNetwork.IsMasterClient || !PhotonNetwork.IsConnected) 
             {
-                
+                // We create spawnables all at once on start
+                for(int i=0; i<spawnableMaximumNumber; i++)
+                {
+                    CreateSpawnable();
+                }
             }
             else // Not the master client
             {
@@ -136,72 +112,79 @@ namespace Zoca
 
         void ResetAll()
         {
-            PowerUpResetAll();
-            PowerDownResetAll();
-        }
 
-        void PowerUpResetAll()
-        {
-            Debug.Log("PowerUp reset all");
-            foreach(Transform t in powerUpSpawnPoints)
+            foreach (Transform spawnPoint in spawnPoints)
             {
-                if (t.childCount > 0)
-                    Destroy(t.GetChild(0).gameObject);
+                if (spawnPoint.childCount > 0)
+                    Destroy(spawnPoint.GetChild(0).gameObject);
             }
+            
         }
 
-        void PowerDownResetAll()
-        {
-            Debug.Log("PowerDown reset all");
-            foreach (Transform t in powerDownSpawnPoints)
-            {
-                if (t.childCount > 0)
-                    Destroy(t.GetChild(0).gameObject);
-            }
-        }
 
-        void CreateNewPowerUp()
-        {
 
-        }
 
+      
         void FillWeightArray()
         {
-            powerUpWeight *= 100;
-            powerDownWeight *= 100;
-            quakeUpWeight *= 100;
-            throwableWeight *= 100;
-
-            weightArray = new int[(int)(powerUpWeight + powerDownWeight + quakeUpWeight + throwableWeight)];
-            Debug.Log("WeightArray.Length:" + weightArray.Length);
-
-            int i = 0;
-            //new ArrayList().AddRange()
-            for(; i<powerUpWeight; i++)
-                weightArray[i] = 0;
-            for (; i < powerDownWeight; i++)
-                weightArray[i] = 1;
-            for (; i < quakeUpWeight; i++)
-                weightArray[i] = 2;
-            for (; i < throwableWeight; i++)
-                weightArray[i] = 3;
-
-            // Debug array
-            i = 0;
-            int pup = 0, pdo = 0, qua = 0, thr = 0;
-            for(; i<weightArray.Length; i++)
+            int count = 0;
+            for(int i=0; i<weights.Length; i++)
             {
-                if (i == 0)
-                    pup++;
-                if (i == 1)
-                    pdo++;
-                if (i == 2)
-                    qua++;
-                if (i == 3)
-                    thr++;
+                count += (int)weights[i];
             }
-            Debug.LogFormat("NumberOfSpawnable - {0},{1},{2},{3}",new List<int>(weightArray).FindAll(i=>i==0).Count,pdo, qua,thr);
+
+            spawnableIds = new int[count];
+            Debug.Log("WeightArray.Length:" + spawnableIds.Length);
+
+            int start = 0, length = 0;
+            for(int i=0; i<weights.Length; i++)
+            {
+                start = length;
+                length += (int)weights[i];
+                for (int j = start; j < length; j++)
+                    spawnableIds[j] = i;
+            }
+
+            Debug.LogFormat("NumberOfSpawnable - {0},{1},{2},{3}",
+                new List<int>(spawnableIds).FindAll(i=>i==0).Count,
+                new List<int>(spawnableIds).FindAll(i => i == 1).Count,
+                new List<int>(spawnableIds).FindAll(i => i == 2).Count,
+                new List<int>(spawnableIds).FindAll(i => i == 3).Count);
             
+        }
+
+        void CreateSpawnable()
+        {
+            if (PhotonNetwork.IsMasterClient || !PhotonNetwork.IsConnected)
+            {
+                // We implement the spawning logic in the master client.
+                // Get the next spawnable item depending on its weight
+                int spawnableId = spawnableIds[Random.Range(0, spawnableIds.Length)];
+                // Get a free spawn point
+                int spawnPointId = GetFreeSpawnPointId(spawnableId);
+
+                // Create a new item
+                Debug.LogFormat("New Spawnable created - itamId:{0}, spawnPointId:{1}", spawnableId, spawnPointId);
+
+                GameObject g = new GameObject("Item");
+                g.transform.parent = spawnPoints[spawnPointId];
+                // Update room custom properties             
+                //PhotonNetwork.CurrentRoom.CustomProperties.Remove
+            }
+            else // No the master client
+            {
+                // Get custom property data
+            }
+        }
+
+        int GetFreeSpawnPointId(int spawnableId)
+        {
+            
+            // Get all the empty spawn points
+            List<Transform> tmp = spawnPoints.FindAll(s => s.childCount == 0);
+
+            // Return the id of a random empty spawn point 
+            return spawnPoints.IndexOf(tmp[Random.Range(0, tmp.Count)]);
         }
         #endregion
     }
