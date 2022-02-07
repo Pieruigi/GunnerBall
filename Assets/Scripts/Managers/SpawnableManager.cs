@@ -18,11 +18,27 @@ namespace Zoca
     /// if its active on the player, will be replaced.
     /// 
     /// </summary>
-    public class SpawnManager : MonoBehaviourPunCallbacks
+    public class SpawnableManager : MonoBehaviourPunCallbacks
     {
-     
+
+        #region internal classes
+        class SpawnableData
+        {
+            public int spawnableId;
+            public int spawnableSubId;
+            public int spawnPointId;
+
+            public SpawnableData(int spawnableId, int spawnableSubId, int spawnPointId)
+            {
+                this.spawnableId = spawnableId;
+                this.spawnableSubId = spawnableSubId;
+                this.spawnPointId = spawnPointId;
+            }
+        }
+        #endregion
+
         #region properties
-        public static SpawnManager Instance { get; private set; }
+        public static SpawnableManager Instance { get; private set; }
         #endregion
 
         #region private fields
@@ -77,6 +93,7 @@ namespace Zoca
         //System.DateTime lastSpawnedTime;
         //int spawnableCount = 0;
 
+        List<SpawnableData> datas = new List<SpawnableData>();
         #endregion
 
 
@@ -139,49 +156,50 @@ namespace Zoca
                 //}
             }
 
-            if (Input.GetKeyDown(KeyCode.H))
-            {
-                //PhotonNetwork.CurrentRoom.SetCustomProperties("Test_pup", 1);
-                ExitGames.Client.Photon.Hashtable ht = new ExitGames.Client.Photon.Hashtable();
-                ht.Add("Test_pup", PhotonNetwork.LocalPlayer.ActorNumber);
-                PhotonNetwork.CurrentRoom.SetCustomProperties(ht);
+            //if (Input.GetKeyDown(KeyCode.H))
+            //{
+            //    //PhotonNetwork.CurrentRoom.SetCustomProperties("Test_pup", 1);
+            //    ExitGames.Client.Photon.Hashtable ht = new ExitGames.Client.Photon.Hashtable();
+            //    ht.Add("Test_pup", PhotonNetwork.LocalPlayer.ActorNumber);
+            //    PhotonNetwork.CurrentRoom.SetCustomProperties(ht);
 
-                //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty("Test_pup", 1);
-                //RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
-            }
+            //    //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty("Test_pup", 1);
+            //    //RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
+            //}
 
-            if (Input.GetKeyDown(KeyCode.J))
-            {
-                object value = 0;
-                if(PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("Test_pup", out value))
-                {
-                    Debug.LogFormat("Property found Test_pup:{0}", value);
-                }
-                else
-                {
-                    Debug.LogFormat("Property not found Test_pup");
-                }
-            }
+            //if (Input.GetKeyDown(KeyCode.J))
+            //{
+            //    SpawnableData data = datas[0];
+            //    string key = string.Format(keyFormat, data.spawnableId, data.spawnableSubId, data.spawnPointId);
+            //    if(PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(key))
+            //    {
+            //        PhotonNetwork.CurrentRoom.SetCustomProperties(
+            //        new ExitGames.Client.Photon.Hashtable() { { key, PhotonNetwork.LocalPlayer.ActorNumber } }
+            //        );
+            //    }
+                
+            //}
 
-            if (Input.GetKeyDown(KeyCode.K))
-            {
+            //if (Input.GetKeyDown(KeyCode.K))
+            //{
 
-                PhotonNetwork.CurrentRoom.CustomProperties.Remove("Test_pup");
-                RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
-            }
+            //    //PhotonNetwork.CurrentRoom.CustomProperties.Remove("Test_pup");
+            //    //RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
+            //    PhotonNetwork.CurrentRoom.SetCustomProperties(new ExitGames.Client.Photon.Hashtable() { { "Test_pup", null } } );
+            //}
 
-            if (Input.GetKeyDown(KeyCode.L))
-            {
-                //PhotonNetwork.CurrentRoom.SetCustomProperties("Test_pup", 1);
-                ExitGames.Client.Photon.Hashtable ht = new ExitGames.Client.Photon.Hashtable();
-                ht.Add("Test_pup", 154);
-                ExitGames.Client.Photon.Hashtable eht = new ExitGames.Client.Photon.Hashtable();
-                eht.Add("Test_pup", 11);
-                PhotonNetwork.CurrentRoom.SetCustomProperties(ht, eht);
+            //if (Input.GetKeyDown(KeyCode.L))
+            //{
+            //    //PhotonNetwork.CurrentRoom.SetCustomProperties("Test_pup", 1);
+            //    ExitGames.Client.Photon.Hashtable ht = new ExitGames.Client.Photon.Hashtable();
+            //    ht.Add("Test_pup", 154);
+            //    ExitGames.Client.Photon.Hashtable eht = new ExitGames.Client.Photon.Hashtable();
+            //    eht.Add("Test_pup", 11);
+            //    PhotonNetwork.CurrentRoom.SetCustomProperties(ht, eht);
 
-                //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty("Test_pup", 1);
-                //RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
-            }
+            //    //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty("Test_pup", 1);
+            //    //RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
+            //}
         }
 
         void ResetAll()
@@ -267,7 +285,10 @@ namespace Zoca
 
             int spawnableSubId = 0;
             // Add a new custom property
-                
+
+            SpawnableData data = new SpawnableData(spawnableId, spawnableSubId, spawnPointId);
+            datas.Add(data);
+
             ExitGames.Client.Photon.Hashtable ht = new ExitGames.Client.Photon.Hashtable();
             ht.Add(string.Format(keyFormat, spawnableId, spawnableSubId, spawnPointId), (int)0);
             PhotonNetwork.CurrentRoom.SetCustomProperties(ht);
@@ -277,12 +298,18 @@ namespace Zoca
 
         int GetFreeSpawnPointId(int spawnableId)
         {
-            
+            List<int> tmp = new List<int>();
+            for(int i=0; i<spawnPoints.Count; i++)
+            {
+                if (!datas.Exists(d => d.spawnPointId == i))
+                    tmp.Add(i);
+            }
+
             // Get all the empty spawn points
-            List<Transform> tmp = spawnPoints.FindAll(s => s.childCount == 0);
+            //List<Transform> tmp = spawnPoints.FindAll(s => s.childCount == 0);
 
             // Return the id of a random empty spawn point 
-            return spawnPoints.IndexOf(tmp[Random.Range(0, tmp.Count)]);
+            return tmp[Random.Range(0, tmp.Count)];
         }
 
         
@@ -298,13 +325,36 @@ namespace Zoca
             foreach (object key in propertiesThatChanged.Keys)
             {
                 Debug.Log("Key:" + key.ToString());
+               
+                    
                 // Check if the key that changed refers to a spawnable item
                 if (key.ToString().StartsWith("sp_"))
                 {
                     Debug.LogFormat("Spawnable updated - {0}", key.ToString());
 
                     string propKey = key.ToString();
-                    int propValue = (int)PhotonNetwork.CurrentRoom.CustomProperties[propKey];
+                    
+                    object o = null;
+                    int propValue = 0;
+                    if (propertiesThatChanged.TryGetValue(key.ToString(), out o))
+                    {
+                        if (o != null)
+                        {
+                            Debug.LogFormat("Found value for {0}:{1}", key.ToString(), o.ToString());
+                            propValue = (int)o;
+                        }
+                        else
+                        {
+                            Debug.LogFormat("Value for {0} is null", key.ToString());
+                            
+                        }
+                            
+                    }
+
+                    // Value == null means that the key has been removed ( to remove a key you just need 
+                    // to call SetCustomProperty on that key by passing null as value ).
+                    if (o == null)
+                        continue;
 
                     // Get spawnable detail
                     string[] propSplits = propKey.Split('_');
@@ -318,15 +368,21 @@ namespace Zoca
                         // Create the physical spawnable item.
                         CreateSpawnable(spawnableId, spawnableSubId, spawnPointId);
                     }
-                    else // Someone picked it up, is that the local player?
+                    else // Spawnable has been picked up by a player or the AI
                     {
-                        if(propValue == PhotonNetwork.LocalPlayer.ActorNumber)
+                        if(propValue == PhotonNetwork.LocalPlayer.ActorNumber || PhotonNetwork.OfflineMode)
                         {
-                            // Use spawnable item on the local player
+                            // Local player or AI picked up the item
+                            //spawnPoints[spawnPointId].GetComponentInChildren<Spawnable>().PickUp();
+                            
+                            // Remove the properties
+                            PhotonNetwork.CurrentRoom.SetCustomProperties(
+                                new ExitGames.Client.Photon.Hashtable() { { propKey, null } }  );
+
                         }
                         else
                         {
-                            // Someone else
+                            // Someone else picked up the item
                         }
 
                         // Destroy the object anyway
@@ -344,6 +400,34 @@ namespace Zoca
 
             }
 
+
+        }
+        #endregion
+
+        #region public methods
+        public void TryPickUp(GameObject spawnable, int actorId)
+        {
+            // Get the spawn point id
+            int spawnPointId = spawnPoints.IndexOf(spawnable.transform.parent);
+
+            // Get the spawnable data
+            SpawnableData data = datas.Find(d => d.spawnPointId == spawnPointId);
+            
+            if(data == null)
+            {
+                Debug.LogWarningFormat("No spawnable found at spawna point {0}", spawnPointId);
+                return;
+            }
+
+            // Build key
+            string key = string.Format(keyFormat, data.spawnableId, data.spawnableSubId, data.spawnPointId);
+
+            // Try to check and swap the corresponding custom property.
+            // If the property is different than zero no update is performed.
+            PhotonNetwork.CurrentRoom.SetCustomProperties(
+                new ExitGames.Client.Photon.Hashtable() { { key, actorId } },
+                new ExitGames.Client.Photon.Hashtable() { { key, 0 } }
+                );
 
         }
         #endregion
