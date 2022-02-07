@@ -124,7 +124,7 @@ namespace Zoca.AI
 
                 if (Owner.CanShoot() && (Owner.AimOrigin.position - ballRB.position).sqrMagnitude < Mathf.Pow(Owner.AimRange,2))
                 {
-                    Debug.Log("Try shoot....................");
+                    //Debug.Log("Try shoot....................");
                     
                     Owner.TryShoot();
 

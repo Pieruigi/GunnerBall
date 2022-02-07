@@ -584,7 +584,7 @@ namespace Zoca
             networkDisplacement = expectedPosition - rb.position;
             rb.velocity = expectedVelocity;
 
-            Debug.LogFormat("Network Vel:{0}, {1}, {2}", networkVelocity.x, networkVelocity.y, networkVelocity.z);
+            //Debug.LogFormat("Network Vel:{0}, {1}, {2}", networkVelocity.x, networkVelocity.y, networkVelocity.z);
             
 
             if (networkVelocity.sqrMagnitude > 0)
@@ -599,7 +599,7 @@ namespace Zoca
                 {
                     //Vector3 tmpDisp = networkDisplacement;
                     SkipLastMasterClientSync();
-                    Debug.Log("SphereCast collide");
+                    //Debug.Log("SphereCast collide");
 
                     rb.velocity = oldVelocity;
                     // If the ball is grounded and hits a wall we must reset the y velocity; it only happens
@@ -607,7 +607,7 @@ namespace Zoca
                     // falling down, so Y velocity can't be zero )
                     if (networkVelocity.y == 0)
                     {
-                        Debug.Log("NetVelocity Y is 0");
+                        //Debug.Log("NetVelocity Y is 0");
                         //networkDisplacement = tmpDisp;
                         rb.position = new Vector3(rb.position.x, networkPosition.y, rb.position.z);
                         rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
@@ -626,10 +626,10 @@ namespace Zoca
             //    networkDisplacement = Vector3.zero;
             //}
 
-            Debug.LogFormat("RB vel:{0}, {1}, {2}", rb.velocity.x, rb.velocity.y, rb.velocity.z);
-            Debug.LogFormat("Net Displacement:{0}, {1}, {2}", networkDisplacement.x, networkDisplacement.y, networkDisplacement.z);
+            //Debug.LogFormat("RB vel:{0}, {1}, {2}", rb.velocity.x, rb.velocity.y, rb.velocity.z);
+            //Debug.LogFormat("Net Displacement:{0}, {1}, {2}", networkDisplacement.x, networkDisplacement.y, networkDisplacement.z);
 
-            Debug.Log("---------------------------------------------------------------------------");
+            //Debug.Log("---------------------------------------------------------------------------");
 
 
             lerpSpeed = 10f;

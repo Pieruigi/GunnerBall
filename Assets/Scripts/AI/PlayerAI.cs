@@ -313,7 +313,7 @@ namespace Zoca.AI
 
         public void TryShoot()
         {
-            Debug.Log("AI - try shoot:" + gameObject.name);
+            //Debug.Log("AI - try shoot:" + gameObject.name);
 #if TEST_AI
            
                 playerController.Shoot(true);

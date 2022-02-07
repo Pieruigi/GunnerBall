@@ -17,7 +17,7 @@ namespace Zoca
         public static readonly string RedTeamScore = "rts"; // byte
         public static readonly string PlayerCreator = "pc"; // byte
         public static readonly string MapId = "mid"; // byte
-
+        
     }
 
     public class RoomCustomPropertyUtility
@@ -52,16 +52,18 @@ namespace Zoca
             {
                 room.CustomProperties.Add(key, value);
             }
+            //ExitGames.Client.Photon.Hashtable ht = new ExitGames.Client.Photon.Hashtable();
+            //ht.Add(key, value);
+            //room.SetCustomProperties(ht);
 
-           
         }
 
-      
+       
 
         public static object GetRoomCustomProperty(Room room, string key)
         {
-            //Debug.Log("RoomCustomProperties.length:" + room.CustomProperties.Count);
-            //Debug.LogFormat("RoomCustomProperties - {0}:{1}",key, room.CustomProperties[key]);
+            Debug.Log("RoomCustomProperties.length:" + room.CustomProperties.Count);
+            Debug.LogFormat("RoomCustomProperties - {0}:{1}",key, room.CustomProperties[key]);
             if (!room.CustomProperties.ContainsKey(key))
                 return null;
 
@@ -75,6 +77,7 @@ namespace Zoca
             AddOrUpdateRoomCustomProperty(PhotonNetwork.CurrentRoom, key, value);
         }
 
+      
         public static object GetCurrentRoomCustomProperty(string key)
         {
             return GetRoomCustomProperty(PhotonNetwork.CurrentRoom, key);

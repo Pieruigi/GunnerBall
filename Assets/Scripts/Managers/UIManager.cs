@@ -139,7 +139,7 @@ namespace Zoca
             if (leavingRoom || MessageBox.IsVisible() || endGameUI.activeSelf)// || opponentLeftUI.activeSelf)
                 return;
             
-            Debug.Log("Paused game");
+            //Debug.Log("Paused game");
             if (!gameMenu.Opened)
                 OpenGameMenuUI();
             else
