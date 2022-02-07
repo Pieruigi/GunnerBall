@@ -131,21 +131,30 @@ namespace Zoca
                 return;
 
             // Save custom properties
-            RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchState, (byte)MatchState.Goaled);
-            RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchOldState, (byte)state);
-            RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchStateTimestamp, (float)PhotonNetwork.Time);
+            //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchState, (byte)MatchState.Goaled);
+            //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchOldState, (byte)state);
+            //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchStateTimestamp, (float)PhotonNetwork.Time);
 
-            if(team == Team.Blue)
+            ExitGames.Client.Photon.Hashtable ht = new ExitGames.Client.Photon.Hashtable();
+            ht.Add(RoomCustomPropertyKey.MatchState, (byte)MatchState.Goaled);
+            ht.Add(RoomCustomPropertyKey.MatchOldState, (byte)state);
+            ht.Add(RoomCustomPropertyKey.MatchStateTimestamp, (float)PhotonNetwork.Time);
+            PhotonNetwork.CurrentRoom.SetCustomProperties(ht);
+            
+
+            if (team == Team.Blue)
             {
-                RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.BlueTeamScore, (byte)(blueTeamScore+1));
+                //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.BlueTeamScore, (byte)(blueTeamScore+1));
+                PhotonNetwork.CurrentRoom.SetCustomProperties(new ExitGames.Client.Photon.Hashtable() { { RoomCustomPropertyKey.BlueTeamScore, (byte)(blueTeamScore+1) } });
             }
             else
             {
-                RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.RedTeamScore, (byte)(redTeamScore + 1));
+                //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.RedTeamScore, (byte)(redTeamScore + 1));
+                PhotonNetwork.CurrentRoom.SetCustomProperties(new ExitGames.Client.Photon.Hashtable() { { RoomCustomPropertyKey.RedTeamScore, (byte)(redTeamScore + 1) } });
             }
 
             // Write
-            RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
+            //RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
 
             // Send an event to all
             // Send event to the others
@@ -290,17 +299,26 @@ namespace Zoca
                     {
 
                         // Set state started
-                        RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchState, (byte)MatchState.Started);
-                        RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchOldState, (byte)state);
-                        RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchStateTimestamp, (float)PhotonNetwork.Time);
+                        //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchState, (byte)MatchState.Started);
+                        //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchOldState, (byte)state);
+                        //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchStateTimestamp, (float)PhotonNetwork.Time);
 
-                        if(oldState != (int)MatchState.None)
+                        ExitGames.Client.Photon.Hashtable ht = new ExitGames.Client.Photon.Hashtable();
+                        ht.Add(RoomCustomPropertyKey.MatchState, (byte)MatchState.Started);
+                        ht.Add(RoomCustomPropertyKey.MatchOldState, (byte)state);
+                        ht.Add(RoomCustomPropertyKey.MatchStateTimestamp, (float)PhotonNetwork.Time);
+
+                        PhotonNetwork.CurrentRoom.SetCustomProperties(ht);
+                        
+
+                        if (oldState != (int)MatchState.None)
                         {
-                            RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchTimeElapsed, (float)timeElapsed);
+                            //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchTimeElapsed, (float)timeElapsed);
+                            PhotonNetwork.CurrentRoom.SetCustomProperties(new ExitGames.Client.Photon.Hashtable() { { RoomCustomPropertyKey.MatchTimeElapsed, (float)timeElapsed } });
                         }
 
                         // Write
-                        RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
+                        //RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
 
                         // Send event
                         RaiseStateChangedEvent();
@@ -312,12 +330,19 @@ namespace Zoca
                     if(timeElapsed > matchLength)
                     {
                         // Set state completed
-                        RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchState, (byte)MatchState.Completed);
-                        RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchOldState, (byte)state);
-                        RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchStateTimestamp, (float)PhotonNetwork.Time);
+                        //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchState, (byte)MatchState.Completed);
+                        //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchOldState, (byte)state);
+                        //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchStateTimestamp, (float)PhotonNetwork.Time);
+
+                        ExitGames.Client.Photon.Hashtable ht = new ExitGames.Client.Photon.Hashtable();
+                        ht.Add(RoomCustomPropertyKey.MatchState, (byte)MatchState.Completed);
+                        ht.Add(RoomCustomPropertyKey.MatchOldState, (byte)state);
+                        ht.Add(RoomCustomPropertyKey.MatchStateTimestamp, (float)PhotonNetwork.Time);
+                        PhotonNetwork.CurrentRoom.SetCustomProperties(ht);
+
 
                         // Write
-                        RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
+                        //RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
 
                         RaiseStateChangedEvent();
                     }
@@ -327,22 +352,29 @@ namespace Zoca
                     if ((float)PhotonNetwork.Time > targetTime)
                     {
                         // Set state completed
-                        RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchState, (byte)MatchState.Paused);
-                        RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchOldState, (byte)state);
-                        RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchStateTimestamp, (float)PhotonNetwork.Time);
-                        RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchTimeElapsed, (float)timeElapsed);
-
+                        //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchState, (byte)MatchState.Paused);
+                        //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchOldState, (byte)state);
+                        //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchStateTimestamp, (float)PhotonNetwork.Time);
+                        //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchTimeElapsed, (float)timeElapsed);
+                        ExitGames.Client.Photon.Hashtable ht = new ExitGames.Client.Photon.Hashtable();
+                        ht.Add(RoomCustomPropertyKey.MatchState, (byte)MatchState.Paused);
+                        ht.Add(RoomCustomPropertyKey.MatchOldState, (byte)state);
+                        ht.Add(RoomCustomPropertyKey.MatchStateTimestamp, (float)PhotonNetwork.Time);
+                        ht.Add(RoomCustomPropertyKey.MatchTimeElapsed, (float)timeElapsed);
+                        PhotonNetwork.CurrentRoom.SetCustomProperties(ht);
+                        
                         // Write
-                        RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
+                        //RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
 
                         RaiseStateChangedEvent();
                     }
                     break;
 
                 case (int)MatchState.Completed:
-                    RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchTimeElapsed, (float)timeElapsed);
+                    //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchTimeElapsed, (float)timeElapsed);
+                    PhotonNetwork.CurrentRoom.SetCustomProperties(new ExitGames.Client.Photon.Hashtable() { { RoomCustomPropertyKey.MatchTimeElapsed, (float)timeElapsed } } );
 
-                    RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
+                    //RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
                     RaiseStateChangedEvent();
 
                     break;
