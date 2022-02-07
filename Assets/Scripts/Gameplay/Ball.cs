@@ -240,7 +240,7 @@ namespace Zoca
         /// <param name="hitPower"></param>
         public void Hit(GameObject hitOwner, Vector3 hitPoint, Vector3 hitNormal, Vector3 hitDirection, float hitPower) 
         {
-            Debug.LogFormat("Ball - hit power:" + hitPower);
+            //Debug.LogFormat("Ball - hit power:" + hitPower);
 
             lastHitter = hitOwner;
 

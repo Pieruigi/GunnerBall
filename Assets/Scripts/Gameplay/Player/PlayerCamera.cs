@@ -272,12 +272,12 @@ namespace Zoca
             this.playerController = playerController;
             playerCollider = playerController.GetComponent<Collider>();
 
-            Debug.Log("PlayerCamera.ViewId:" + playerController.photonView.ViewID);
-            Debug.Log("PlayerCamera.Owner:" + playerController.photonView.Owner);
-            Debug.Log("PlayerCamera.OwnerActorNr:" + playerController.photonView.OwnerActorNr);
-            Debug.Log("PlayerCamera.AmController:" + playerController.photonView.AmController);
-            Debug.Log("PlayerCamera.AmOwner:" + playerController.photonView.AmOwner);
-            Debug.Log("PlayerCamera.ControllerActornNr:" + playerController.photonView.ControllerActorNr);
+            //Debug.Log("PlayerCamera.ViewId:" + playerController.photonView.ViewID);
+            //Debug.Log("PlayerCamera.Owner:" + playerController.photonView.Owner);
+            //Debug.Log("PlayerCamera.OwnerActorNr:" + playerController.photonView.OwnerActorNr);
+            //Debug.Log("PlayerCamera.AmController:" + playerController.photonView.AmController);
+            //Debug.Log("PlayerCamera.AmOwner:" + playerController.photonView.AmOwner);
+            //Debug.Log("PlayerCamera.ControllerActornNr:" + playerController.photonView.ControllerActorNr);
 
             if (!playerController.photonView.IsMine || playerController.photonView.IsRoomView)
             {

@@ -401,7 +401,6 @@ namespace Zoca
                     ySpeed = 0; 
                 }
 
-                Debug.Log("JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ:" + Jumping);
 
                 //// Gravity
                 //if (!cc.isGrounded)
@@ -433,7 +432,7 @@ namespace Zoca
                 // Gravity
                 if (!cc.isGrounded)
                 {
-                    Debug.Log("Physics.gravity:" + Physics.gravity.y);
+                    
                     ySpeed += Physics.gravity.y * Time.deltaTime;
                     //Debug.LogFormat("PlayerController - Not grounded; ySpeed; {0}", ySpeed);
                 }

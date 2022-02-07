@@ -64,49 +64,86 @@ namespace Zoca
         bool spawnOnKickOff = false;
 
         int[] spawnableIds;
+
+        /// <summary>
+        /// 0: spawnable id
+        /// 1: spawnable subid
+        /// 2: spawn point id
+        /// </summary>
+        string keyFormat = "{0}_{1}_{2}";
+
+        //enum KeyValue { Pickable }
         #endregion
 
 
 
         #region private methods
-        private void Awake()
-        {
-            if (!Instance)
-            {
-                Instance = this;
-                ResetAll();
+        //private void Awake()
+        //{
+        //    if (!Instance)
+        //    {
+        //        Instance = this;
+               
+        //        ResetAll();
 
-                // Create the weight array
-                FillWeightArray();
+        //        // Create the weight array
+        //        FillWeightArray();
 
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
-        }
+        //    }
+        //    else
+        //    {
+        //        Destroy(gameObject);
+        //    }
+        //}
 
-        // Start is called before the first frame update
-        void Start()
-        {
-            if (PhotonNetwork.IsMasterClient || !PhotonNetwork.IsConnected) 
-            {
-                // We create spawnables all at once on start
-                for(int i=0; i<spawnableMaximumNumber; i++)
-                {
-                    CreateSpawnable();
-                }
-            }
-            else // Not the master client
-            {
+        //// Start is called before the first frame update
+        //void Start()
+        //{
 
-            }
+        //    if (PhotonNetwork.IsMasterClient) 
+        //    {
+        //        // We create spawnables all at once on start
+        //        for(int i=0; i<spawnableMaximumNumber; i++)
+        //        {
+        //            CreateSpawnable();
+        //        }
+        //    }
+        //    else // Not the master client
+        //    {
+
+        //    }
             
-        }
+        //}
 
         // Update is called once per frame
         void Update()
         {
+            if (Input.GetKeyDown(KeyCode.H))
+            {
+                //PhotonNetwork.CurrentRoom.SetCustomProperties("Test_pup", 1);
+                RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty("Test_pup", 1);
+                RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
+            }
+
+            if (Input.GetKeyDown(KeyCode.J))
+            {
+                object value = 0;
+                if(PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("Test_pup", out value))
+                {
+                    Debug.LogFormat("Property found Test_pup:{0}", value);
+                }
+                else
+                {
+                    Debug.LogFormat("Property not found Test_pup");
+                }
+            }
+
+            if (Input.GetKeyDown(KeyCode.K))
+            {
+
+                PhotonNetwork.CurrentRoom.CustomProperties.Remove("Test_pup");
+                RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
+            }
 
         }
 
@@ -155,7 +192,7 @@ namespace Zoca
 
         void CreateSpawnable()
         {
-            if (PhotonNetwork.IsMasterClient || !PhotonNetwork.IsConnected)
+            if (PhotonNetwork.IsMasterClient)
             {
                 // We implement the spawning logic in the master client.
                 // Get the next spawnable item depending on its weight
@@ -169,7 +206,7 @@ namespace Zoca
                 GameObject g = new GameObject("Item");
                 g.transform.parent = spawnPoints[spawnPointId];
                 // Update room custom properties             
-                //PhotonNetwork.CurrentRoom.CustomProperties.Remove
+                //PhotonNetwork.CurrentRoom.CustomProperties.Add(keyFormat, )
             }
             else // No the master client
             {
@@ -185,6 +222,19 @@ namespace Zoca
 
             // Return the id of a random empty spawn point 
             return spawnPoints.IndexOf(tmp[Random.Range(0, tmp.Count)]);
+        }
+
+        #endregion
+
+        #region pun callbacks
+        public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
+        {
+            base.OnRoomPropertiesUpdate(propertiesThatChanged);
+            Debug.Log("PropertyChanged.Count:" + propertiesThatChanged.Count);
+            foreach(string key in propertiesThatChanged.Keys)
+            {
+                Debug.LogFormat("Property changed - {0}:{1}", key, propertiesThatChanged[key]);
+            }
         }
         #endregion
     }

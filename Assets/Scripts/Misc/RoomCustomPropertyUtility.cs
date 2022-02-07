@@ -60,8 +60,8 @@ namespace Zoca
 
         public static object GetRoomCustomProperty(Room room, string key)
         {
-            Debug.Log("RoomCustomProperties.length:" + room.CustomProperties.Count);
-            Debug.LogFormat("RoomCustomProperties - {0}:{1}",key, room.CustomProperties[key]);
+            //Debug.Log("RoomCustomProperties.length:" + room.CustomProperties.Count);
+            //Debug.LogFormat("RoomCustomProperties - {0}:{1}",key, room.CustomProperties[key]);
             if (!room.CustomProperties.ContainsKey(key))
                 return null;
 
