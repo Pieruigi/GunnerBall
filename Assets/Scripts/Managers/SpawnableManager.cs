@@ -25,20 +25,24 @@ namespace Zoca
         class SpawnableData
         {
             public int spawnableId;
-            public int spawnableSubId;
+            //public int spawnableSubId;
             public int spawnPointId;
 
-            public SpawnableData(int spawnableId, int spawnableSubId, int spawnPointId)
+            public SpawnableData(int spawnableId/*, int spawnableSubId*/, int spawnPointId)
             {
                 this.spawnableId = spawnableId;
-                this.spawnableSubId = spawnableSubId;
+                //this.spawnableSubId = spawnableSubId;
                 this.spawnPointId = spawnPointId;
             }
         }
+
+     
         #endregion
 
         #region properties
         public static SpawnableManager Instance { get; private set; }
+
+        const string SpawnablePrefabFolder = "Spawnables";
         #endregion
 
         #region private fields
@@ -61,14 +65,13 @@ namespace Zoca
         List<Transform> spawnPoints = new List<Transform>();
 
         /// <summary>
-        /// 0: powerup
-        /// 1: powerdown
-        /// 2: quakeup
-        /// 3: throwable
+        /// Each weight correspond to a specific spawnable object.
+        /// The id of the weight is the id of the object which is in the resource folder.
         /// </summary>
         [SerializeField]
-        int[] weights = new int[4];
+        int[] weights;
 
+        //[SerializeField]
     
         /// <summary>
         /// All the skills you can power up given a specific character and weapon ( speed, fireRate, ecc... )
@@ -87,13 +90,16 @@ namespace Zoca
         /// 1: spawnable subid
         /// 2: spawn point id
         /// </summary>
-        string keyFormat = "sp_{0}_{1}_{2}";
+        
+        string keyFormat = "sp_{0}_{1}";
+        
 
         //enum KeyValue { Pickable }
         //System.DateTime lastSpawnedTime;
         //int spawnableCount = 0;
 
         List<SpawnableData> datas = new List<SpawnableData>();
+        List<GameObject> prefabs = new List<GameObject>();
         #endregion
 
 
@@ -105,10 +111,17 @@ namespace Zoca
             {
                 Instance = this;
 
-                ResetAll();
+                ResetAll(); // Don't really need it
 
                 // Create the weight array
-                FillWeightArray();
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    // Fill the array
+                    FillWeightArray();
+                    // Load from resources
+                    LoadPrefabs();
+                }
+                    
 
             }
             else
@@ -126,19 +139,20 @@ namespace Zoca
                 // We create spawnables all at once on start
                 for (int i = 0; i < spawnableMaximumNumber; i++)
                 {
-                    InitSpawnable();
+                    CreateSpawnable();
                 }
             }
             else // Not the master client
             {
-                foreach(object key in PhotonNetwork.CurrentRoom.CustomProperties.Keys)
+                foreach (object key in PhotonNetwork.CurrentRoom.CustomProperties.Keys)
                 {
-                    if(key.ToString().StartsWith("sp_"))
+                    if (key.ToString().StartsWith("sp_"))
                     {
                         Debug.LogFormat("Fount a spawnable key " + key);
                         string[] splits = key.ToString().Split('_');
-                        CreateSpawnable(int.Parse(splits[1]), int.Parse(splits[2]), int.Parse(splits[3]));
+                        InstantiateSpawnableObject(int.Parse(splits[1]), int.Parse(splits[2]));
                     }
+                    CreateSpawnable();
                 }
             }
 
@@ -156,50 +170,9 @@ namespace Zoca
                 //}
             }
 
-            //if (Input.GetKeyDown(KeyCode.H))
-            //{
-            //    //PhotonNetwork.CurrentRoom.SetCustomProperties("Test_pup", 1);
-            //    ExitGames.Client.Photon.Hashtable ht = new ExitGames.Client.Photon.Hashtable();
-            //    ht.Add("Test_pup", PhotonNetwork.LocalPlayer.ActorNumber);
-            //    PhotonNetwork.CurrentRoom.SetCustomProperties(ht);
 
-            //    //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty("Test_pup", 1);
-            //    //RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
-            //}
 
-            //if (Input.GetKeyDown(KeyCode.J))
-            //{
-            //    SpawnableData data = datas[0];
-            //    string key = string.Format(keyFormat, data.spawnableId, data.spawnableSubId, data.spawnPointId);
-            //    if(PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(key))
-            //    {
-            //        PhotonNetwork.CurrentRoom.SetCustomProperties(
-            //        new ExitGames.Client.Photon.Hashtable() { { key, PhotonNetwork.LocalPlayer.ActorNumber } }
-            //        );
-            //    }
-                
-            //}
 
-            //if (Input.GetKeyDown(KeyCode.K))
-            //{
-
-            //    //PhotonNetwork.CurrentRoom.CustomProperties.Remove("Test_pup");
-            //    //RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
-            //    PhotonNetwork.CurrentRoom.SetCustomProperties(new ExitGames.Client.Photon.Hashtable() { { "Test_pup", null } } );
-            //}
-
-            //if (Input.GetKeyDown(KeyCode.L))
-            //{
-            //    //PhotonNetwork.CurrentRoom.SetCustomProperties("Test_pup", 1);
-            //    ExitGames.Client.Photon.Hashtable ht = new ExitGames.Client.Photon.Hashtable();
-            //    ht.Add("Test_pup", 154);
-            //    ExitGames.Client.Photon.Hashtable eht = new ExitGames.Client.Photon.Hashtable();
-            //    eht.Add("Test_pup", 11);
-            //    PhotonNetwork.CurrentRoom.SetCustomProperties(ht, eht);
-
-            //    //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty("Test_pup", 1);
-            //    //RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
-            //}
         }
 
         void ResetAll()
@@ -214,7 +187,10 @@ namespace Zoca
         }
 
 
-
+        void LoadPrefabs()
+        {
+            prefabs = new List<GameObject>(Resources.LoadAll<GameObject>(SpawnablePrefabFolder));
+        }
 
       
         void FillWeightArray()
@@ -237,28 +213,35 @@ namespace Zoca
                     spawnableIds[j] = i;
             }
 
-            Debug.LogFormat("NumberOfSpawnable - {0},{1},{2},{3}",
-                new List<int>(spawnableIds).FindAll(i=>i==0).Count,
-                new List<int>(spawnableIds).FindAll(i => i == 1).Count,
-                new List<int>(spawnableIds).FindAll(i => i == 2).Count,
-                new List<int>(spawnableIds).FindAll(i => i == 3).Count);
+            for(int i=0; i<weights.Length; i++)
+            {
+                Debug.LogFormat("SpwnableId:{0}, Count:{1}", i, new List<int>(spawnableIds).FindAll(s => s == i).Count);
+            }
             
         }
 
         /// <summary>
-        /// All clients ( even the master client ).
-        /// Creates the physical spawnable item.
+        /// Objects are spawned by the master client.
         /// </summary>
         /// <param name="spawnableId"></param>
-        /// <param name="spawnableSubId"></param>
         /// <param name="spawnPointId"></param>
-        void CreateSpawnable(int spawnableId, int spawnableSubId, int spawnPointId)
+        void InstantiateSpawnableObject(int spawnableId, int spawnPointId)
         {
             // Create a new item
-            Debug.LogFormat("New Spawnable created - itemId:{0}, itemSubId:{2}, spawnPointId:{1}", spawnableId, spawnPointId, spawnableSubId);
+            Debug.LogFormat("New Spawnable created - itemId:{0}, spawnPointId:{1}", spawnableId, spawnPointId);
 
-            GameObject g = new GameObject("Item");
-            g.transform.parent = spawnPoints[spawnPointId];
+            // Get the spawnable object by the id
+            GameObject prefab = prefabs[spawnableId];
+
+            // Get the spawn point
+            Transform spawnPoint = spawnPoints[spawnPointId];
+
+            // Instantiate
+            string path = System.IO.Path.Combine(SpawnablePrefabFolder, prefab.name);
+            PhotonNetwork.InstantiateRoomObject(path, spawnPoint.position, spawnPoint.rotation);
+
+            //GameObject g = new GameObject("Item");
+            //g.transform.parent = spawnPoints[spawnPointId];
         }
 
         /// <summary>
@@ -270,7 +253,7 @@ namespace Zoca
         /// room custom properties: if the key exists and it value is 0 the item can be picked.
         /// We use CAS to check the room custom properties.
         /// </summary>
-        void InitSpawnable()
+        void CreateSpawnable()
         {
             if (!PhotonNetwork.IsMasterClient)
                 return;
@@ -283,14 +266,13 @@ namespace Zoca
             // Get a free spawn point
             int spawnPointId = GetFreeSpawnPointId(spawnableId);
 
-            int spawnableSubId = 0;
             // Add a new custom property
 
-            SpawnableData data = new SpawnableData(spawnableId, spawnableSubId, spawnPointId);
+            SpawnableData data = new SpawnableData(spawnableId, spawnPointId);
             datas.Add(data);
 
             ExitGames.Client.Photon.Hashtable ht = new ExitGames.Client.Photon.Hashtable();
-            ht.Add(string.Format(keyFormat, spawnableId, spawnableSubId, spawnPointId), (int)0);
+            ht.Add(string.Format(keyFormat, spawnableId, spawnPointId), (int)0);
             PhotonNetwork.CurrentRoom.SetCustomProperties(ht);
             
             
@@ -322,6 +304,8 @@ namespace Zoca
             base.OnRoomPropertiesUpdate(propertiesThatChanged);
             Debug.LogFormat("CustomProperties.Count:{0}", PhotonNetwork.CurrentRoom.CustomProperties.Count);
             Debug.Log("PropertyChanged.Count:" + propertiesThatChanged.Count);
+
+            // Loop through all the properties that have changed
             foreach (object key in propertiesThatChanged.Keys)
             {
                 Debug.Log("Key:" + key.ToString());
@@ -330,21 +314,29 @@ namespace Zoca
                 // Check if the key that changed refers to a spawnable item
                 if (key.ToString().StartsWith("sp_"))
                 {
+                    // It's a spawnable property.
                     Debug.LogFormat("Spawnable updated - {0}", key.ToString());
 
+                    // Parse the key as string
                     string propKey = key.ToString();
-                    
+
+                    // Read the value:
+                    // 0 - spawnable just initialized, we must create the physical object
+                    // >0 - it is the actor number who picked up the spawnable
+                    // null - property has been removed, means the spawnable has been activated 
                     object o = null;
                     int propValue = 0;
                     if (propertiesThatChanged.TryGetValue(key.ToString(), out o))
                     {
                         if (o != null)
                         {
+                            // Value is not null, so the spawnable has been just initialized or picked.
                             Debug.LogFormat("Found value for {0}:{1}", key.ToString(), o.ToString());
                             propValue = (int)o;
                         }
                         else
                         {
+                            // Value is null, one of the players picked up the spawnable
                             Debug.LogFormat("Value for {0} is null", key.ToString());
                             
                         }
@@ -356,23 +348,29 @@ namespace Zoca
                     if (o == null)
                         continue;
 
+                    // Key has not been removed, so the spawnable is alive.
                     // Get spawnable detail
                     string[] propSplits = propKey.Split('_');
                     int spawnableId = int.Parse(propSplits[1]);
-                    int spawnableSubId = int.Parse(propSplits[2]);
-                    int spawnPointId = int.Parse(propSplits[3]);
+                    int spawnPointId = int.Parse(propSplits[2]);
 
                     if (propValue == 0) // Has just been initialized
                     {
-                       
-                        // Create the physical spawnable item.
-                        CreateSpawnable(spawnableId, spawnableSubId, spawnPointId);
+                        // Only the master client instantiate.
+                        // When the master client initialize a new spawnable the corresponding key on 
+                        // the custom properties is zero.
+                        // We wait for the server to respond to take care of the lag.
+                        if(PhotonNetwork.IsMasterClient)
+                            InstantiateSpawnableObject(spawnableId, spawnPointId);
                     }
                     else // Spawnable has been picked up by a player or the AI
                     {
+                        // The property value is not zero, this means that someone took the spawnable.
                         if(propValue == PhotonNetwork.LocalPlayer.ActorNumber || PhotonNetwork.OfflineMode)
                         {
-                            // Local player or AI picked up the item
+                            // Every human player executes his own code when he picks up a spawnable object.
+                            // In offline mode there is only one human player and some AIs, so its always 
+                            // the local player who executes the code.
                             //spawnPoints[spawnPointId].GetComponentInChildren<Spawnable>().PickUp();
                             
                             // Remove the properties
@@ -382,10 +380,12 @@ namespace Zoca
                         }
                         else
                         {
-                            // Someone else picked up the item
+                            // Not in offline mode and the local player is not the one who's 
+                            // picking up the spawnable object.
                         }
 
-                        // Destroy the object anyway
+                        // Destroy the object anyway, even if we are not the local player who is picking up
+                        // the object.
                         // Get the spawn point
                         if(spawnPoints[spawnPointId].childCount > 0)
                         {
@@ -405,8 +405,20 @@ namespace Zoca
         #endregion
 
         #region public methods
-        public void TryPickUp(GameObject spawnable, int actorId)
+        /// <summary>
+        /// Local player only.
+        /// In online matches it is called only by the player who tries to pick up the spawnable.
+        /// In offline matches is the always the master client who call the 
+        /// </summary>
+        /// <param name="spawnable"></param>
+        /// <param name="actorNumber"></param>
+        public void TryPickUp(GameObject spawnable, int actorNumber)
         {
+            // We go ahead only if the local player is the one trying to pick up the object or if we are
+            // playing in offline mode ( so we are the master client and we need to take care of the AI )
+            if (PhotonNetwork.LocalPlayer.ActorNumber != actorNumber && !PhotonNetwork.OfflineMode)
+                return;
+
             // Get the spawn point id
             int spawnPointId = spawnPoints.IndexOf(spawnable.transform.parent);
 
@@ -420,12 +432,13 @@ namespace Zoca
             }
 
             // Build key
-            string key = string.Format(keyFormat, data.spawnableId, data.spawnableSubId, data.spawnPointId);
+            string key = string.Format(keyFormat, data.spawnableId, data.spawnPointId);
 
             // Try to check and swap the corresponding custom property.
-            // If the property is different than zero no update is performed.
+            // Property different than zero means that someone else has already picked up the object and we
+            // just need to wait for the server to send the update callback.
             PhotonNetwork.CurrentRoom.SetCustomProperties(
-                new ExitGames.Client.Photon.Hashtable() { { key, actorId } },
+                new ExitGames.Client.Photon.Hashtable() { { key, actorNumber } },
                 new ExitGames.Client.Photon.Hashtable() { { key, 0 } }
                 );
 
