@@ -53,8 +53,11 @@ namespace Zoca
         [SerializeField]
         int[] weights;
 
+        [SerializeField]
+        List<GameObject> prefabs = new List<GameObject>();
+
         //[SerializeField]
-    
+
         /// <summary>
         /// All the skills you can power up given a specific character and weapon ( speed, fireRate, ecc... )
         /// </summary>
@@ -75,7 +78,7 @@ namespace Zoca
         
         string keyFormat = "sp_{0}_{1}";
         
-        List<GameObject> prefabs = new List<GameObject>();
+        
         List<Transform> takenSpawnPoints = new List<Transform>();
         #endregion
 
@@ -90,9 +93,7 @@ namespace Zoca
 
                 ResetAll(); // Don't really need it
 
-                // Load from resources
-                LoadPrefabs();
-
+              
                 // Only the master client should fill the spawnable array
                 if (PhotonNetwork.IsMasterClient)
                 {
@@ -165,11 +166,7 @@ namespace Zoca
         }
 
 
-        void LoadPrefabs()
-        {
-            prefabs = new List<GameObject>(Resources.LoadAll<GameObject>(PickablePrefabFolder));
-        }
-
+       
       
         void FillPickableArray()
         {
@@ -215,6 +212,7 @@ namespace Zoca
 
             // Instantiate
             GameObject g = Instantiate(prefab, spawnPoint.position, spawnPoint.rotation, spawnPoint);
+            g.name = pickableId.ToString();
 
         }
 
@@ -399,9 +397,9 @@ namespace Zoca
             int spawnPointId = spawnPoints.IndexOf(pickable.transform.parent);
 
             // Pickable name has the format id.name ( ex: 01.speedUp )               
-            string pickableName = pickable.name.Split('.')[0];
+            //string pickableName = pickable.name.Split('.')[0];
             
-            int pickableId = prefabs.FindIndex(p=>p.name.StartsWith(pickableName));
+            int pickableId = int.Parse(pickable.name);
             
           
             // Build the property key

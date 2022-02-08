@@ -9079,7 +9079,7 @@ GameObject:
   - component: {fileID: 880762764}
   - component: {fileID: 880762763}
   m_Layer: 0
-  m_Name: SpawnManager
+  m_Name: PickableManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9097,7 +9097,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cb9e8f70a1a2c0428c8eff0f1cf5622, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnableMaximumNumber: 4
+  pickableMaximumNumber: 4
   respawnTime: 20
   spawnPoints:
   - {fileID: 47483727}
@@ -9107,6 +9107,10 @@ MonoBehaviour:
   - {fileID: 321273944}
   - {fileID: 1752256664}
   weights: 64000000280000000a000000
+  prefabs:
+  - {fileID: 683130737336089461, guid: 5162fead666e7094fa9586821c0bf8d9, type: 3}
+  - {fileID: 683130737336089461, guid: f6ae9dede2432a34c9679b809680ae49, type: 3}
+  - {fileID: 683130737336089461, guid: e3e846341ecbd984f89fde2aaedf6dbd, type: 3}
 --- !u!4 &880762764
 Transform:
   m_ObjectHideFlags: 0
