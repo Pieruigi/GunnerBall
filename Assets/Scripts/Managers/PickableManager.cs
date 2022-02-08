@@ -6,8 +6,7 @@ using UnityEngine;
 
 namespace Zoca
 {
-    public enum SpawnableType { PowerUp, PowerDown, Quaker, Throwable }
-
+    
     /// <summary>
     /// We have four types of spawnable objects:
     /// - powerup: increases a skill of the player who pick it up ( common )
@@ -18,31 +17,14 @@ namespace Zoca
     /// if its active on the player, will be replaced.
     /// 
     /// </summary>
-    public class SpawnableManager : MonoBehaviourPunCallbacks
+    public class PickableManager : MonoBehaviourPunCallbacks
     {
 
-        #region internal classes
-        class SpawnableData
-        {
-            public int spawnableId;
-            //public int spawnableSubId;
-            public int spawnPointId;
-
-            public SpawnableData(int spawnableId/*, int spawnableSubId*/, int spawnPointId)
-            {
-                this.spawnableId = spawnableId;
-                //this.spawnableSubId = spawnableSubId;
-                this.spawnPointId = spawnPointId;
-            }
-        }
-
      
-        #endregion
-
         #region properties
-        public static SpawnableManager Instance { get; private set; }
+        public static PickableManager Instance { get; private set; }
 
-        const string SpawnablePrefabFolder = "Spawnables";
+        const string PickablePrefabFolder = "Pickables";
         #endregion
 
         #region private fields
@@ -51,7 +33,7 @@ namespace Zoca
         /// The maximum number of powerup spawned at the same time in the arena.
         /// </summary>
         [SerializeField]
-        int spawnableMaximumNumber = 4;
+        int pickableMaximumNumber = 4;
 
             
 
@@ -83,7 +65,7 @@ namespace Zoca
         /// </summary>
         bool spawnOnKickOff = false;
 
-        int[] spawnableIds;
+        int[] pickableIds;
 
         /// <summary>
         /// 0: spawnable id
@@ -93,13 +75,8 @@ namespace Zoca
         
         string keyFormat = "sp_{0}_{1}";
         
-
-        //enum KeyValue { Pickable }
-        //System.DateTime lastSpawnedTime;
-        //int spawnableCount = 0;
-
-        List<SpawnableData> datas = new List<SpawnableData>();
         List<GameObject> prefabs = new List<GameObject>();
+        List<Transform> takenSpawnPoints = new List<Transform>();
         #endregion
 
 
@@ -113,13 +90,14 @@ namespace Zoca
 
                 ResetAll(); // Don't really need it
 
-                // Create the weight array
+                // Load from resources
+                LoadPrefabs();
+
+                // Only the master client should fill the spawnable array
                 if (PhotonNetwork.IsMasterClient)
                 {
                     // Fill the array
-                    FillWeightArray();
-                    // Load from resources
-                    LoadPrefabs();
+                    FillPickableArray();
                 }
                     
 
@@ -137,9 +115,9 @@ namespace Zoca
             if (PhotonNetwork.IsMasterClient)
             {
                 // We create spawnables all at once on start
-                for (int i = 0; i < spawnableMaximumNumber; i++)
+                for (int i = 0; i < pickableMaximumNumber; i++)
                 {
-                    CreateSpawnable();
+                    CreatePickable();
                 }
             }
             else // Not the master client
@@ -150,9 +128,9 @@ namespace Zoca
                     {
                         Debug.LogFormat("Fount a spawnable key " + key);
                         string[] splits = key.ToString().Split('_');
-                        InstantiateSpawnableObject(int.Parse(splits[1]), int.Parse(splits[2]));
+                        InstantiatePickableObject(int.Parse(splits[1]), int.Parse(splits[2]));
                     }
-                    CreateSpawnable();
+                    
                 }
             }
 
@@ -189,11 +167,11 @@ namespace Zoca
 
         void LoadPrefabs()
         {
-            prefabs = new List<GameObject>(Resources.LoadAll<GameObject>(SpawnablePrefabFolder));
+            prefabs = new List<GameObject>(Resources.LoadAll<GameObject>(PickablePrefabFolder));
         }
 
       
-        void FillWeightArray()
+        void FillPickableArray()
         {
             int count = 0;
             for(int i=0; i<weights.Length; i++)
@@ -201,21 +179,20 @@ namespace Zoca
                 count += (int)weights[i];
             }
 
-            spawnableIds = new int[count];
-            Debug.Log("WeightArray.Length:" + spawnableIds.Length);
-
+            pickableIds = new int[count];
+          
             int start = 0, length = 0;
             for(int i=0; i<weights.Length; i++)
             {
                 start = length;
                 length += (int)weights[i];
                 for (int j = start; j < length; j++)
-                    spawnableIds[j] = i;
+                    pickableIds[j] = i;
             }
 
             for(int i=0; i<weights.Length; i++)
             {
-                Debug.LogFormat("SpwnableId:{0}, Count:{1}", i, new List<int>(spawnableIds).FindAll(s => s == i).Count);
+                Debug.LogFormat("SpwnableId:{0}, Count:{1}", i, new List<int>(pickableIds).FindAll(s => s == i).Count);
             }
             
         }
@@ -223,25 +200,22 @@ namespace Zoca
         /// <summary>
         /// Objects are spawned by the master client.
         /// </summary>
-        /// <param name="spawnableId"></param>
+        /// <param name="pickableId"></param>
         /// <param name="spawnPointId"></param>
-        void InstantiateSpawnableObject(int spawnableId, int spawnPointId)
+        void InstantiatePickableObject(int pickableId, int spawnPointId)
         {
             // Create a new item
-            Debug.LogFormat("New Spawnable created - itemId:{0}, spawnPointId:{1}", spawnableId, spawnPointId);
+            Debug.LogFormat("New Spawnable created - itemId:{0}, spawnPointId:{1}", pickableId, spawnPointId);
 
             // Get the spawnable object by the id
-            GameObject prefab = prefabs[spawnableId];
+            GameObject prefab = prefabs[pickableId];
 
             // Get the spawn point
             Transform spawnPoint = spawnPoints[spawnPointId];
 
             // Instantiate
-            string path = System.IO.Path.Combine(SpawnablePrefabFolder, prefab.name);
-            PhotonNetwork.InstantiateRoomObject(path, spawnPoint.position, spawnPoint.rotation);
+            GameObject g = Instantiate(prefab, spawnPoint.position, spawnPoint.rotation, spawnPoint);
 
-            //GameObject g = new GameObject("Item");
-            //g.transform.parent = spawnPoints[spawnPointId];
         }
 
         /// <summary>
@@ -253,26 +227,23 @@ namespace Zoca
         /// room custom properties: if the key exists and it value is 0 the item can be picked.
         /// We use CAS to check the room custom properties.
         /// </summary>
-        void CreateSpawnable()
+        void CreatePickable()
         {
             if (!PhotonNetwork.IsMasterClient)
                 return;
 
-            //lastSpawnedTime = System.DateTime.UtcNow;
-            
             // We implement the spawning logic in the master client.
             // Get the next spawnable item depending on its weight
-            int spawnableId = spawnableIds[Random.Range(0, spawnableIds.Length)];
+            int pickableId = pickableIds[Random.Range(0, pickableIds.Length)];
             // Get a free spawn point
-            int spawnPointId = GetFreeSpawnPointId(spawnableId);
+            int spawnPointId = GetFreeSpawnPointId(pickableId);
+            // Set the spawn point taken
+            takenSpawnPoints.Add(spawnPoints[spawnPointId]);
+            
 
-            // Add a new custom property
-
-            SpawnableData data = new SpawnableData(spawnableId, spawnPointId);
-            datas.Add(data);
-
+            // Add the new custom property
             ExitGames.Client.Photon.Hashtable ht = new ExitGames.Client.Photon.Hashtable();
-            ht.Add(string.Format(keyFormat, spawnableId, spawnPointId), (int)0);
+            ht.Add(string.Format(keyFormat, pickableId, spawnPointId), (int)0);
             PhotonNetwork.CurrentRoom.SetCustomProperties(ht);
             
             
@@ -283,12 +254,9 @@ namespace Zoca
             List<int> tmp = new List<int>();
             for(int i=0; i<spawnPoints.Count; i++)
             {
-                if (!datas.Exists(d => d.spawnPointId == i))
+                if (!takenSpawnPoints.Contains(spawnPoints[i]))
                     tmp.Add(i);
             }
-
-            // Get all the empty spawn points
-            //List<Transform> tmp = spawnPoints.FindAll(s => s.childCount == 0);
 
             // Return the id of a random empty spawn point 
             return tmp[Random.Range(0, tmp.Count)];
@@ -351,17 +319,15 @@ namespace Zoca
                     // Key has not been removed, so the spawnable is alive.
                     // Get spawnable detail
                     string[] propSplits = propKey.Split('_');
-                    int spawnableId = int.Parse(propSplits[1]);
+                    int pickableId = int.Parse(propSplits[1]);
                     int spawnPointId = int.Parse(propSplits[2]);
 
                     if (propValue == 0) // Has just been initialized
                     {
-                        // Only the master client instantiate.
-                        // When the master client initialize a new spawnable the corresponding key on 
-                        // the custom properties is zero.
-                        // We wait for the server to respond to take care of the lag.
-                        if(PhotonNetwork.IsMasterClient)
-                            InstantiateSpawnableObject(spawnableId, spawnPointId);
+                        // Each client instantiate spawnable objects
+                        // We wait for the server to respond ( even in the master client )
+                        // to take care of the lag.
+                        InstantiatePickableObject(pickableId, spawnPointId);
                     }
                     else // Spawnable has been picked up by a player or the AI
                     {
@@ -382,16 +348,12 @@ namespace Zoca
                         {
                             // Not in offline mode and the local player is not the one who's 
                             // picking up the spawnable object.
+                            // We could find the player who picked up the spawnable object and nay apply
+                            // some effect.
                         }
 
-                        // Destroy the object anyway, even if we are not the local player who is picking up
-                        // the object.
-                        // Get the spawn point
-                        if(spawnPoints[spawnPointId].childCount > 0)
-                        {
-                            GameObject item = spawnPoints[spawnPointId].GetChild(0).gameObject;
-                            Destroy(item);
-                        }
+                        // Destroy the object anyway, no matter who is picking the object.
+                        SetSpawnPointFree(spawnPointId);
                         
                     }
                     
@@ -402,6 +364,20 @@ namespace Zoca
 
 
         }
+
+        void SetSpawnPointFree(int spawnPointId)
+        {
+            if (spawnPoints[spawnPointId].childCount > 0)
+            {
+                // Destroy the physical object
+                GameObject item = spawnPoints[spawnPointId].GetChild(0).gameObject;
+                Destroy(item);
+
+                // Set free
+                takenSpawnPoints.Remove(spawnPoints[spawnPointId]);
+
+            }
+        }
         #endregion
 
         #region public methods
@@ -410,9 +386,9 @@ namespace Zoca
         /// In online matches it is called only by the player who tries to pick up the spawnable.
         /// In offline matches is the always the master client who call the 
         /// </summary>
-        /// <param name="spawnable"></param>
+        /// <param name="pickable"></param>
         /// <param name="actorNumber"></param>
-        public void TryPickUp(GameObject spawnable, int actorNumber)
+        public void TryPickUp(GameObject pickable, int actorNumber)
         {
             // We go ahead only if the local player is the one trying to pick up the object or if we are
             // playing in offline mode ( so we are the master client and we need to take care of the AI )
@@ -420,20 +396,17 @@ namespace Zoca
                 return;
 
             // Get the spawn point id
-            int spawnPointId = spawnPoints.IndexOf(spawnable.transform.parent);
+            int spawnPointId = spawnPoints.IndexOf(pickable.transform.parent);
 
-            // Get the spawnable data
-            SpawnableData data = datas.Find(d => d.spawnPointId == spawnPointId);
+            // Pickable name has the format id.name ( ex: 01.speedUp )               
+            string pickableName = pickable.name.Split('.')[0];
             
-            if(data == null)
-            {
-                Debug.LogWarningFormat("No spawnable found at spawna point {0}", spawnPointId);
-                return;
-            }
-
-            // Build key
-            string key = string.Format(keyFormat, data.spawnableId, data.spawnPointId);
-
+            int pickableId = prefabs.FindIndex(p=>p.name.StartsWith(pickableName));
+            
+          
+            // Build the property key
+            string key = string.Format(keyFormat, pickableId, spawnPointId);
+            
             // Try to check and swap the corresponding custom property.
             // Property different than zero means that someone else has already picked up the object and we
             // just need to wait for the server to send the update callback.

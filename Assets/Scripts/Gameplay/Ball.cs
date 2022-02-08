@@ -507,7 +507,7 @@ namespace Zoca
             
             if (!photonView.IsMine)
             {
-                Debug.Log("SkippLastClientSync()");
+                //Debug.Log("SkippLastClientSync()");
                 // Update network time to skip any sync that is just arrived
                 networkTime = PhotonNetwork.Time;
                 networkDisplacement = Vector3.zero;
