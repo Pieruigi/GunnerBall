@@ -69,7 +69,7 @@ namespace Zoca
                 return;
 
             // It's the local player or the AI 
-            if (playerController.GetComponent<PowerUpManager>().CanBePoweredUp())
+            if (playerController.GetComponent<PowerUpManager>().CanBePoweredUp(this))
             {
                 picking = true;
                 PickableManager.Instance.TryPickUp(gameObject, playerController.photonView.OwnerActorNr);

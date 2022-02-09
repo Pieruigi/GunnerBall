@@ -14,19 +14,23 @@ namespace Zoca
             public float buff;
             public float time;
             public Skill skill;
-            
+            public float elapsed;
             
             public Data(float buff, float time, Skill skill) 
             { 
                 this.buff = buff; 
                 this.time = time;
                 this.skill = skill;
+                elapsed = 0;
             }
         }
         #endregion
 
         #region properties
-
+        public int PowerUpCount
+        {
+            get { return datas.Count; }
+        }
         #endregion
 
         #region private
@@ -73,8 +77,8 @@ namespace Zoca
             foreach(Data data in datas)
             {
                 // Update the elapsed time
-                data.time -= Time.deltaTime;
-                if(data.time <= 0)
+                data.elapsed += Time.deltaTime;
+                if(data.elapsed > data.time)
                 {
                     // Remove player buff
                     SetSkillValue(data.skill, GetSkillValue(data.skill) / data.buff);
@@ -168,9 +172,31 @@ namespace Zoca
 
 
 
-        public bool CanBePoweredUp()
+        public bool CanBePoweredUp(PowerUp powerUp)
         {
-            return datas.Count < PowerUpMax ? true : false;
+            // Only one powerup of a given type can be active
+            foreach(Data data in datas)
+            {
+                if (data.skill == powerUp.Skill)
+                    return false;
+            }
+
+            return true;
+            //return datas.Count < PowerUpMax ? true : false;
+        }
+
+        public bool IsPowerUpActive(Skill skill)
+        {
+            return datas.Exists(p => p.skill == skill);
+        }
+
+        public float GetPowerUpRemainingTime(Skill skill)
+        {
+            Data data = datas.Find(p => p.skill == skill);
+            if (data == null)
+                return 0;
+
+            return Mathf.Max(0, data.time - data.elapsed);
         }
         #endregion
     }

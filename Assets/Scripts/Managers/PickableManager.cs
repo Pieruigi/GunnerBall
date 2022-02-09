@@ -104,6 +104,10 @@ namespace Zoca
                 {
                     // Fill the array
                     FillPickableArray();
+
+                    // Adjust minimum and maximum depending on the number of players
+                   // pickableMinimumNumber *= PhotonNetwork.CurrentRoom.MaxPlayers / 2;
+                   // pickableMaximumNumber *= PhotonNetwork.CurrentRoom.MaxPlayers / 2;
                 }
                     
 
@@ -165,7 +169,8 @@ namespace Zoca
                         int count = 0;
                         for (int i = 0; i < spawnPoints.Count; i++)
                         {
-                            count++;
+                            if (spawnPoints[i].childCount > 0)
+                                count++;
                         }
 
                         // If it's less than the maximum number then we could spawn some others
