@@ -19,6 +19,7 @@ GameObject:
   - component: {fileID: 5990213063411280542}
   - component: {fileID: 6883992551167893711}
   - component: {fileID: 4069958166935038270}
+  - component: {fileID: 4092832861348731284}
   m_Layer: 0
   m_Name: HirotaTasaburo
   m_TagString: Player
@@ -383,6 +384,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   reactionTime: 0.5
   team: 1
+--- !u!114 &4092832861348731284
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 707472009685262571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6496b179f1dba84daf8256ba46010fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1224195714289566950
 GameObject:
   m_ObjectHideFlags: 0

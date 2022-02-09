@@ -6,6 +6,7 @@ namespace Zoca
 {
     public enum Team { Blue, Red }
 
+    public enum Skill { Speed, Stamina, Resistance, FirePower, FireRate, FireRange }
 
     public class ResourceFolder
     {
@@ -48,4 +49,6 @@ namespace Zoca
         public const byte StateChanged = 199;
         public const byte Synchronize = 198;
     }
+
+    
 }

@@ -3,6 +3,7 @@ using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zoca.Interfaces;
 
 namespace Zoca
 {
@@ -332,10 +333,14 @@ namespace Zoca
                         // The property value is not zero, this means that someone took the spawnable.
                         if(propValue == PhotonNetwork.LocalPlayer.ActorNumber || PhotonNetwork.OfflineMode)
                         {
-                            // Every human player executes his own code when he picks up a spawnable object.
+                            // Every client executes his own code when the owned player picks up a spawnable 
+                            // object.
                             // In offline mode there is only one human player and some AIs, so its always 
-                            // the local player who executes the code.
-                            //spawnPoints[spawnPointId].GetComponentInChildren<Spawnable>().PickUp();
+                            // the local client executing the code.
+                            // Get the player controller
+                            PlayerController picker = new List<PlayerController>(GameObject.FindObjectsOfType<PlayerController>()).Find(p => p.photonView.CreatorActorNr == propValue);
+                            // Pick up the object
+                            spawnPoints[spawnPointId].GetComponentInChildren<IPickable>().PickUp(picker.gameObject);
                             
                             // Remove the properties
                             PhotonNetwork.CurrentRoom.SetCustomProperties(
