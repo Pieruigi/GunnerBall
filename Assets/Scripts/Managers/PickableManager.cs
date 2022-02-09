@@ -36,13 +36,15 @@ namespace Zoca
         [SerializeField]
         int pickableMaximumNumber = 4;
 
-            
+        [SerializeField]
+        int pickableMinimumNumber = 2;
+
 
         /// <summary>
         /// How time time it will take for the next powerup to spawn.
         /// </summary>
         [SerializeField]
-        float respawnTime = 20;
+        float respawnTime = 60;
 
         [SerializeField]
         List<Transform> spawnPoints = new List<Transform>();
@@ -81,6 +83,8 @@ namespace Zoca
         
         
         List<Transform> takenSpawnPoints = new List<Transform>();
+
+        float respawnCooldown = 0;
         #endregion
 
 
@@ -116,8 +120,10 @@ namespace Zoca
 
             if (PhotonNetwork.IsMasterClient)
             {
+                respawnCooldown = respawnTime;
+                int count = Random.Range(pickableMinimumNumber, pickableMaximumNumber + 1);
                 // We create spawnables all at once on start
-                for (int i = 0; i < pickableMaximumNumber; i++)
+                for (int i = 0; i < count; i++)
                 {
                     CreatePickable();
                 }
@@ -141,17 +147,43 @@ namespace Zoca
         // Update is called once per frame
         void Update()
         {
+            // The master client takes care of the respawn
             if (PhotonNetwork.IsMasterClient)
             {
-                // Check if it's time to create another spawnable
-                //if((System.DateTime.UtcNow - lastSpawnedTime).TotalSeconds > respawnTime)
-                //{
+                if(Match.Instance.State == (int)MatchState.Started)
+                {
+                    // Update cooldown
+                    respawnCooldown -= Time.deltaTime;
+
+                    // It's time to respawn pickables
+                    if(respawnCooldown < 0)
+                    {
+                        // Set the cooldown for the next time
+                        respawnCooldown = respawnTime;
+
+                        // Get the current number of pickables
+                        int count = 0;
+                        for (int i = 0; i < spawnPoints.Count; i++)
+                        {
+                            count++;
+                        }
+
+                        // If it's less than the maximum number then we could spawn some others
+                        if (count < pickableMaximumNumber)
+                        {
+                            // Lets check if we need more pickables
+                            int r = Random.Range(pickableMinimumNumber, pickableMaximumNumber + 1);
+                            if(r>count)
+                            {
+                                count = r - count;
+                                for (int i = 0; i < count; i++)
+                                    CreatePickable();
+                            }
+                        }
+                    }
                     
-                //}
+                }
             }
-
-
-
 
         }
 
@@ -393,6 +425,8 @@ namespace Zoca
         /// <param name="actorNumber"></param>
         public void TryPickUp(GameObject pickable, int actorNumber)
         {
+            Debug.Log("Trying to pick up " + pickable + ", actorNumber:" + actorNumber);
+
             // We go ahead only if the local player is the one trying to pick up the object or if we are
             // playing in offline mode ( so we are the master client and we need to take care of the AI )
             if (PhotonNetwork.LocalPlayer.ActorNumber != actorNumber && !PhotonNetwork.OfflineMode)

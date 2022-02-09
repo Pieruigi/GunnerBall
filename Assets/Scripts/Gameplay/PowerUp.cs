@@ -9,6 +9,23 @@ namespace Zoca
 
     public class PowerUp : MonoBehaviour, IPickable
     {
+        #region properties
+        public float Buff
+        {
+            get { return buff; }
+        }
+
+        public float Time
+        {
+            get { return time; }
+        }
+
+        public Skill Skill
+        {
+            get { return skill; }
+        }
+        #endregion
+
         #region private fields
         [SerializeField]
         float buff = 1.2f;
@@ -18,6 +35,8 @@ namespace Zoca
 
         [SerializeField]
         Skill skill = Skill.Speed;
+
+        bool picking = false; // A local flag to avoid the player picks the object twice
         #endregion
 
         #region private methods
@@ -35,6 +54,9 @@ namespace Zoca
 
         private void OnTriggerEnter(Collider other)
         {
+            if (picking)
+                return;
+
             // Try get the player controller from other
             PlayerController playerController = other.GetComponent<PlayerController>();
             
@@ -47,8 +69,12 @@ namespace Zoca
                 return;
 
             // It's the local player or the AI 
-            if(playerController.GetComponent<PowerUpManager>().CanBePoweredUp())
+            if (playerController.GetComponent<PowerUpManager>().CanBePoweredUp())
+            {
+                picking = true;
                 PickableManager.Instance.TryPickUp(gameObject, playerController.photonView.OwnerActorNr);
+            }
+                
         }
         #endregion
 

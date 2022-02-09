@@ -20,6 +20,7 @@ namespace Zoca
         public float Power
         {
             get { return power; }
+            set { power = value; }
         }
 
         //[SerializeField]
@@ -33,6 +34,7 @@ namespace Zoca
         public float FireRate
         {
             get { return fireRate; }
+            set { fireRate = value; cooldown = 1f / fireRate; }
         }
 
         [SerializeField]
@@ -40,6 +42,7 @@ namespace Zoca
         public float FireRange
         {
             get { return fireRange; }
+            set { fireRange = value; }
         }
 
         [Header("Fx")]
@@ -98,24 +101,9 @@ namespace Zoca
 
         private void Awake()
         {
-            ///// ONLY FOR TEST
-            ///
-            ///////////////////
-//#if UNITY_EDITOR
-//            power = TestPlayerStats.WeaponFirePower;
-//            damage = TestPlayerStats.WeaponDamage;
-//            fireRate = TestPlayerStats.WeaponFireRate;
-//            fireRange = TestPlayerStats.WeaponFireRange;
-
-            
-//#endif
-
-            ///////////////////
-
 
             cooldown = 1f / fireRate;
             //activeCoolerCount = coolerCount;
-
 
 
         }

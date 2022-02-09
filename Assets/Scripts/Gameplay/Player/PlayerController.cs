@@ -29,6 +29,7 @@ namespace Zoca
         public float MaxSpeed
         {
             get { return maxSpeed; }
+            set { maxSpeed = value; }
         }
 
         [SerializeField]
@@ -93,6 +94,7 @@ namespace Zoca
         public float StaminaMax
         {
             get { return staminaDefault; }
+            set { staminaDefault = value; }
         }
 
 
@@ -146,10 +148,11 @@ namespace Zoca
         #endregion
 
         #region fight
-        [SerializeField]
+        //[SerializeField]
         public float FreezingCooldown
         {
             get { return freezingCooldown; }
+            set { freezingCooldown = value; }
         }
         [SerializeField]
         float freezingCooldown = 4;
