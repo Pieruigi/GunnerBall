@@ -396,7 +396,7 @@ namespace Zoca
                             // In offline mode there is only one human player and some AIs, so its always 
                             // the local client executing the code.
                             // Get the player controller
-                            PlayerController picker = new List<PlayerController>(GameObject.FindObjectsOfType<PlayerController>()).Find(p => p.photonView.CreatorActorNr == propValue);
+                            PlayerController picker = new List<PlayerController>(GameObject.FindObjectsOfType<PlayerController>()).Find(p => p.photonView.OwnerActorNr == propValue);
                             // Pick up the object
                             try
                             {

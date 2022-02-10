@@ -160,27 +160,40 @@ namespace Zoca
 
             return ret;
         }
+
+       
+       
         #endregion
 
         #region public methods
         public void PowerUp(PowerUp powerUp)
         {
             Debug.Log("Activating power up");
-            SetSkillValue(powerUp.Skill, GetSkillValue(powerUp.Skill) * powerUp.Buff);
+            Data data = datas.Find(d => d.skill == powerUp.Skill);
+            if (data == null)
+            {
+                // Power up skill
+                SetSkillValue(powerUp.Skill, GetSkillValue(powerUp.Skill) * powerUp.Buff);
+                datas.Add(new Data(powerUp.Buff, powerUp.Time, powerUp.Skill));
+            }
+            else
+            {
+                // Skill already powered up, just reset the timer
+                data.elapsed = 0;
+            }
 
-            datas.Add(new Data(powerUp.Buff, powerUp.Time, powerUp.Skill));
         }
 
 
 
         public bool CanBePoweredUp(PowerUp powerUp)
         {
-            // Only one powerup of a given type can be active
-            foreach(Data data in datas)
-            {
-                if (data.skill == powerUp.Skill)
-                    return false;
-            }
+            //// Only one powerup of a given type can be active
+            //foreach(Data data in datas)
+            //{
+            //    if (data.skill == powerUp.Skill)
+            //        return false;
+            //}
 
             return true;
             //return datas.Count < PowerUpMax ? true : false;
