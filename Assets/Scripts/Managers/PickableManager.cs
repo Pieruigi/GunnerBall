@@ -122,6 +122,8 @@ namespace Zoca
         void Start()
         {
 
+            Match.Instance.OnStateChanged += HandleOnStateChanged;
+
             if (PhotonNetwork.IsMasterClient)
             {
                 respawnCooldown = respawnTime;
@@ -156,6 +158,20 @@ namespace Zoca
             {
                 if(Match.Instance.State == (int)MatchState.Started)
                 {
+                    int count = 0;
+                    if (spawnOnKickOff)
+                    {
+                        spawnOnKickOff = false;
+                        int r = Random.Range(pickableMinimumNumber, pickableMaximumNumber + 1);
+                        if (r > count)
+                        {
+                            count = r - count;
+                            for (int i = 0; i < count; i++)
+                                CreatePickable();
+                        }
+                        
+                    }
+
                     // Update cooldown
                     respawnCooldown -= Time.deltaTime;
 
@@ -166,7 +182,8 @@ namespace Zoca
                         respawnCooldown = respawnTime;
 
                         // Get the current number of pickables
-                        int count = 0;
+                        //int count = 0;
+                        count = 0;
                         for (int i = 0; i < spawnPoints.Count; i++)
                         {
                             if (spawnPoints[i].childCount > 0)
@@ -188,6 +205,8 @@ namespace Zoca
                     }
                     
                 }
+
+
             }
 
         }
@@ -204,8 +223,15 @@ namespace Zoca
         }
 
 
-       
-      
+       void HandleOnStateChanged()
+        {
+            if(Match.Instance.State == (int)MatchState.Goaled)
+            {
+                spawnOnKickOff = true;
+            }
+        }
+
+
         void FillPickableArray()
         {
             int count = 0;
