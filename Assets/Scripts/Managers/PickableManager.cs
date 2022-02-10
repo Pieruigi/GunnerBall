@@ -398,7 +398,24 @@ namespace Zoca
                             // Get the player controller
                             PlayerController picker = new List<PlayerController>(GameObject.FindObjectsOfType<PlayerController>()).Find(p => p.photonView.CreatorActorNr == propValue);
                             // Pick up the object
-                            spawnPoints[spawnPointId].GetComponentInChildren<IPickable>().PickUp(picker.gameObject);
+                            try
+                            {
+                                spawnPoints[spawnPointId].GetComponentInChildren<IPickable>().PickUp(picker.gameObject);
+                            }
+                            catch(System.Exception e)
+                            {
+                                Debug.LogErrorFormat("OnRoomPropertyUpdateError - propValue: {0}", propValue);
+                                Debug.LogErrorFormat("OnRoomPropertyUpdateError - spawnPointId: {0}", spawnPointId);
+                                Debug.LogErrorFormat("OnRoomPropertyUpdateError - picker: {0}", picker);
+
+                                if(spawnPoints[spawnPointId].childCount > 0)
+                                    Debug.LogErrorFormat("OnRoomPropertyUpdateError - IPickable: {0}", spawnPoints[spawnPointId].GetComponentInChildren<IPickable>());
+                                else
+                                    Debug.LogErrorFormat("OnRoomPropertyUpdateError - no IPickable has been found, spawnPoint.ChildCount:{0}",spawnPoints[spawnPointId].childCount);
+
+                                throw e;
+                            }
+                            
                             
                             // Remove the properties
                             PhotonNetwork.CurrentRoom.SetCustomProperties(

@@ -66,11 +66,20 @@ namespace Zoca.UI
             // Check for collision
             Ray ray = new Ray(origin, direction);
             RaycastHit info;
-            //int mask = ~LayerMask.NameToLayer(Layer.Player);
+
+            /***************** Using ray *******************
             localPlayerCollider.enabled = false;
             bool hit = Physics.Raycast(ray, out info, localPlayerController.FireWeapon.FireRange + PlayerController.Local.PlayerCamera.DistanceAdjustment);
             localPlayerCollider.enabled = true;
+            ***************************************************/
 
+            /****************** Using sphere ******************************/
+            float radius = localPlayerController.FireWeapon.FireRadius;
+            int layer = LayerMask.GetMask(new string[] { Layer.Ground, Layer.Wall });
+            float maxDistance = localPlayerController.FireWeapon.FireRange + PlayerController.Local.PlayerCamera.DistanceAdjustment - radius;
+            bool hit = Physics.SphereCast(ray, radius, out info, maxDistance, ~layer);
+
+            /**************************************************/
             Color c = Color.red;
             notAimImage.enabled = true;
             notAimLoaderImage.enabled = true;

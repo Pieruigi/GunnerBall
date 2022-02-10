@@ -1,4 +1,3 @@
-//#define TEST_DISTANCE
 using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
@@ -43,6 +42,13 @@ namespace Zoca
         {
             get { return fireRange; }
             set { fireRange = value; }
+        }
+
+        [SerializeField]
+        float fireRadius = 0.5f;
+        public float FireRadius
+        {
+            get { return fireRadius; }
         }
 
         [Header("Fx")]
@@ -95,9 +101,6 @@ namespace Zoca
 
         
 
-#if TEST_DISTANCE
-        GameObject testSphere;
-#endif
 
         private void Awake()
         {
@@ -125,40 +128,9 @@ namespace Zoca
                 cooldownElapsed -= Time.deltaTime;
             }
 
-            // Reload coolers
-            //if(activeCoolerCount < coolerCount)
-            //{
-            //    coolerCooldownElapsed -= Time.deltaTime;
-            //    if(coolerCooldownElapsed < 0)
-            //    {
-            //        activeCoolerCount++;
-            //        coolerCooldownElapsed = coolerCooldown;
-            //    }
-            //}
         }
 
-#if TEST_DISTANCE
-        private void LateUpdate()
-        {
-            TestDistance();
-        }
 
-        void TestDistance()
-        {
-            Vector3 pos = owner.PlayerCamera.transform.position;
-            pos += owner.PlayerCamera.transform.forward * (fireRange + owner.PlayerCamera.DistanceAdjustment);
-            if(testSphere == null)
-            {
-                testSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                Destroy(testSphere.GetComponent<Collider>());
-            }
-                
-
-            testSphere.transform.localScale = Vector3.one * 0.2f;
-            testSphere.transform.position = pos;
-
-        }
-#endif
 
         public bool CanShoot()
         {
@@ -205,15 +177,7 @@ namespace Zoca
                     superShotCharge = 0;// Uncharge the super shot
 
             }
-            
-
-
-            // Check coolers
-            //if (activeCoolerCount == 0)
-            //    return false;
-
-            //activeCoolerCount--;
-
+         
             // Ready to shoot
             cooldownElapsed = cooldown;
             //coolerCooldownElapsed = coolerCooldown;
@@ -225,12 +189,21 @@ namespace Zoca
             // Check for collision
             Ray ray = new Ray(origin, direction);
             RaycastHit info;
-            //int mask = ~LayerMask.NameToLayer(Layer.Player);
+
+            /************************ Using ray *************************
             ownerCollider.enabled = false;
             Debug.DrawRay(ray.origin, ray.direction * (fireRange + owner.PlayerCamera.DistanceAdjustment), Color.red, 30);
             bool hit = Physics.Raycast(ray, out info, fireRange + owner.PlayerCamera.DistanceAdjustment);
-           
             ownerCollider.enabled = true;
+            **************************************************************/
+
+            /************************ Using sphere ************************/
+            float radius = fireRadius;
+            float maxDistance = fireRange + owner.PlayerCamera.DistanceAdjustment - radius;
+            int layer = LayerMask.GetMask(new string[] { Layer.Ground, Layer.Wall });
+            bool hit = Physics.SphereCast(ray, radius, out info, maxDistance, ~layer);
+            /**************************************************************/
+
             if (hit)
             {
                 
@@ -239,17 +212,7 @@ namespace Zoca
                 if(hittable != null)
                 {
                     parameters = new object[6];
-                    //if (!PhotonNetwork.OfflineMode)
-                    //{
-                        
-                        //parameters[0] = info.collider.GetComponent<Ball>().photonView.ViewID;
-                        parameters[0] = (hittable as MonoBehaviourPun).photonView.ViewID;
-                    //}
-                    //else
-                    //{
-                    //    parameters[0] = (hittable as MonoBehaviourPun).GetInstanceID();
-                    //    //parameters[0] = (hittable as MonoBehaviourPun);
-                    //}
+                    parameters[0] = (hittable as MonoBehaviourPun).photonView.ViewID;
                     parameters[1] = info.point;
                     parameters[2] = info.normal;
                     parameters[3] = PhotonNetwork.Time;

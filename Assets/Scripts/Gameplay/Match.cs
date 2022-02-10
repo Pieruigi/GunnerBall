@@ -94,7 +94,7 @@ namespace Zoca
         void Start()
         {
             // Get the local player 
-            PlayerController playerController = PlayerController.LocalPlayer.GetComponent<PlayerController>();
+            //PlayerController playerController = PlayerController.LocalPlayer.GetComponent<PlayerController>();
 
             //if(state == (int)MatchState.Paused)
             //{
