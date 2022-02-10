@@ -100,6 +100,7 @@ namespace Zoca
             firePowerDefault = playerController.FireWeapon.Power;
             fireRateDefault = playerController.FireWeapon.FireRate;
             fireRangeDefault = playerController.FireWeapon.FireRange;
+            
         }
 
         private void Reset()

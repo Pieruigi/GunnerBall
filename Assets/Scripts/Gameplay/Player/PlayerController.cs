@@ -29,11 +29,13 @@ namespace Zoca
         public float MaxSpeed
         {
             get { return maxSpeed; }
-            set { maxSpeed = value; }
+            set { maxSpeed = value; float r = maxSpeedDefault / value; acceleration = accelerationDefault / r; }
         }
+        float maxSpeedDefault;
 
         [SerializeField]
         float acceleration = 10f;
+        float accelerationDefault;
 
         [SerializeField]
         float sprintMultiplier = 2;
@@ -249,6 +251,8 @@ namespace Zoca
             healthDefault = health;
             sprintSpeed = maxSpeed * sprintMultiplier;
             staminaDefault = stamina;
+            accelerationDefault = acceleration;
+            maxSpeedDefault = maxSpeed;
 
             animationController = GetComponent<AnimationController>();
 
