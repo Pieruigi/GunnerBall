@@ -106,8 +106,8 @@ namespace Zoca
                     FillPickableArray();
 
                     // Adjust minimum and maximum depending on the number of players
-                    pickableMinimumNumber *= PhotonNetwork.CurrentRoom.MaxPlayers / 2;
-                    pickableMaximumNumber *= PhotonNetwork.CurrentRoom.MaxPlayers / 2;
+                    pickableMinimumNumber *= PhotonNetwork.CurrentRoom.MaxPlayers;
+                    pickableMaximumNumber *= PhotonNetwork.CurrentRoom.MaxPlayers;
                 }
                     
 
