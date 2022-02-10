@@ -158,32 +158,27 @@ namespace Zoca
             {
                 if(Match.Instance.State == (int)MatchState.Started)
                 {
-                    int count = 0;
-                    if (spawnOnKickOff)
-                    {
-                        spawnOnKickOff = false;
-                        int r = Random.Range(pickableMinimumNumber, pickableMaximumNumber + 1);
-                        if (r > count)
-                        {
-                            count = r - count;
-                            for (int i = 0; i < count; i++)
-                                CreatePickable();
-                        }
-                        
-                    }
+                    
+                    
 
                     // Update cooldown
                     respawnCooldown -= Time.deltaTime;
 
                     // It's time to respawn pickables
-                    if(respawnCooldown < 0)
+                    if(respawnCooldown < 0 || spawnOnKickOff)
                     {
+                        if(spawnOnKickOff)
+                            spawnOnKickOff = false;
+                        
                         // Set the cooldown for the next time
-                        respawnCooldown = respawnTime;
+                        if(respawnCooldown < 0)
+                            respawnCooldown = respawnTime;
+                        
+                        
 
                         // Get the current number of pickables
-                        //int count = 0;
-                        count = 0;
+                        int count = 0;
+                        
                         for (int i = 0; i < spawnPoints.Count; i++)
                         {
                             if (spawnPoints[i].childCount > 0)
