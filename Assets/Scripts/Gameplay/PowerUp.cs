@@ -43,17 +43,23 @@ namespace Zoca
         // Start is called before the first frame update
         void Start()
         {
-
+            Match.Instance.OnStateChanged += delegate { picking = false; };
         }
 
         // Update is called once per frame
         void Update()
         {
-
+            
         }
 
         private void OnTriggerEnter(Collider other)
         {
+            if (Match.Instance.State == (int)MatchState.Goaled)
+            {
+                return;
+            }
+                
+            
             if (picking)
                 return;
 

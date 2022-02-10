@@ -451,8 +451,7 @@ namespace Zoca
         /// <param name="actorNumber"></param>
         public void TryPickUp(GameObject pickable, int actorNumber)
         {
-            //if (Match.Instance.State == (int)MatchState.Goaled)
-            //    return;
+            
 
             Debug.Log("Trying to pick up " + pickable + ", actorNumber:" + actorNumber);
 
