@@ -21,7 +21,7 @@ namespace Zoca.AI
      
         Rigidbody ballRB;
         float lastTargetDistance = -1;
-        float maxAimError = 0.35f;
+        float maxAimError = 0.2f;//0.35f;
 
         public ShootChoice(PlayerAI owner) : base(owner) 
         {
