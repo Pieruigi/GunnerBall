@@ -25,8 +25,8 @@ namespace Zoca
         //[SerializeField]
         //float speed = 60;
 
-        [SerializeField]
-        float damage = 10;
+        //[SerializeField]
+        float damage = 10000;
 
         [SerializeField]
         float fireRate = 0.5f;
@@ -310,7 +310,7 @@ namespace Zoca
 
                     float mul = superShot ? 2f : 1f;
 
-                    hittable.Hit(owner.gameObject, hitPoint, hitNormal, hitDirection, useDamage ? damage * mul : power * mul);
+                    hittable.Hit(owner.gameObject, hitPoint, hitNormal, hitDirection, useDamage ? damage/* * mul*/ : power * mul);
                 }
             }
            

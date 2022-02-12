@@ -13,7 +13,7 @@ using Zoca.Interfaces;
 
 namespace Zoca
 {
-    public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable//, IHittable
+    public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable, IHittable
     {
         //public UnityAction OnLeaveRoomRequest;
         public UnityAction OnPaused;

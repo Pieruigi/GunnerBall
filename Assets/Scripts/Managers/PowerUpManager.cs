@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Zoca
 {
@@ -8,6 +9,11 @@ namespace Zoca
 
     public class PowerUpManager : MonoBehaviour
     {
+        #region events
+        public UnityAction<Skill> OnPowerUpActivated;
+        public UnityAction<Skill> OnPowerUpDeactivated;
+        #endregion
+
         #region internal classes
         class Data
         {
@@ -89,7 +95,13 @@ namespace Zoca
 
             // Remove expired powerups
             foreach (Data data in toRemoveList)
+            {
                 datas.Remove(data);
+
+                // Call event for each powerup
+                OnPowerUpDeactivated?.Invoke(data.skill);
+            }
+                
         }
 
         void InitDefaultSkills()
@@ -182,6 +194,7 @@ namespace Zoca
                 data.elapsed = 0;
             }
 
+            OnPowerUpActivated?.Invoke(powerUp.Skill);
         }
 
 
@@ -211,6 +224,15 @@ namespace Zoca
                 return 0;
 
             return Mathf.Max(0, data.time - data.elapsed);
+        }
+
+        public float GetPowerUpTime(Skill skill)
+        {
+            Data data = datas.Find(p => p.skill == skill);
+            if (data == null)
+                return 0;
+
+            return data.time;
         }
         #endregion
     }
