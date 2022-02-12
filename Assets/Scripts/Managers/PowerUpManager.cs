@@ -87,7 +87,7 @@ namespace Zoca
                 if(data.elapsed > data.time)
                 {
                     // Remove player buff
-                    SetSkillValue(data.skill, GetSkillValue(data.skill) / data.buff);
+                    SetSkillValue(data.skill, GetSkillValue(data.skill) - (GetSkillValueDefault(data.skill) * data.buff));
                     // Add to list
                     toRemoveList.Add(data);
                 }
@@ -173,7 +173,33 @@ namespace Zoca
             return ret;
         }
 
-       
+        float GetSkillValueDefault(Skill skill)
+        {
+            float ret = 0;
+            switch (skill)
+            {
+                case Skill.FirePower:
+                    ret = firePowerDefault;
+                    break;
+                case Skill.FireRange:
+                    ret = fireRangeDefault;
+                    break;
+                case Skill.FireRate:
+                    ret = fireRateDefault;
+                    break;
+                case Skill.Speed:
+                    ret = speedDefault;
+                    break;
+                case Skill.Stamina:
+                    ret = staminaDefault;
+                    break;
+                case Skill.Resistance:
+                    ret = resistanceDefault;
+                    break;
+            }
+
+            return ret;
+        }
        
         #endregion
 
@@ -185,7 +211,7 @@ namespace Zoca
             if (data == null)
             {
                 // Power up skill
-                SetSkillValue(powerUp.Skill, GetSkillValue(powerUp.Skill) * powerUp.Buff);
+                SetSkillValue(powerUp.Skill, GetSkillValue(powerUp.Skill) + (GetSkillValueDefault(powerUp.Skill) * powerUp.Buff));
                 datas.Add(new Data(powerUp.Buff, powerUp.Time, powerUp.Skill));
             }
             else
