@@ -33,7 +33,7 @@ namespace Zoca
         }
         float maxSpeedDefault;
 
-        [SerializeField]
+        //[SerializeField]
         float acceleration = 10f;
         float accelerationDefault;
 
@@ -251,6 +251,7 @@ namespace Zoca
             healthDefault = health;
             sprintSpeed = maxSpeed * sprintMultiplier;
             staminaDefault = stamina;
+            acceleration = maxSpeed * 7f;
             accelerationDefault = acceleration;
             maxSpeedDefault = maxSpeed;
 

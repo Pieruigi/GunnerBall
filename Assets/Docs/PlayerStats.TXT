@@ -1,0 +1,35 @@
+Le skill del giocatore sono:
+1. speed
+2. stamina
+3. freeze cooldown ( freeze per semplicità )
+
+Ciascuna skill ha un valore massimo e uno minimo:
+
+speed 	[7 - 10] 	=> +0.3
+stamina [140 - 300] 	=> +16
+freeze	[5 - 2]		=> -0.3
+
+Ciascun personaggio ha a disposizione 14 punti da poter spendere nelle diverse skill; se su una
+specifica skill non si spende nessun punto questa resta al suo valore minimo.
+
+Ciascun intervallo è frazionato in 10 parti: ex. speed, 10-7 = 3 => 3/10 = 0.3.
+A ciascuna skill possono essere assegnati uno o più punti; per ciascun punto assegnato
+alla skill si aggiunge o si sottrae ( dipende dal segno +/- della frazione ) al suo minimo
+un valore pari alla frazione moltiplicata per il punto.
+
+Come esempio definiamo le skill di Saeko: 
+1. spendiamo 7 punti sulla velocità: speed = 7(base) + 7(punti) * 0.3 = 7 + 2.1 = 9.1
+2. dei rimanenti 7 punti ne spendiamo 4 sulla stamina: 140 + 4 * 16 = 140 + 64 = 204
+3. spendiamo i restanti 3 punti sul freeze: 5 - 3 * 0.3 = 5 - 0.9 = 4.1
+
+Risultato Saeko
+Speed	9.1
+Stamina	204
+Freeze 	4.1
+
+NB: 
+Naturalmente i punti possono anche diventare 28, basterebbe dividere le frazioni per 2, quindi la 
+frazione della speed sarebbe 0.15 al posto di 0.3; in questo caso Saeko non avrebbe speso 7 punti su 14
+per la speed, ma ne avrebbe spesi 14 su 28.
+
+
