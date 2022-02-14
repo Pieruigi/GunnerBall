@@ -17,14 +17,19 @@ namespace Zoca
         GameObject target;
 
         #endregion
+        protected virtual void Awake()
+        {
+
+        }
+
         // Start is called before the first frame update
-        void Start()
+        protected virtual void Start()
         {
 
         }
 
         // Update is called once per frame
-        void Update()
+        protected virtual void Update()
         {
 
         }

@@ -27,14 +27,10 @@ namespace Zoca
         #endregion
 
         #region private methods
-        // Start is called before the first frame update
-        void Start()
-        {
-
-        }
+        
 
         // Update is called once per frame
-        void Update()
+        protected override void Update()
         {
             if(!CanShoot())
             {
@@ -69,7 +65,15 @@ namespace Zoca
 
         public void PickUp(GameObject picker)
         {
-            throw new System.NotImplementedException();
+            // Remove all the children
+            int count = transform.childCount;
+            for(int i=0; i<count; i++)
+            {
+                Destroy(transform.GetChild(0).gameObject);
+            }
+
+            // Activate the power up
+            Activate(picker);
         }
 
         public bool CanBePicked(GameObject picker)
@@ -87,16 +91,19 @@ namespace Zoca
         #region IPowerUp interface
         public override void Activate(GameObject target)
         {
+            Debug.Log("This-TypeOf:" + GetType());
+            Debug.Log("This-TypeOf.IsSubclass:" + GetType().IsSubclassOf(typeof(SpecialSkillPowerUp)));
+
             PowerUpManager pum = target.GetComponent<PowerUpManager>();
 
             // If there is another powerup of the same type active then we remove it
-            SpecialSkillPowerUp ssp = (SpecialSkillPowerUp)new List<IPowerUp>(pum.PowerUpList).Find(p => p.GetType().IsSubclassOf(this.GetType()));
+            SpecialSkillPowerUp ssp = (SpecialSkillPowerUp)new List<IPowerUp>(pum.PowerUpList).Find(p => p.GetType().IsSubclassOf(typeof(SpecialSkillPowerUp)));
 
             if (ssp) // Already exists, destroy it
             {
                 ssp.Deactivate(target);
             }
-            ready = true;
+            currentCooldown = 0.5f;
             base.Activate(target);
         }
 

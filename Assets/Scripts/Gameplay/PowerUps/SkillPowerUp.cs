@@ -44,12 +44,9 @@ namespace Zoca
 
         #region private methods
         // Start is called before the first frame update
-        void Start()
-        {
-        }
-
+        
         // Update is called once per frame
-        void Update()
+        protected override void Update()
         {
             // Only update powerups timer while playing
             if (Match.Instance.State != (int)MatchState.Started)
