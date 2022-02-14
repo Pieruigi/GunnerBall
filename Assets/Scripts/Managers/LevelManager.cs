@@ -28,7 +28,13 @@ namespace Zoca
         {
             get { return ballSpawnPoint; }
         }
-        
+
+        [SerializeField]
+        List<GameObject> powerDownList;
+        public IList<GameObject> PowerDownList
+        {
+            get { return powerDownList.AsReadOnly(); }
+        }
 
         private void Awake()
         {

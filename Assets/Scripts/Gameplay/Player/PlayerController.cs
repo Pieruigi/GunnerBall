@@ -1,5 +1,4 @@
-//#define PEER_SHOT -- NO LONGER USED
-//#define SYNC_MOVE_INPUT
+
 using Photon.Pun;
 using System;
 using System.Collections;
@@ -291,19 +290,6 @@ namespace Zoca
             {
                 Debug.LogFormat("PlayerController - setting mine: {0}", gameObject.name);
 
-                ///// ONLY FOR TEST
-                ///
-                ///////////////////
-//#if UNITY_EDITOR
-//                maxSpeed = TestPlayerStats.PlayerMaxSpeed;
-//                sprintMultiplier = TestPlayerStats.PlayerSprintMultiplier;
-//                health = TestPlayerStats.PlayerHealth;
-//                healthMax = TestPlayerStats.PlayerHealthMax;
-//                freezingCooldown = TestPlayerStats.PlayerFreezingTime;
-
-//#endif
-
-                ///////////////////
 
 
                 // This is the local player
@@ -430,21 +416,7 @@ namespace Zoca
                 }
 
 
-                //// Gravity
-                //if (!cc.isGrounded)
-                //{
-                //    ySpeed += Physics.gravity.y * Time.deltaTime;
-                //    //Debug.LogFormat("PlayerController - Not grounded; ySpeed; {0}", ySpeed);
-                //}
-                //else
-                //{
-                //    // When player hits the ground we must reset vertical speed
-                //    if (ySpeed < 0)
-                //        ySpeed = 0;
-
-                //    jumping = false;
-                //    //Debug.LogFormat("PlayerController - Grounded; ySpeed; {0}", ySpeed);
-                //}
+               
 
                 // Set the vertical speed
                 velocity.y = ySpeed;
@@ -494,15 +466,7 @@ namespace Zoca
                             // Call rpc on all the clients, even the local one.
                             // By calling it via server we can balance lag.
                             photonView.RPC("RpcShoot", RpcTarget.AllViaServer, parameters as object);
-                            //if (!PhotonNetwork.OfflineMode)
-                            //{
-                            //    photonView.RPC("RpcShoot", RpcTarget.AllViaServer, parameters as object);
-                            //}
-                            //else
-                            //{
-                               
-                            //    photonView.RPC("RpcShoot", RpcTarget.AllViaServer, parameters as object);
-                            //}
+                            
 
                         }
                         
@@ -529,7 +493,6 @@ namespace Zoca
                 {
                     if (health == 0)
                     {
-                        //Debug.LogFormat("PlayerController - Health is empty, freezing player...");
                         currentFreezingCooldown = freezingCooldown;
                         freezed = true;
                 
@@ -543,13 +506,8 @@ namespace Zoca
                 transform.position = Vector3.Lerp(transform.position, networkPosition, Time.deltaTime * lerpSpeed);
                 transform.rotation = Quaternion.Lerp(transform.rotation, networkRotation, Time.deltaTime * lerpSpeed);
                 currentPitch = Mathf.Lerp(currentPitch, networkPitch, Time.deltaTime * lerpSpeed);
-                //transform.position = Vector3.MoveTowards(transform.position, networkPosition, Time.deltaTime * lerpSpeed * 5f);
-                //transform.rotation =  Quaternion.RotateTowards(transform.rotation, networkRotation, Time.deltaTime * lerpSpeed * 60f);
-                //currentPitch = Mathf.MoveTowards(currentPitch, networkPitch, 360 * Time.deltaTime);
-#if SYNC_MOVE_INPUT
-                // Remote player, lerp input
-                moveInput = Vector2.MoveTowards(moveInput, networkMoveInput, Time.deltaTime * 5);
-#endif
+                
+
             }
 
         }
@@ -559,10 +517,10 @@ namespace Zoca
             // Run this for both local and remote players
             if (freezed)
             {
-#if !FX_DISABLED
+
                 if (!freezeParticle.isPlaying)
                     freezeParticle.Play();
-#endif
+
 
                 if (!freezeAudioSource.isPlaying)
                     freezeAudioSource.Play();
@@ -572,10 +530,10 @@ namespace Zoca
             }
             else
             {
-#if !FX_DISABLED
+
                 if (freezeParticle.isPlaying)
                     freezeParticle.Stop();
-#endif
+
 
                 if (freezeAudioSource.isPlaying)
                     freezeAudioSource.Stop();
@@ -730,9 +688,30 @@ namespace Zoca
                 if ((DateTime.UtcNow - freezedLast).TotalSeconds < 1)
                     return;
 
+#if !FREEZE_ON_HIT_BY_OPPONENT
                 health = Mathf.Max(0, health - hitDamage);
+#else
+                if (Tag.Ball.Equals(owner.tag))
+                {
+                    health = Mathf.Max(0, health - hitDamage);
+                }
+                else
+                {
+                    // Power down player
+                    foreach(GameObject p in LevelManager.Instance.PowerDownList)
+                    {
+                        // Create power down
+                        GameObject g = Instantiate(p);
+                        SkillPowerUp pDown = g.GetComponent<SkillPowerUp>();
+                        // Set the default player freezing cooldown
+                        pDown.SetDuration(freezingCooldownDefault);
+                        // Activate the powerup
+                        pDown.Activate(gameObject);
+                    }
+                }
+#endif
 
-                // If the ball hit the player we let the ball bounce away.
+                    // If the ball hit the player we let the ball bounce away.
                 if (Tag.Ball.Equals(owner.tag))
                 {
                     Vector3 bounce = owner.transform.position - transform.position;
@@ -758,10 +737,7 @@ namespace Zoca
                 stream.SendNext((byte)health);
                 stream.SendNext(currentPitch);
 
-#if SYNC_MOVE_INPUT
-                // For animator
-                stream.SendNext(moveInput);
-#endif
+
             }
             else // Remote player
             {
@@ -781,11 +757,6 @@ namespace Zoca
                     freezed = true;
                 else
                     freezed = false;
-
-#if SYNC_MOVE_INPUT
-                // For animator
-                networkMoveInput = (Vector2)stream.ReceiveNext();
-#endif
 
             }
         }
@@ -979,12 +950,6 @@ namespace Zoca
             // Set the fireweapon owner
             fireWeapon.SetOwner(this);
 
-            //// Set the weapon
-            //fireWeapon = weapons[weaponId];
-            //// Activate the current weapon
-            //fireWeapon.gameObject.SetActive(true);
-            //// Set the fireweapon owner
-            //fireWeapon.SetOwner(this);
         }
 
 

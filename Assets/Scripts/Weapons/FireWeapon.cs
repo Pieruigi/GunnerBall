@@ -73,11 +73,6 @@ namespace Zoca
         [SerializeField]
         AudioSource audioSource;
 
-        //[SerializeField]
-        //int coolerCount = 3;
-
-        //[SerializeField]
-        //int coolerCooldown = 4;
 
         float shootDelay = 0.1f;
 
@@ -97,8 +92,7 @@ namespace Zoca
 
         PlayerController owner;
         Collider ownerCollider;
-        //int activeCoolerCount;
-        //float coolerCooldownElapsed;
+
         float distanceAdjustment;
 
         float actualDistance;
@@ -121,7 +115,6 @@ namespace Zoca
         {
 
             cooldown = 1f / fireRate;
-            //activeCoolerCount = coolerCount;
 
             powerDefault = power;
             fireRateDefault = fireRate;
@@ -278,9 +271,9 @@ namespace Zoca
             //Debug.LogFormat("FireWeapon - Shooting: params.Length:{0}", parameters.Length);
 
 // We can add some fx here
-#if !FX_DISABLED
+
             shootParticle.Play();
-#endif
+
 
             // Audio
             audioSource.Play();

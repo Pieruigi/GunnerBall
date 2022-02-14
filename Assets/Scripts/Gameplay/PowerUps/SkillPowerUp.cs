@@ -32,6 +32,7 @@ namespace Zoca
 
         [SerializeField]
         float duration = 30;
+        
 
         [SerializeField]
         Skill skill = Skill.Speed;
@@ -177,7 +178,10 @@ namespace Zoca
             return true;
         }
 
-
+        public void SetDuration(float duration)
+        {
+            this.duration = duration;
+        }
         #endregion
 
         #region IPowerUp implementation
