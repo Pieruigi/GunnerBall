@@ -45,16 +45,16 @@ namespace Zoca.UI
 
         void HandleOnPowerUpActivated(Skill skill)
         {
-            GameObject o = powerUps.Find(t => t.GetComponent<PowerUpTemplate>().Skill == skill);
-            if (!o)
-            {
-                // Doesn't exist, create it
-                o = GameObject.Instantiate(powerUpTemplate, container);
+            //GameObject o = powerUps.Find(t => t.GetComponent<PowerUpTemplate>().Skill == skill);
+            //if (!o)
+            //{
+            //    // Doesn't exist, create it
+            //    o = GameObject.Instantiate(powerUpTemplate, container);
                 
-            }
+            //}
 
-            // Init template
-            o.GetComponent<PowerUpTemplate>().Init(skill, pum.GetPowerUpTime(skill), pum.GetPowerUpRemainingTime(skill));
+            //// Init template
+            //o.GetComponent<PowerUpTemplate>().Init(skill, pum.GetPowerUpTime(skill), pum.GetPowerUpRemainingTime(skill));
 
         }
 

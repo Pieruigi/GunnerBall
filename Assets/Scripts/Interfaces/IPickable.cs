@@ -8,7 +8,7 @@ namespace Zoca.Interfaces
     {
         void PickUp(GameObject picker);
 
-       
+        bool CanBePicked(GameObject picker);
     }
 
 }

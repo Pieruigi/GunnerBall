@@ -32,6 +32,11 @@ namespace Zoca
             set { maxSpeed = value; float r = maxSpeedDefault / value; acceleration = accelerationDefault / r; }
         }
         float maxSpeedDefault;
+        public float MaxSpeedDefault
+        {
+            get { return maxSpeedDefault; }
+        }
+
 
         //[SerializeField]
         float acceleration = 10f;
@@ -92,13 +97,20 @@ namespace Zoca
             get { return stamina; }
         }
 
-        float staminaDefault;
+        
+        float staminaMax;
+        
         public float StaminaMax
         {
-            get { return staminaDefault; }
-            set { staminaDefault = value; }
+            get { return staminaMax; }
+            set { staminaMax = value; }
         }
 
+        float staminaDefault;
+        public float StaminaDefault
+        {
+            get { return staminaDefault; }
+        }
 
         float staminaRechargeDelay = 2;
         float staminaRechargeSpeed = 30;
@@ -158,8 +170,14 @@ namespace Zoca
         }
         [SerializeField]
         float freezingCooldown = 4;
-
         float currentFreezingCooldown;
+
+        float freezingCooldownDefault;
+        public float FreezingCooldownDefault
+        {
+            get { return freezingCooldownDefault; }
+        }
+
         bool freezed = false;
         DateTime freezedLast;
 
@@ -250,10 +268,12 @@ namespace Zoca
 
             healthDefault = health;
             sprintSpeed = maxSpeed * sprintMultiplier;
-            staminaDefault = stamina;
+            staminaMax = stamina;
+            staminaDefault = staminaMax;
             acceleration = maxSpeed * 7f;
             accelerationDefault = acceleration;
             maxSpeedDefault = maxSpeed;
+            freezingCooldownDefault = freezingCooldown;
 
             animationController = GetComponent<AnimationController>();
 

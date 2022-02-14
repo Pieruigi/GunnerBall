@@ -64,35 +64,35 @@ public class TestPowerUpUI : MonoBehaviour
         fireRateText.text = PlayerController.Local.FireWeapon.FireRate.ToString();
         fireRangeText.text = PlayerController.Local.FireWeapon.FireRange.ToString();
 
-        PowerUpManager pum = PlayerController.Local.GetComponent<PowerUpManager>();
-        if (pum.IsPowerUpActive(Skill.Speed))
-            speedPowerUpText.text = pum.GetPowerUpRemainingTime(Skill.Speed).ToString();
-        else
-            speedPowerUpText.text = "0";
+        //PowerUpManager pum = PlayerController.Local.GetComponent<PowerUpManager>();
+        //if (pum.IsPowerUpActive(Skill.Speed))
+        //    speedPowerUpText.text = pum.GetPowerUpRemainingTime(Skill.Speed).ToString();
+        //else
+        //    speedPowerUpText.text = "0";
 
-        if (pum.IsPowerUpActive(Skill.Stamina))
-            staminaPowerUpText.text = pum.GetPowerUpRemainingTime(Skill.Stamina).ToString();
-        else
-            staminaPowerUpText.text = "0";
+        //if (pum.IsPowerUpActive(Skill.Stamina))
+        //    staminaPowerUpText.text = pum.GetPowerUpRemainingTime(Skill.Stamina).ToString();
+        //else
+        //    staminaPowerUpText.text = "0";
 
-        if (pum.IsPowerUpActive(Skill.Resistance))
-            freezingTimePowerUpText.text = pum.GetPowerUpRemainingTime(Skill.Resistance).ToString();
-        else
-            freezingTimePowerUpText.text = "0";
+        //if (pum.IsPowerUpActive(Skill.Resistance))
+        //    freezingTimePowerUpText.text = pum.GetPowerUpRemainingTime(Skill.Resistance).ToString();
+        //else
+        //    freezingTimePowerUpText.text = "0";
 
-        if (pum.IsPowerUpActive(Skill.FirePower))
-            firePowerPowerUpText.text = pum.GetPowerUpRemainingTime(Skill.FirePower).ToString();
-        else
-            firePowerPowerUpText.text = "0";
+        //if (pum.IsPowerUpActive(Skill.FirePower))
+        //    firePowerPowerUpText.text = pum.GetPowerUpRemainingTime(Skill.FirePower).ToString();
+        //else
+        //    firePowerPowerUpText.text = "0";
 
-        if (pum.IsPowerUpActive(Skill.FireRate))
-            fireRatePowerUpText.text = pum.GetPowerUpRemainingTime(Skill.FireRate).ToString();
-        else
-            fireRatePowerUpText.text = "0";
+        //if (pum.IsPowerUpActive(Skill.FireRate))
+        //    fireRatePowerUpText.text = pum.GetPowerUpRemainingTime(Skill.FireRate).ToString();
+        //else
+        //    fireRatePowerUpText.text = "0";
 
-        if (pum.IsPowerUpActive(Skill.FireRange))
-            fireRangePowerUpText.text = pum.GetPowerUpRemainingTime(Skill.FireRange).ToString();
-        else
-            fireRangePowerUpText.text = "0";
+        //if (pum.IsPowerUpActive(Skill.FireRange))
+        //    fireRangePowerUpText.text = pum.GetPowerUpRemainingTime(Skill.FireRange).ToString();
+        //else
+        //    fireRangePowerUpText.text = "0";
     }
 }

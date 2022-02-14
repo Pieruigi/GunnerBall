@@ -5,17 +5,17 @@ using Zoca.Interfaces;
 
 namespace Zoca
 {
-    public class MultiPowerUp : MonoBehaviour, IPickable
+    public class PickUpTrigger : MonoBehaviour
     {
         [SerializeField]
-        List<PowerUp> powerUps;
+        GameObject target;
 
-        bool picking = false;
+        bool picking = false; // A local flag to avoid the player picks the object twice
+
         // Start is called before the first frame update
         void Start()
         {
             Match.Instance.OnStateChanged += delegate { picking = false; };
-
         }
 
         // Update is called once per frame
@@ -47,30 +47,12 @@ namespace Zoca
                 return;
 
             // It's the local player or the AI 
-            if (CanBePoweredUp(playerController))
+            if (target.GetComponent<IPickable>().CanBePicked(other.gameObject))
             {
                 picking = true;
-                PickableManager.Instance.TryPickUp(gameObject, playerController.photonView.OwnerActorNr);
+                PickableManager.Instance.TryPickUp(target, playerController.photonView.OwnerActorNr);
             }
 
-        }
-
-        bool CanBePoweredUp(PlayerController playerController)
-        {
-            foreach (PowerUp powerUp in powerUps)
-            {
-                if (!playerController.GetComponent<PowerUpManager>().CanBePoweredUp(powerUp))
-                    return false;
-            }
-
-            return true;
-        }
-
-        public void PickUp(GameObject picker)
-        {
-            // Add all the power ups
-            foreach (PowerUp powerUp in powerUps)
-                powerUp.PickUp(picker);
         }
     }
 

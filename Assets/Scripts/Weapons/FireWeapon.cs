@@ -22,8 +22,11 @@ namespace Zoca
             set { power = value; }
         }
 
-        //[SerializeField]
-        //float speed = 60;
+        float powerDefault;
+        public float PowerDefault
+        {
+            get { return powerDefault; }
+        }
 
         //[SerializeField]
         float damage = 10000;
@@ -36,12 +39,24 @@ namespace Zoca
             set { fireRate = value; cooldown = 1f / fireRate; }
         }
 
+        float fireRateDefault;
+        public float FireRateDefault
+        {
+            get { return fireRateDefault; }
+        }
+
         [SerializeField]
         float fireRange = 8.6f;
         public float FireRange
         {
             get { return fireRange; }
             set { fireRange = value; }
+        }
+
+        float fireRangeDefault;
+        public float FireRangeDefault
+        {
+            get { return fireRangeDefault; }
         }
 
         [SerializeField]
@@ -108,6 +123,9 @@ namespace Zoca
             cooldown = 1f / fireRate;
             //activeCoolerCount = coolerCount;
 
+            powerDefault = power;
+            fireRateDefault = fireRate;
+            fireRangeDefault = fireRange;
 
         }
 
