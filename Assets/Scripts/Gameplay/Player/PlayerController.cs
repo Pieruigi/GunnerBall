@@ -688,28 +688,9 @@ namespace Zoca
                 if ((DateTime.UtcNow - freezedLast).TotalSeconds < 1)
                     return;
 
-#if !FREEZE_ON_HIT_BY_OPPONENT
+
                 health = Mathf.Max(0, health - hitDamage);
-#else
-                if (Tag.Ball.Equals(owner.tag))
-                {
-                    health = Mathf.Max(0, health - hitDamage);
-                }
-                else
-                {
-                    // Power down player
-                    foreach(GameObject p in LevelManager.Instance.PowerDownList)
-                    {
-                        // Create power down
-                        GameObject g = Instantiate(p);
-                        SkillPowerUp pDown = g.GetComponent<SkillPowerUp>();
-                        // Set the default player freezing cooldown
-                        pDown.SetDuration(freezingCooldownDefault);
-                        // Activate the powerup
-                        pDown.Activate(gameObject);
-                    }
-                }
-#endif
+
 
                     // If the ball hit the player we let the ball bounce away.
                 if (Tag.Ball.Equals(owner.tag))

@@ -30,10 +30,10 @@ namespace Zoca
         }
 
         [SerializeField]
-        List<GameObject> powerDownList;
-        public IList<GameObject> PowerDownList
+        GameObject barrierPrefab;
+        public GameObject BarrierPrefab
         {
-            get { return powerDownList.AsReadOnly(); }
+            get { return barrierPrefab; }
         }
 
         private void Awake()
