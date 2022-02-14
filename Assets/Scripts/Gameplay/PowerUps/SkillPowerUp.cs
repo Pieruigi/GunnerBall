@@ -159,10 +159,10 @@ namespace Zoca
         #endregion
 
         #region public methods
-        public void ResetTimer()
-        {
-            elapsed = 0;
-        }
+        //public void ResetTimer()
+        //{
+        //    elapsed = 0;
+        //}
         #endregion
 
         #region IPickable implementation
@@ -183,28 +183,27 @@ namespace Zoca
         #region IPowerUp implementation
         public override void Activate(GameObject target)
         {
-            // If this power up already exists don't activate it but update timer to the existing one
+            // If a similar powerup has already been activated then destroy it first
             List<IPowerUp> list = new List<IPowerUp>(target.GetComponent<PowerUpManager>().PowerUpList);
-            // Look for a similar powerup
-            SkillPowerUp powerUp = (SkillPowerUp)list.Find(p => p.GetType() == typeof(SkillPowerUp) && (p as SkillPowerUp).skill == this.skill);
-            if (!powerUp) // Not found
+            // Look for a similar powerup ( means they power the same skill, so the skill and the sign of the buff are the same )
+            // Power down is not the same as the power up
+            SkillPowerUp powerUp = (SkillPowerUp)list.Find(p => p.GetType() == typeof(SkillPowerUp) && (p as SkillPowerUp).skill == this.skill && Mathf.Sign((p as SkillPowerUp).Buff) == Mathf.Sign(this.buff));
+
+            if (powerUp)
             {
-
-                base.Activate(target);
-
-                PlayerController playerController = target.GetComponent<PlayerController>();
-
-                SetSkillValue(skill, GetSkillValue(skill) + (GetDefaultSkillValue(skill) * buff));
-
-                loop = true;
-            }
-            else // Already exists
-            {
-                // Simply reset the timer
-                powerUp.ResetTimer();
                 // Destroy this power up by calling the base method
-                base.Deactivate(target);
+                powerUp.Deactivate(target);
             }
+
+            // Set the new power up
+            base.Activate(target);
+
+            PlayerController playerController = target.GetComponent<PlayerController>();
+
+            SetSkillValue(skill, GetSkillValue(skill) + (GetDefaultSkillValue(skill) * buff));
+
+            loop = true;
+
             
         }
 
@@ -215,6 +214,8 @@ namespace Zoca
 
             base.Deactivate(target);
         }
+
+        
         #endregion
     }
 
