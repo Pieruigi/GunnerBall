@@ -458,18 +458,33 @@ namespace Zoca
                     {
                         //Debug.Log("Update - shooting 2...");
                         object[] parameters;
-                     
-                        // Returns true if the weapon is ready to shoot, otherwise returns false
-                        if (fireWeapon.TryShoot(superShoot, out parameters))
+
+                        if (!superShoot)
                         {
+                            // Returns true if the weapon is ready to shoot, otherwise returns false
+                            if (fireWeapon.TryShoot(out parameters))
+                            {
 
-                            // Call rpc on all the clients, even the local one.
-                            // By calling it via server we can balance lag.
-                            photonView.RPC("RpcShoot", RpcTarget.AllViaServer, parameters as object);
-                            
+                                // Call rpc on all the clients, even the local one.
+                                // By calling it via server we can balance lag.
+                                photonView.RPC("RpcShoot", RpcTarget.AllViaServer, parameters as object);
 
+                            }
                         }
+                        else // Shoot power up
+                        {
+                            // Get the current power up if any
+                            SpecialSkillPowerUp ssp = GetComponent<PowerUpManager>().GetSpecialSkillPowerUp();
+                            if (ssp == null)
+                                return;
+
+                            fireWeapon.TryShootPowerUp(ssp);
+                        }
+
+
                         
+
+
                     }
 
  
@@ -661,6 +676,33 @@ namespace Zoca
             }
         }
 
+        public void ShootPowerUp(bool value)
+        {
+            
+            if(sprinting)
+            {
+                shooting = false;
+                superShoot = false;
+                return;
+            }
+
+            if (value)
+            {
+                shooting = true;
+                superShoot = true;
+            }
+            else
+            {
+                shooting = false;
+                superShoot = true;
+            }
+
+
+
+            
+            
+        }
+
         public void Sprint(bool value)
         {
             sprintInput = value;
@@ -836,38 +878,38 @@ namespace Zoca
 
         public void OnSuperShoot(InputAction.CallbackContext context)
         {
-            return;
-
             if (!photonView.IsMine || (PhotonNetwork.OfflineMode && photonView.Owner != PhotonNetwork.MasterClient))
                 return;
 
-            // Always set the super shoot false
-            superShoot = false;
+            ShootPowerUp(context.performed);
 
-            // You can't shoot if you are sprinting
-            if (sprinting)
-            {
-                shooting = false;
-                return;
-            }
+            //// Always set the super shoot false
+            //superShoot = false;
+
+            //// You can't shoot if you are sprinting
+            //if (sprinting)
+            //{
+            //    shooting = false;
+            //    return;
+            //}
 
 
-            if (context.performed)
-            {
+            //if (context.performed)
+            //{
 
-                if (!shooting)
-                {
-                    shooting = true;
-                    superShoot = true;
-                }
-            }
-            else
-            {
-                if (shooting)
-                {
-                    shooting = false;
-                }
-            }
+            //    if (!shooting)
+            //    {
+            //        shooting = true;
+            //        superShoot = true;
+            //    }
+            //}
+            //else
+            //{
+            //    if (shooting)
+            //    {
+            //        shooting = false;
+            //    }
+            //}
         }
 
       

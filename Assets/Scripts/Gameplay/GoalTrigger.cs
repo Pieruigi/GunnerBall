@@ -57,8 +57,8 @@ namespace Zoca
                 {
                     if(team != (Team)PlayerCustomPropertyUtility.GetLocalPlayerCustomProperty(PlayerCustomPropertyKey.TeamColor))
                     {
-                        PlayerController.Local.FireWeapon.IncreaseSuperShotCharge();
-                        PlayerController.Local.FireWeapon.IncreaseSuperShotCharge();
+                        //PlayerController.Local.FireWeapon.IncreaseSuperShotCharge();
+                        //PlayerController.Local.FireWeapon.IncreaseSuperShotCharge();
                     }
                         
                 }

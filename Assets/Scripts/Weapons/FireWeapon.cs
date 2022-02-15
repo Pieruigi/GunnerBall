@@ -97,19 +97,7 @@ namespace Zoca
 
         float actualDistance;
 
-        float superShotCharge = 0;
-        public float SuperShotCharge
-        {
-            get { return superShotCharge; }
-        }
-        float superShotChargeReady = 5;
-        public float SuperShotChargeReady
-        {
-            get { return superShotChargeReady; }
-        }
-
         
-
 
         private void Awake()
         {
@@ -148,16 +136,7 @@ namespace Zoca
             return cooldownElapsed <= 0;
         }
 
-        public void IncreaseSuperShotCharge()
-        {
-            superShotCharge = Mathf.Clamp(superShotCharge, superShotCharge + 1, superShotChargeReady);
-        }
-
-        public bool IsSuperShotReady()
-        {
-            return !(superShotCharge < superShotChargeReady);
-        }
-
+        
         /// <summary>
         /// Local player only.
         /// Returns true if he can shoot and some values are sent back as params 
@@ -165,7 +144,7 @@ namespace Zoca
         /// </summary>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        public virtual bool TryShoot(bool superShot, out object[] parameters)
+        public virtual bool TryShoot(out object[] parameters)
         {
             //Debug.Log("FireWeapon - TryShoot().");
             parameters = null;
@@ -178,17 +157,6 @@ namespace Zoca
             if (cooldownElapsed > 0)
                 return false;
 
-            // Try super shot
-            if (superShot)
-            {
-                // If not ready don't shoot
-                if (!IsSuperShotReady())
-                    return false;
-                else
-                    superShotCharge = 0;// Uncharge the super shot
-
-            }
-         
             // Ready to shoot
             cooldownElapsed = cooldown;
             //coolerCooldownElapsed = coolerCooldown;
@@ -228,14 +196,7 @@ namespace Zoca
                     parameters[2] = info.normal;
                     parameters[3] = PhotonNetwork.Time;
                     parameters[4] = direction;
-                    parameters[5] = superShot;
-
-                    // If the player is in the enemy goal area then load the super shot
-                    if(!superShot && !owner.IsInGoalArea())
-                    {
-                        //superShotCharge = Mathf.Clamp(superShotCharge, superShotCharge + 1, superShotChargeReady);
-                        IncreaseSuperShotCharge();
-                    }
+                    parameters[5] = false;// superShot; ******************** TO REMOVE
                    
                 }
             }
@@ -244,7 +205,20 @@ namespace Zoca
         }
 
 
+        public bool TryShootPowerUp(SpecialSkillPowerUp powerUp)
+        {
+            if (cooldownElapsed > 0)
+                return false;
 
+            if (!powerUp || !powerUp.CanShoot())
+                return false;
+
+            // At this point we can set the cooldown
+            cooldownElapsed = 0;
+
+            return powerUp.TryShoot();
+
+        }
 
         public void SetOwner(PlayerController owner)
         {

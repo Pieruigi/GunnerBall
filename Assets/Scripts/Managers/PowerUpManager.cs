@@ -64,12 +64,6 @@ namespace Zoca
         }
 
        
-
-      
-
-      
-
-      
        
         #endregion
 
@@ -84,8 +78,16 @@ namespace Zoca
             powerUpList.Remove(powerUp);
         }
 
-  
+        public bool HasSpecialSkillPowerUp()
+        {
+            return powerUpList.Exists(p => p.GetType().IsSubclassOf(typeof(SpecialSkillPowerUp)));
+        }
  
+        public SpecialSkillPowerUp GetSpecialSkillPowerUp()
+        {
+            return (SpecialSkillPowerUp)powerUpList.Find(p => p.GetType().IsSubclassOf(typeof(SpecialSkillPowerUp)));
+        }
+
         #endregion
     }
 

@@ -22,7 +22,7 @@ namespace Zoca
         /// <summary>
         /// Implement this to shoot the powerup
         /// </summary>
-        protected abstract void DoShoot();
+        protected abstract bool DoTryShoot();
         
         #endregion
 
@@ -41,22 +41,25 @@ namespace Zoca
         #endregion
 
         #region public methods
-        public void Shoot()
+        public bool TryShoot()
         {
             // Can't shoot, return
             if (!CanShoot())
-                return;
+                return false;
 
             // Ok, set the cooldown
             currentCooldown = cooldown;
 
+            // Decrease charges
+            chargeCount--;
+
             // Must be implemented
-            DoShoot();
+            return DoTryShoot();
         }
 
         public bool CanShoot()
         {
-            return !(currentCooldown > 0);
+            return !(currentCooldown > 0) && chargeCount > 0;
         }
         #endregion
 

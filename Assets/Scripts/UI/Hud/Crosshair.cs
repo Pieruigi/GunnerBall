@@ -44,7 +44,7 @@ namespace Zoca.UI
 
             CheckLoader();
 
-            CheckSuperShot();
+         
         }
 
         void CheckDot()
@@ -117,12 +117,7 @@ namespace Zoca.UI
             //}
         }
 
-        void CheckSuperShot()
-        {
-
-            superShotImage.fillAmount = localPlayerController.FireWeapon.SuperShotCharge / localPlayerController.FireWeapon.SuperShotChargeReady;
-            
-        }
+       
     }
 
 }

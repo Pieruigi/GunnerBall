@@ -6,9 +6,10 @@ namespace Zoca
 {
     public class BarrierPowerUp : SpecialSkillPowerUp
     {
-        protected override void DoShoot()
+        protected override bool DoTryShoot()
         {
-            throw new System.NotImplementedException();
+            Debug.Log("Shooting barrier");
+            return true;
         }
     }
 
