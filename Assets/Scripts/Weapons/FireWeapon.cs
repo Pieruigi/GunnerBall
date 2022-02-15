@@ -190,13 +190,13 @@ namespace Zoca
 
                 if(hittable != null)
                 {
-                    parameters = new object[6];
+                    parameters = new object[5];
                     parameters[0] = (hittable as MonoBehaviourPun).photonView.ViewID;
                     parameters[1] = info.point;
                     parameters[2] = info.normal;
                     parameters[3] = PhotonNetwork.Time;
                     parameters[4] = direction;
-                    parameters[5] = false;// superShot; ******************** TO REMOVE
+                    //parameters[5] = false;// superShot; ******************** TO REMOVE
                    
                 }
             }
@@ -214,7 +214,7 @@ namespace Zoca
                 return false;
 
             // At this point we can set the cooldown
-            cooldownElapsed = 0;
+            cooldownElapsed = cooldown;
 
             return powerUp.TryShoot();
 
@@ -273,7 +273,7 @@ namespace Zoca
             Vector3 hitNormal = (Vector3)parameters[2];
             double timestamp = (double)parameters[3];
             Vector3 hitDirection = (Vector3)parameters[4];
-            bool superShot = (bool)parameters[5];
+            //bool superShot = (bool)parameters[5];
 
             // Check the time passed
             float lag = (float)(PhotonNetwork.Time - timestamp);
@@ -293,9 +293,8 @@ namespace Zoca
                     if (!Tag.Ball.Equals((hittable as MonoBehaviour).tag))
                         useDamage = true;
 
-                    float mul = superShot ? 2f : 1f;
-
-                    hittable.Hit(owner.gameObject, hitPoint, hitNormal, hitDirection, useDamage ? damage/* * mul*/ : power * mul);
+                   
+                    hittable.Hit(owner.gameObject, hitPoint, hitNormal, hitDirection, useDamage ? damage : power);
                 }
             }
            

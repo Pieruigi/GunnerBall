@@ -43,8 +43,6 @@ namespace Zoca
                 // Dot product
                 if(Vector3.Dot(transform.forward, triggerToBallDirection) > 0)
                 {
-                    
-
                     Match.Instance.Goal(team == Team.Blue ? Team.Red : Team.Blue);
                 }
             }
@@ -57,8 +55,8 @@ namespace Zoca
                 {
                     if(team != (Team)PlayerCustomPropertyUtility.GetLocalPlayerCustomProperty(PlayerCustomPropertyKey.TeamColor))
                     {
-                        //PlayerController.Local.FireWeapon.IncreaseSuperShotCharge();
-                        //PlayerController.Local.FireWeapon.IncreaseSuperShotCharge();
+                        // If you want to apply some effect or power up to the player who scores
+                        // and its team ( or to power down the opponent team ) add code here.
                     }
                         
                 }
