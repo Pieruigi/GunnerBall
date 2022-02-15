@@ -1,41 +1,56 @@
+using ExitGames.Client.Photon;
+using Photon.Pun;
+using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Zoca
 {
-    public class LevelManager : MonoBehaviour
+    public class LevelManager : MonoBehaviour, IOnEventCallback
     {
+        #region constants
+        public const string RoomObjectsResourceFolder = "GameAssets/RoomObjects";
+        #endregion
+
+        #region properties
         public static LevelManager Instance { get; private set; }
 
-        [SerializeField]
-        List<Transform> blueTeamSpawnPoints;
         public IList<Transform> BlueTeamSpawnPoints
         {
             get { return blueTeamSpawnPoints.AsReadOnly(); }
         }
 
-        [SerializeField]
-        List<Transform> redTeamSpawnPoints;
         public IList<Transform> RedTeamSpawnPoints
         {
             get { return redTeamSpawnPoints.AsReadOnly(); }
         }
 
-        [SerializeField]
-        Transform ballSpawnPoint;
         public Transform BallSpawnPoint
         {
             get { return ballSpawnPoint; }
         }
+        #endregion
+
+        #region private fields
+        [Header("Main Section")]
+        [SerializeField]
+        List<Transform> blueTeamSpawnPoints;
+        
 
         [SerializeField]
-        GameObject barrierPrefab;
-        public GameObject BarrierPrefab
-        {
-            get { return barrierPrefab; }
-        }
+        List<Transform> redTeamSpawnPoints;
+        
 
+        [SerializeField]
+        Transform ballSpawnPoint;
+
+        [Header("Networked Room Objects Section")]
+        [SerializeField]
+        GameObject barrierPrefab;
+        #endregion
+
+        #region private methods
         private void Awake()
         {
             if (!Instance)
@@ -61,7 +76,57 @@ namespace Zoca
 
         }
 
+        private void OnEnable()
+        {
+            PhotonNetwork.AddCallbackTarget(this);
+        }
+
+        private void OnDisable()
+        {
+            PhotonNetwork.RemoveCallbackTarget(this);
+        }
+
+        void SpawnNetworkedRoomObject(string prefabName, Vector3 position, Quaternion rotation)
+        {
+            object[] content = new object[] { prefabName, position, rotation };
+            RaiseEventOptions options = new RaiseEventOptions { Receivers = ReceiverGroup.MasterClient };
+            PhotonNetwork.RaiseEvent(PhotonEvent.NetworkedRoomObjectSpawn, content, options, SendOptions.SendReliable);
+        }
+
+        #endregion
+
+        #region photon event callback
+        public void OnEvent(EventData photonEvent)
+        {
+            switch (photonEvent.Code)
+            {
+                case PhotonEvent.NetworkedRoomObjectSpawn:
+
+                    // Only the master client can spawn networked room objects
+                    if (PhotonNetwork.IsMasterClient)
+                    {
+                        // Get the index of the object to be spawned
+                        object[] data = (object[])photonEvent.CustomData;
+                        string prefabName = (string)data[0];
+                        Vector3 position = (Vector3)data[1];
+                        Quaternion rotation = (Quaternion)data[2];
+                        //PhotonNetwork instantiate
+                        string path = System.IO.Path.Combine(RoomObjectsResourceFolder, prefabName);
+                        PhotonNetwork.Instantiate(path, position, rotation);
+                    }
+                    break;
+            }
+        }
+        #endregion
+
+        #region public methods
+        public void SpawnBarrier(Vector3 position, Quaternion rotation)
+        {
+            SpawnNetworkedRoomObject(barrierPrefab.name, position, rotation);
+        }
+
         
+        #endregion
     }
 
 }

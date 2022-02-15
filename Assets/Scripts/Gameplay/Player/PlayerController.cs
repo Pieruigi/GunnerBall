@@ -679,10 +679,10 @@ namespace Zoca
         public void ShootPowerUp(bool value)
         {
             
-            if(sprinting)
+            if (sprinting)
             {
                 shooting = false;
-                superShoot = false;
+               
                 return;
             }
 
@@ -694,7 +694,7 @@ namespace Zoca
             else
             {
                 shooting = false;
-                superShoot = true;
+                superShoot = false;
             }
 
 

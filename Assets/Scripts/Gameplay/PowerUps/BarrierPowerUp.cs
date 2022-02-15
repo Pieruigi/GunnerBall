@@ -9,6 +9,7 @@ namespace Zoca
         protected override bool DoTryShoot()
         {
             Debug.Log("Shooting barrier");
+            LevelManager.Instance.SpawnBarrier(Vector3.zero, Quaternion.identity);
             return true;
         }
     }
