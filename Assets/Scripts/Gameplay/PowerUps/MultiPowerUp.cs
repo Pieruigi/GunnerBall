@@ -1,16 +1,23 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using Zoca.Interfaces;
 
 namespace Zoca
 {
     public class MultiPowerUp : MonoBehaviour, IPickable
     {
+        public event UnityAction<IPickable, GameObject> OnPicked;
+
+       
         [SerializeField]
         List<SkillPowerUp> powerUps;
 
-      
+        
+
+
         // Start is called before the first frame update
         void Start()
         {
@@ -23,7 +30,7 @@ namespace Zoca
 
         }
 
-  
+        
         bool CanBePoweredUp(PlayerController playerController)
         {
             foreach (IPowerUp powerUp in powerUps)
@@ -37,9 +44,15 @@ namespace Zoca
 
         public void PickUp(GameObject picker)
         {
-            // Add all the power ups
-            foreach (IPowerUp powerUp in powerUps)
-                powerUp.Activate(picker);
+            if(PlayerController.LocalPlayer == picker || PhotonNetwork.OfflineMode)
+            {
+                // Add all the power ups
+                foreach (IPowerUp powerUp in powerUps)
+                    powerUp.Activate(picker);
+            }
+
+            OnPicked?.Invoke(this, picker);
+
         }
 
         public bool CanBePicked(GameObject picker)

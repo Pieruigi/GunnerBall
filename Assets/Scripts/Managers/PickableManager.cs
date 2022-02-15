@@ -427,6 +427,8 @@ namespace Zoca
                             // picking up the spawnable object.
                             // We could find the player who picked up the spawnable object and nay apply
                             // some effect.
+                            PlayerController picker = new List<PlayerController>(GameObject.FindObjectsOfType<PlayerController>()).Find(p => p.photonView.OwnerActorNr == propValue);
+                            spawnPoints[spawnPointId].GetComponentInChildren<IPickable>().PickUp(picker.gameObject);
                         }
 
                         // Destroy the object anyway, no matter who is picking the object.

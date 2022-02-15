@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using Zoca.Interfaces;
 
 namespace Zoca
@@ -9,6 +10,8 @@ namespace Zoca
 
     public class SkillPowerUp : PowerUp, IPickable
     {
+        public event UnityAction<IPickable, GameObject> OnPicked;
+
         #region properties
         public float Buff
         {

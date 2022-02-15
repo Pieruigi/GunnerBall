@@ -1,12 +1,16 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using Zoca.Interfaces;
 
 namespace Zoca
 {
     public abstract class SpecialSkillPowerUp : PowerUp, IPickable
     {
+        public event UnityAction<IPickable, GameObject> OnPicked;
+
         #region private fields
         [SerializeField]
         int chargeCount; // How many times you can use this powerup before it expires
@@ -68,15 +72,22 @@ namespace Zoca
 
         public void PickUp(GameObject picker)
         {
-            // Remove all the children
-            int count = transform.childCount;
-            for(int i=0; i<count; i++)
+            OnPicked?.Invoke(this, picker);
+
+            if (PlayerController.LocalPlayer == picker || PhotonNetwork.OfflineMode)
             {
-                Destroy(transform.GetChild(0).gameObject);
+                // Remove all the children
+                int count = transform.childCount;
+                for (int i = 0; i < count; i++)
+                {
+                    Destroy(transform.GetChild(0).gameObject);
+                }
+
+                // Activate the power up
+                Activate(picker);
             }
 
-            // Activate the power up
-            Activate(picker);
+            
         }
 
         public bool CanBePicked(GameObject picker)
