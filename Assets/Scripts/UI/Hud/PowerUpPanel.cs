@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using Zoca.Interfaces;
 
 namespace Zoca.UI
 {
@@ -8,22 +10,27 @@ namespace Zoca.UI
     {
         #region private fields
         [SerializeField]
-        GameObject powerUpTemplate;
+        Image characterPowerUpImage;
+
+        [SerializeField]
+        Image weaponPowerUpImage;
 
         [SerializeField]
         Transform container;
 
         PowerUpManager pum;
         List<GameObject> powerUps; // List of templates
+        Image characterImageCharge;
+        Image weaponImageCharge;
+        SkillPowerUp characterPowerUp;
+        SkillPowerUp weaponPowerUp;
+
         #endregion
 
         #region private methods
         private void Awake()
         {
-            // Move the template out of container
-            powerUpTemplate.transform.parent = container.parent;
-            // Deactivate the template
-            powerUpTemplate.SetActive(false);
+
         }
 
         // Start is called before the first frame update
@@ -33,34 +40,70 @@ namespace Zoca.UI
             pum = PlayerController.Local.GetComponent<PowerUpManager>();
 
             // Set handles
-            //pum.OnPowerUpActivated += HandleOnPowerUpActivated;
-            //pum.OnPowerUpDeactivated += HandleOnPowerUpDeactivated;
+            pum.OnPowerUpActivated += HandleOnPowerUpActivated;
+            pum.OnPowerUpDeactivated += HandleOnPowerUpDeactivated;
+
+            // Set the charge images
+            characterImageCharge = characterPowerUpImage.transform.GetChild(0).GetComponent<Image>();
+            weaponImageCharge = weaponPowerUpImage.transform.GetChild(0).GetComponent<Image>();
+            characterImageCharge.fillAmount = 1;
+            weaponImageCharge.fillAmount = 1;
+
         }
 
         // Update is called once per frame
         void Update()
         {
+            if (!characterPowerUp && !weaponPowerUp)
+                return;
+            
+            if(characterPowerUp != null)
+            {
+                characterImageCharge.fillAmount = 1 - characterPowerUp.RemainingTime / characterPowerUp.Duration;
+            }
 
+            if (weaponPowerUp != null)
+            {
+                weaponImageCharge.fillAmount = 1 - weaponPowerUp.RemainingTime / weaponPowerUp.Duration;
+            }
         }
 
-        void HandleOnPowerUpActivated(Skill skill)
+        void HandleOnPowerUpActivated(IPowerUp powerUp)
         {
-            //GameObject o = powerUps.Find(t => t.GetComponent<PowerUpTemplate>().Skill == skill);
-            //if (!o)
-            //{
-            //    // Doesn't exist, create it
-            //    o = GameObject.Instantiate(powerUpTemplate, container);
+            Debug.Log("PowerUpActivated:" + powerUp);
+
+            if (powerUp.GetType() == typeof(SkillPowerUp))
+            {
+                Debug.Log("PowerUpActivated - is subclass:" + powerUp);
+                // We only take into account speed and firePower
+                switch ((powerUp as SkillPowerUp).Skill)
+                {
+                    case Skill.Speed:
+                        // Reset character icon timer
+                        characterImageCharge.fillAmount = 0;
+                        characterPowerUp = powerUp as SkillPowerUp;
+                        break;
+                    case Skill.FirePower:
+                        // Reset character icon timer
+                        weaponImageCharge.fillAmount = 0;
+                        weaponPowerUp = powerUp as SkillPowerUp;
+                        break;
+                }
                 
-            //}
-
-            //// Init template
-            //o.GetComponent<PowerUpTemplate>().Init(skill, pum.GetPowerUpTime(skill), pum.GetPowerUpRemainingTime(skill));
+            }
 
         }
 
-        void HandleOnPowerUpDeactivated(Skill skill)
+        void HandleOnPowerUpDeactivated(IPowerUp powerUp)
         {
+            if (!powerUp.GetType().IsSubclassOf(typeof(SkillPowerUp)))
+                return;
 
+            if (powerUp as SkillPowerUp == characterPowerUp)
+                characterPowerUp = null;
+
+            if (powerUp as SkillPowerUp == weaponPowerUp)
+                weaponPowerUp = null;
         }
 
         

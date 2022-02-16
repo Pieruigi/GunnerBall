@@ -11,8 +11,8 @@ namespace Zoca
     public class PowerUpManager : MonoBehaviour
     {
         #region events
-        public UnityAction<Skill> OnPowerUpActivated;
-        public UnityAction<Skill> OnPowerUpDeactivated;
+        public UnityAction<IPowerUp> OnPowerUpActivated;
+        public UnityAction<IPowerUp> OnPowerUpDeactivated;
         #endregion
 
         #region internal classes
@@ -71,11 +71,15 @@ namespace Zoca
         public void Add(IPowerUp powerUp)
         {
             powerUpList.Add(powerUp);
+
+            OnPowerUpActivated?.Invoke(powerUp);
         }
 
         public void Remove(IPowerUp powerUp)
         {
             powerUpList.Remove(powerUp);
+
+            OnPowerUpDeactivated?.Invoke(powerUp);
         }
 
         public bool HasSpecialSkillPowerUp()

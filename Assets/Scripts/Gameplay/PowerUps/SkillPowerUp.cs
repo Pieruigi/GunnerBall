@@ -27,6 +27,16 @@ namespace Zoca
         {
             get { return skill; }
         }
+
+        public float Duration
+        {
+            get { return duration; }
+        }
+
+        public float RemainingTime
+        {
+            get { return Mathf.Max(0, duration - elapsed); }
+        }
         #endregion
 
         #region private fields
