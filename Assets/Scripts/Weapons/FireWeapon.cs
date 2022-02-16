@@ -32,7 +32,7 @@ namespace Zoca
         float damage = 10000;
 
         [SerializeField]
-        float fireRate = 0.5f;
+        float fireRate = 0.2f;
         public float FireRate
         {
             get { return fireRate; }
@@ -88,8 +88,8 @@ namespace Zoca
             get { return cooldownElapsed; }
         }
 
-       
-
+        float failedCooldown = 0.5f;
+        
         PlayerController owner;
         Collider ownerCollider;
 
@@ -213,10 +213,20 @@ namespace Zoca
             if (!powerUp || !powerUp.CanShoot())
                 return false;
 
-            // At this point we can set the cooldown
-            cooldownElapsed = cooldown;
+            
+            bool ret = powerUp.TryShoot();
 
-            return powerUp.TryShoot();
+            if (!ret)
+            {
+                //if (!(cooldownElapsed > 0))
+                //    cooldownElapsed = failedCooldown;
+            }
+            else
+            {
+                cooldownElapsed = cooldown;
+            }
+
+            return ret;
 
         }
 

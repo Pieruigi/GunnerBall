@@ -14,31 +14,18 @@ namespace Zoca
 
             // Cast a ray from the camera
             Ray ray = new Ray(playerController.PlayerCamera.transform.position, playerController.PlayerCamera.transform.forward);
-            int mask = LayerMask.GetMask(new string[] { Layer.Ground, Layer.Wall });
+            int mask = LayerMask.GetMask(new string[] { Layer.Ground });
             RaycastHit info;
             if(Physics.Raycast(ray, out info, 1000, mask))
             {
-                
-                if(info.transform.gameObject.layer == LayerMask.NameToLayer(Layer.Wall))
-                {
-                    // We hit the wall, so we must check for the ground to create the barrier
-                    ray = new Ray(info.point, Vector3.down);
-                    mask = LayerMask.GetMask(new string[] { Layer.Ground });
-                    if(Physics.Raycast(ray, out info, 1000, mask))
-                    {
-                        LevelManager.Instance.SpawnBarrier(info.point, Target.transform.rotation);
-                    }
-                }
-                else
-                {
-                    LevelManager.Instance.SpawnBarrier(info.point, Target.transform.rotation);
-                }
-
+                // Create the barrier
+                LevelManager.Instance.SpawnBarrier(info.point, Target.transform.rotation);
+                return true;
             }
-
             
+            // No ground hit, no barrier
+            return false;
             
-            return true;
         }
     }
 

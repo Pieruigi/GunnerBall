@@ -51,14 +51,22 @@ namespace Zoca
             if (!CanShoot())
                 return false;
 
-            // Ok, set the cooldown
-            currentCooldown = cooldown;
-
-            // Decrease charges
-            chargeCount--;
+            
 
             // Must be implemented
-            return DoTryShoot();
+            bool shot = DoTryShoot();
+
+            if (shot)
+            {
+                // Ok, set the cooldown
+                currentCooldown = cooldown;
+
+                // Decrease charges
+                chargeCount--;
+            }
+           
+
+            return shot;
         }
 
         public bool CanShoot()
