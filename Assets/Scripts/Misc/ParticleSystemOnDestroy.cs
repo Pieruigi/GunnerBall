@@ -29,8 +29,8 @@ namespace Zoca
             if (!started)
                 return;
 
-            //if (!GetComponent<ParticleSystem>().isPlaying)
-            //    Destroy(gameObject);
+            if (!GetComponent<ParticleSystem>().isPlaying)
+                Destroy(gameObject, 5);
         }
 
         void HandleOnPicked(IPickable pickable, GameObject picker)
