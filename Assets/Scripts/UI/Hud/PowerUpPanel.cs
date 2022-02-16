@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -82,11 +83,13 @@ namespace Zoca.UI
                         // Reset character icon timer
                         characterImageCharge.fillAmount = 0;
                         characterPowerUp = powerUp as SkillPowerUp;
+                        StartCoroutine(PlaySkillPowerUpIn(characterPowerUp));
                         break;
                     case Skill.FirePower:
                         // Reset character icon timer
                         weaponImageCharge.fillAmount = 0;
                         weaponPowerUp = powerUp as SkillPowerUp;
+                        StartCoroutine(PlaySkillPowerUpIn(weaponPowerUp));
                         break;
                 }
                 
@@ -100,13 +103,56 @@ namespace Zoca.UI
                 return;
 
             if (powerUp as SkillPowerUp == characterPowerUp)
+            {
                 characterPowerUp = null;
+                StartCoroutine(PlaySkillPowerUpOut(characterPowerUp));
+            }
+                
 
             if (powerUp as SkillPowerUp == weaponPowerUp)
+            {
                 weaponPowerUp = null;
+                StartCoroutine(PlaySkillPowerUpOut(weaponPowerUp));
+            }
+                
         }
 
-        
+       
+       
+        IEnumerator PlaySkillPowerUpIn(SkillPowerUp powerUp)
+        {
+            yield return new WaitForEndOfFrame();
+            if (!powerUp)
+                yield break;
+            if (powerUp == characterPowerUp)
+            {
+                characterPowerUpImage.transform.DOShakeScale(1);
+            }
+            else
+            {
+                weaponPowerUpImage.transform.DOShakeScale(1);
+            }
+            
+        }
+
+        IEnumerator PlaySkillPowerUpOut(SkillPowerUp powerUp)
+        {
+            yield return new WaitForEndOfFrame();
+
+            if (powerUp)
+                yield break;
+
+            if (powerUp == characterPowerUp)
+            {
+                characterPowerUpImage.transform.DOShakeScale(1);
+            }
+            else
+            {
+                weaponPowerUpImage.transform.DOShakeScale(1);
+            }
+
+        }
+
         #endregion
     }
 
