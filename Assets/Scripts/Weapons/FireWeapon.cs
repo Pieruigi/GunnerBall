@@ -213,13 +213,12 @@ namespace Zoca
             if (!powerUp || !powerUp.CanShoot())
                 return false;
 
-            
             bool ret = powerUp.TryShoot();
 
             if (!ret)
             {
-                //if (!(cooldownElapsed > 0))
-                //    cooldownElapsed = failedCooldown;
+                if (!(cooldownElapsed > 0))
+                    cooldownElapsed = failedCooldown;
             }
             else
             {
@@ -245,9 +244,17 @@ namespace Zoca
             StartCoroutine(ShootDelayed(parameters));
         }
 
+        public void ShootPowerUp(object[] parameters)
+        {
+            shootParticle.Play();
+
+
+            // Audio
+            audioSource.Play();
+        }
 
 #region private
-
+      
 
 
         IEnumerator ShootDelayed(object[] parameters)

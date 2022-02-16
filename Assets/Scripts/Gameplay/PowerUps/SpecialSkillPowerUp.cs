@@ -47,11 +47,11 @@ namespace Zoca
         #region public methods
         public bool TryShoot()
         {
+           
             // Can't shoot, return
             if (!CanShoot())
                 return false;
 
-            
 
             // Must be implemented
             bool shot = DoTryShoot();

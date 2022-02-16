@@ -457,7 +457,7 @@ namespace Zoca
                     if (!startPaused && !freezed && !goalPaused)
                     {
                         //Debug.Log("Update - shooting 2...");
-                        object[] parameters;
+                        object[] parameters = null;
 
                         if (!superShoot)
                         {
@@ -478,7 +478,10 @@ namespace Zoca
                             if (ssp == null)
                                 return;
 
-                            fireWeapon.TryShootPowerUp(ssp);
+                            if(fireWeapon.TryShootPowerUp(ssp))
+                            {
+                                photonView.RPC("RpcShootPowerUp", RpcTarget.AllViaServer, parameters as object);
+                            }
                         }
 
 
@@ -1011,9 +1014,17 @@ namespace Zoca
             fireWeapon.Shoot(parameters);
         }
 
-        
+        [PunRPC]
+        void RpcShootPowerUp(object[] parameters, PhotonMessageInfo info)
+        {
+            Debug.Log("ShootPowerUp......");
+            animationController.AnimateShoot(1f);
 
-#endregion
+            fireWeapon.ShootPowerUp(parameters);
+        }
+
+
+        #endregion
 
     }
 

@@ -8,6 +8,7 @@ namespace Zoca
     {
         protected override bool DoTryShoot()
         {
+            
             Debug.Log("Shooting barrier");
             // Get the owner player controller
             PlayerController playerController = Target.GetComponent<PlayerController>();
