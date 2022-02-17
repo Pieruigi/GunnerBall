@@ -81,7 +81,9 @@ namespace Zoca
                 // Decrease charges
                 chargeCount--;
             }
-           
+
+            if (chargeCount == 0)
+                Deactivate(Target);
 
             return shot;
         }

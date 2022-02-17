@@ -49,7 +49,8 @@ namespace Zoca
     {
         public const byte StateChanged = 199;
         public const byte Synchronize = 198;
-        public const byte NetworkedRoomObjectSpawn = 197;
+        public const byte SpawnBarrier = 197;
+        public const byte SpawnElectricGrenade = 196;
     }
 
     

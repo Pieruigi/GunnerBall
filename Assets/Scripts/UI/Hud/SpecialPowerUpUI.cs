@@ -1,6 +1,7 @@
 using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Zoca.Collections;
@@ -20,8 +21,12 @@ namespace Zoca.UI
         [SerializeField]
         Image emptyImage;
 
+        [SerializeField]
+        TMP_Text chargeCount; 
+
         SpecialSkillPowerUp powerUp;
         List<PowerUpInfo> infoList;
+        Color emptyColorDefault;
         #endregion
 
         #region private methods
@@ -29,7 +34,8 @@ namespace Zoca.UI
         {
             // Set images 
             // Show the empty image
-            Color c = emptyImage.color;
+            emptyColorDefault = emptyImage.color;
+            Color c = emptyColorDefault;
             c.a = 1;
             emptyImage.color = c;
             // Hide the recharge image
@@ -37,6 +43,9 @@ namespace Zoca.UI
 
             // Load powerup info resources
             infoList = new List<PowerUpInfo>(Resources.LoadAll<PowerUpInfo>(PowerUpInfo.CollectionFolder));
+
+            // Hide charge count text
+            chargeCount.text = "";
         }
 
         // Start is called before the first frame update
@@ -56,6 +65,8 @@ namespace Zoca.UI
                 return;
 
             rechargeImage.fillAmount = powerUp.CooldownLeft / powerUp.Cooldown;
+
+            chargeCount.text = string.Format("x{0}", powerUp.LeftCharges);
         }
 
         IEnumerator PlayPowerInEffect()
@@ -74,7 +85,9 @@ namespace Zoca.UI
             // If the empty image is visible set it invisible
             if(emptyImage.color.a != 0)
             {
-                emptyImage.DOColor(new Color(1, 1, 1, 0), 1f);
+                Color c = emptyColorDefault;
+                c.a = 0;
+                emptyImage.DOColor(c, 1f);
             }
 
             // Shake the base image
@@ -89,7 +102,12 @@ namespace Zoca.UI
                 yield break;
 
             // Reset empty image
-            emptyImage.DOColor(new Color(1, 1, 1, 1), 1f);
+            Color c = emptyColorDefault;
+            c.a = 1;
+            emptyImage.DOColor(c, 1f);
+
+            // Hide charge count text
+            chargeCount.text = "";
 
             // Shake the base image
             yield return powerUpImage.transform.DOShakeScale(1);

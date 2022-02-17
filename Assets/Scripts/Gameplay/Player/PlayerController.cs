@@ -511,9 +511,9 @@ namespace Zoca
                 {
                     if (health == 0)
                     {
-                        currentFreezingCooldown = freezingCooldown;
-                        freezed = true;
-                
+                        //currentFreezingCooldown = freezingCooldown;
+                        //freezed = true;
+                        SetFreezed();
                     }
                 }
             }
@@ -787,6 +787,12 @@ namespace Zoca
             }
         }
 
+        public void SetFreezed()
+        {
+            currentFreezingCooldown = freezingCooldown;
+            freezed = true;
+        }
+
 #region input_system_callbacks
         public void OnMove(InputAction.CallbackContext context)
         {
@@ -926,7 +932,7 @@ namespace Zoca
                 OnPaused?.Invoke();
         }
 
-       
+        
 
 
 #endregion

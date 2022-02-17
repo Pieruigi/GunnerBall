@@ -45,9 +45,12 @@ namespace Zoca
         [SerializeField]
         Transform ballSpawnPoint;
 
-        [Header("Networked Room Objects Section")]
+        [Header("Room Objects Section")]
         [SerializeField]
         GameObject barrierPrefab;
+
+        [SerializeField]
+        GameObject electricGrenadePrefab;
         #endregion
 
         #region private methods
@@ -86,11 +89,10 @@ namespace Zoca
             PhotonNetwork.RemoveCallbackTarget(this);
         }
 
-        void SpawnNetworkedRoomObject(string prefabName, Vector3 position, Quaternion rotation)
+        void SpawnNetworkedRoomObject(object[] content)
         {
-            object[] content = new object[] { prefabName, position, rotation };
             RaiseEventOptions options = new RaiseEventOptions { Receivers = ReceiverGroup.MasterClient };
-            PhotonNetwork.RaiseEvent(PhotonEvent.NetworkedRoomObjectSpawn, content, options, SendOptions.SendReliable);
+            PhotonNetwork.RaiseEvent(PhotonEvent.SpawnBarrier, content, options, SendOptions.SendReliable);
         }
 
         #endregion
@@ -100,7 +102,7 @@ namespace Zoca
         {
             switch (photonEvent.Code)
             {
-                case PhotonEvent.NetworkedRoomObjectSpawn:
+                case PhotonEvent.SpawnBarrier:
 
                     // Only the master client can spawn networked room objects
                     if (PhotonNetwork.IsMasterClient)
@@ -115,6 +117,21 @@ namespace Zoca
                         PhotonNetwork.Instantiate(path, position, rotation);
                     }
                     break;
+                case PhotonEvent.SpawnElectricGrenade:
+                    if (PhotonNetwork.IsMasterClient)
+                    {
+                        // Get the index of the object to be spawned
+                        object[] data = (object[])photonEvent.CustomData;
+                        string prefabName = (string)data[0];
+                        Vector3 position = (Vector3)data[1];
+                        Quaternion rotation = (Quaternion)data[2];
+                        byte team = (byte)data[3];
+                        //PhotonNetwork instantiate
+                        string path = System.IO.Path.Combine(RoomObjectsResourceFolder, prefabName);
+                        GameObject g = PhotonNetwork.Instantiate(path, position, rotation);
+                        g.GetComponent<ElectricGrenade>().SetTargetTeam((int)team);
+                    }
+                    break;
             }
         }
         #endregion
@@ -122,10 +139,15 @@ namespace Zoca
         #region public methods
         public void SpawnBarrier(Vector3 position, Quaternion rotation)
         {
-            SpawnNetworkedRoomObject(barrierPrefab.name, position, rotation);
+            object[] content = new object[] { barrierPrefab.name, position, rotation };
+            SpawnNetworkedRoomObject(content);
         }
 
-        
+        public void SpawnElectricGrenade(Vector3 position, Quaternion rotation, int targetTeam)
+        {
+            object[] content = new object[] { electricGrenadePrefab.name, position, rotation, (byte)targetTeam };
+            SpawnNetworkedRoomObject(content);
+        }
         #endregion
     }
 
