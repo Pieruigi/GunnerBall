@@ -12,6 +12,18 @@ ModelImporter:
   - first:
       74: 7578287938853143621
     second: Man|shot
+  - first:
+      74: -1458426796301913015
+    second: idle_
+  - first:
+      74: -7252065212234289490
+    second: electrocuted
+  - first:
+      74: 5232413347242836390
+    second: run_
+  - first:
+      74: -7513944936651426453
+    second: shot
   externalObjects:
   - first:
       type: UnityEngine:Material
@@ -47,7 +59,10 @@ ModelImporter:
     rigImportErrors: 
     rigImportWarnings: 
     animationImportErrors: 
-    animationImportWarnings: 
+    animationImportWarnings: "\nClip 'run_' has import animation warnings that might
+      lower retargeting quality:\nNote: Activate translation DOF on avatar to improve
+      retargeting quality.\n\t'mixamorig:LeftUpLeg' has scale animation that will
+      be discarded.\n"
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
