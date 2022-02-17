@@ -36,7 +36,18 @@ namespace Zoca
         float cooldown;
         float currentCooldown = 0;
 
-       
+        [SerializeField]
+        GameObject baseParticle;
+
+        [SerializeField]
+        GameObject trigger;
+
+        [SerializeField]
+        GameObject mesh;
+
+        [SerializeField]
+        GameObject endParticle;
+
         #endregion
 
         #region abstract methods
@@ -101,14 +112,23 @@ namespace Zoca
         {
             OnPicked?.Invoke(this, picker);
 
+            
+
             if (PlayerController.LocalPlayer == picker || PhotonNetwork.OfflineMode)
             {
-                // Remove all the children
-                int count = transform.childCount;
-                for (int i = 0; i < count; i++)
-                {
-                    Destroy(transform.GetChild(0).gameObject);
-                }
+                //// Remove all the children
+                //int count = transform.childCount;
+                //for (int i = 0; i < count; i++)
+                //{
+                //    Destroy(transform.GetChild(0).gameObject);
+                //}
+                endParticle.transform.parent = null;
+                endParticle.GetComponent<ParticleSystem>().Play();
+                Destroy(endParticle, 10);
+                Destroy(baseParticle);
+                Destroy(trigger);
+                Destroy(mesh);
+
 
                 // Activate the power up
                 Activate(picker);

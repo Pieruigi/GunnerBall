@@ -109,9 +109,9 @@ namespace Zoca
                     //{
                         // Get the index of the object to be spawned
                         object[] data = (object[])photonEvent.CustomData;
-                        string prefabName = (string)data[0];
-                        Vector3 position = (Vector3)data[1];
-                        Quaternion rotation = (Quaternion)data[2];
+                        //string prefabName = (string)data[0];
+                        Vector3 position = (Vector3)data[0];
+                        Quaternion rotation = (Quaternion)data[1];
                         //PhotonNetwork instantiate
                         //string path = System.IO.Path.Combine(RoomObjectsResourceFolder, prefabName);
                         Instantiate(barrierPrefab, position, rotation);
@@ -122,10 +122,10 @@ namespace Zoca
                     //{
                         // Get the index of the object to be spawned
                         data = (object[])photonEvent.CustomData;
-                        prefabName = (string)data[0];
-                        position = (Vector3)data[1];
-                        rotation = (Quaternion)data[2];
-                        byte team = (byte)data[3];
+                        //prefabName = (string)data[0];
+                        position = (Vector3)data[0];
+                        rotation = (Quaternion)data[1];
+                        byte team = (byte)data[2];
                         //PhotonNetwork instantiate
                         //path = System.IO.Path.Combine(RoomObjectsResourceFolder, prefabName);
                         GameObject g = Instantiate(electricGrenadePrefab, position, rotation);
@@ -139,14 +139,18 @@ namespace Zoca
         #region public methods
         public void SpawnBarrier(Vector3 position, Quaternion rotation)
         {
-            object[] content = new object[] { barrierPrefab.name, position, rotation };
-            SpawnNetworkedRoomObject(content);
+            object[] content = new object[] { position, rotation };
+            RaiseEventOptions options = new RaiseEventOptions { Receivers = ReceiverGroup.All };
+            PhotonNetwork.RaiseEvent(PhotonEvent.SpawnBarrier, content, options, SendOptions.SendReliable);
+            //SpawnNetworkedRoomObject(content);
         }
 
         public void SpawnElectricGrenade(Vector3 position, Quaternion rotation, int targetTeam)
         {
-            object[] content = new object[] { electricGrenadePrefab.name, position, rotation, (byte)targetTeam };
-            SpawnNetworkedRoomObject(content);
+            object[] content = new object[] { position, rotation, (byte)targetTeam };
+            RaiseEventOptions options = new RaiseEventOptions { Receivers = ReceiverGroup.All };
+            PhotonNetwork.RaiseEvent(PhotonEvent.SpawnElectricGrenade, content, options, SendOptions.SendReliable);
+            //SpawnNetworkedRoomObject(content);
         }
         #endregion
     }
