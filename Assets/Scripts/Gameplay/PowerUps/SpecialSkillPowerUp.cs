@@ -11,6 +11,23 @@ namespace Zoca
     {
         public event UnityAction<IPickable, GameObject> OnPicked;
 
+        #region properties
+        public int LeftCharges
+        {
+            get { return chargeCount; }
+        }
+
+        public float CooldownLeft
+        {
+            get { return Mathf.Max(0, currentCooldown); }
+        }
+
+        public float Cooldown
+        {
+            get { return cooldown; }
+        }
+        #endregion
+
         #region private fields
         [SerializeField]
         int chargeCount; // How many times you can use this powerup before it expires

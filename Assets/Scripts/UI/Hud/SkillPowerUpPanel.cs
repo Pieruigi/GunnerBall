@@ -7,7 +7,7 @@ using Zoca.Interfaces;
 
 namespace Zoca.UI
 {
-    public class PowerUpPanel : MonoBehaviour
+    public class SkillPowerUpPanel : MonoBehaviour
     {
         #region private fields
         [SerializeField]
@@ -16,11 +16,7 @@ namespace Zoca.UI
         [SerializeField]
         Image weaponPowerUpImage;
 
-        [SerializeField]
-        Transform container;
-
         PowerUpManager pum;
-        List<GameObject> powerUps; // List of templates
         Image characterImageCharge;
         Image weaponImageCharge;
         SkillPowerUp characterPowerUp;

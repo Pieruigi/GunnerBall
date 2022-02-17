@@ -87,6 +87,27 @@ namespace Zoca.Editor
 
             Selection.activeObject = asset;
         }
+
+        [MenuItem("Assets/Create/Shootball/PowerUpInfo")]
+        public static void CreatePowerUpInfo()
+        {
+            PowerUpInfo asset = ScriptableObject.CreateInstance<PowerUpInfo>();
+
+            string name = "/powerUpInfo.asset";
+
+            string folder = System.IO.Path.Combine("Assets/Resources", PowerUpInfo.CollectionFolder);
+
+            if (!System.IO.Directory.Exists(folder))
+                System.IO.Directory.CreateDirectory(folder);
+
+            AssetDatabase.CreateAsset(asset, folder + name);
+
+            AssetDatabase.SaveAssets();
+
+            EditorUtility.FocusProjectWindow();
+
+            Selection.activeObject = asset;
+        }
     }
 
 }
