@@ -89,12 +89,7 @@ namespace Zoca
             PhotonNetwork.RemoveCallbackTarget(this);
         }
 
-        void SpawnNetworkedRoomObject(object[] content)
-        {
-            RaiseEventOptions options = new RaiseEventOptions { Receivers = ReceiverGroup.All };
-            PhotonNetwork.RaiseEvent(PhotonEvent.SpawnBarrier, content, options, SendOptions.SendReliable);
-        }
-
+        
         #endregion
 
         #region photon event callback
@@ -142,7 +137,7 @@ namespace Zoca
             object[] content = new object[] { position, rotation };
             RaiseEventOptions options = new RaiseEventOptions { Receivers = ReceiverGroup.All };
             PhotonNetwork.RaiseEvent(PhotonEvent.SpawnBarrier, content, options, SendOptions.SendReliable);
-            //SpawnNetworkedRoomObject(content);
+            
         }
 
         public void SpawnElectricGrenade(Vector3 position, Quaternion rotation, int targetTeam)
@@ -150,7 +145,7 @@ namespace Zoca
             object[] content = new object[] { position, rotation, (byte)targetTeam };
             RaiseEventOptions options = new RaiseEventOptions { Receivers = ReceiverGroup.All };
             PhotonNetwork.RaiseEvent(PhotonEvent.SpawnElectricGrenade, content, options, SendOptions.SendReliable);
-            //SpawnNetworkedRoomObject(content);
+            
         }
         #endregion
     }
