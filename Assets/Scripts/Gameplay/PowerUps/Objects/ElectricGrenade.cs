@@ -16,6 +16,16 @@ namespace Zoca
         // Start is called before the first frame update
         void Start()
         {
+            // If the local player doesn't belong to the target team return and the match is 
+            // online we can return ( we don't take care of the other players )
+            if (!PhotonNetwork.OfflineMode)
+            {
+                int team = (int)PlayerCustomPropertyUtility.GetPlayerCustomProperty(PlayerController.Local.photonView.Owner, PlayerCustomPropertyKey.TeamColor);
+
+                if (team != targetTeam)
+                    return;
+            }
+
             StartCoroutine(Explode());
         }
 
@@ -39,19 +49,26 @@ namespace Zoca
                 if (!player) // Its not a player
                     continue;
 
-                // Check the player team
-                Team team = (Team)PlayerCustomPropertyUtility.GetPlayerCustomProperty(player.photonView.Owner, PlayerCustomPropertyKey.TeamColor);
-                if(team == (Team)targetTeam)
+                // Only local player or AIs are going to be freezed by the grenade
+                if(player.photonView.IsMine || PhotonNetwork.OfflineMode)
                 {
-                    // Freeze player
-                    player.SetFreezed();
+                    // Check the player team
+                    Team team = (Team)PlayerCustomPropertyUtility.GetPlayerCustomProperty(player.photonView.Owner, PlayerCustomPropertyKey.TeamColor);
+                    Debug.LogFormat("Player:{0}, Team:{1}", player, team);
+                    if (team == (Team)targetTeam)
+                    {
+                        // Freeze player
+                        player.SetFreezed();
+                    }
                 }
+                
             }
 
         }
 
         public void SetTargetTeam(int team)
         {
+            Debug.Log("Setting grenade target team:" + (Team)team);
             targetTeam = team;
         }
     }

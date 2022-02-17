@@ -19,7 +19,9 @@ namespace Zoca
             {
                 // Create the barrier
                 int team = (int)PlayerCustomPropertyUtility.GetPlayerCustomProperty(playerController.photonView.Owner, PlayerCustomPropertyKey.TeamColor);
-                StartCoroutine(Spawn(info.point, Target.transform.rotation, team));
+                team = team == (int)Team.Blue ? (int)Team.Red : (int)Team.Blue;
+
+                LevelManager.Instance.SpawnElectricGrenade(info.point, Target.transform.rotation, team);
                 return true;
             }
 
@@ -27,12 +29,7 @@ namespace Zoca
             return false;
         }
 
-        IEnumerator Spawn(Vector3 position, Quaternion rotation, int targetTeam)
-        {
-            yield return new WaitForSeconds(0.5f);
-
-            LevelManager.Instance.SpawnElectricGrenade(position, rotation, targetTeam);
-        }
+        
 
     }
 

@@ -91,7 +91,7 @@ namespace Zoca
 
         void SpawnNetworkedRoomObject(object[] content)
         {
-            RaiseEventOptions options = new RaiseEventOptions { Receivers = ReceiverGroup.MasterClient };
+            RaiseEventOptions options = new RaiseEventOptions { Receivers = ReceiverGroup.All };
             PhotonNetwork.RaiseEvent(PhotonEvent.SpawnBarrier, content, options, SendOptions.SendReliable);
         }
 
@@ -99,38 +99,38 @@ namespace Zoca
 
         #region photon event callback
         public void OnEvent(EventData photonEvent)
-        {
+        {   
             switch (photonEvent.Code)
             {
                 case PhotonEvent.SpawnBarrier:
 
                     // Only the master client can spawn networked room objects
-                    if (PhotonNetwork.IsMasterClient)
-                    {
+                    //if (PhotonNetwork.IsMasterClient)
+                    //{
                         // Get the index of the object to be spawned
                         object[] data = (object[])photonEvent.CustomData;
                         string prefabName = (string)data[0];
                         Vector3 position = (Vector3)data[1];
                         Quaternion rotation = (Quaternion)data[2];
                         //PhotonNetwork instantiate
-                        string path = System.IO.Path.Combine(RoomObjectsResourceFolder, prefabName);
-                        PhotonNetwork.Instantiate(path, position, rotation);
-                    }
+                        //string path = System.IO.Path.Combine(RoomObjectsResourceFolder, prefabName);
+                        Instantiate(barrierPrefab, position, rotation);
+                    //}
                     break;
                 case PhotonEvent.SpawnElectricGrenade:
-                    if (PhotonNetwork.IsMasterClient)
-                    {
+                    //if (PhotonNetwork.IsMasterClient)
+                    //{
                         // Get the index of the object to be spawned
-                        object[] data = (object[])photonEvent.CustomData;
-                        string prefabName = (string)data[0];
-                        Vector3 position = (Vector3)data[1];
-                        Quaternion rotation = (Quaternion)data[2];
+                        data = (object[])photonEvent.CustomData;
+                        prefabName = (string)data[0];
+                        position = (Vector3)data[1];
+                        rotation = (Quaternion)data[2];
                         byte team = (byte)data[3];
                         //PhotonNetwork instantiate
-                        string path = System.IO.Path.Combine(RoomObjectsResourceFolder, prefabName);
-                        GameObject g = PhotonNetwork.Instantiate(path, position, rotation);
+                        //path = System.IO.Path.Combine(RoomObjectsResourceFolder, prefabName);
+                        GameObject g = Instantiate(electricGrenadePrefab, position, rotation);
                         g.GetComponent<ElectricGrenade>().SetTargetTeam((int)team);
-                    }
+                    //}
                     break;
             }
         }

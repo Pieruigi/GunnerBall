@@ -21,7 +21,8 @@ namespace Zoca
             if(Physics.Raycast(ray, out info, 1000, mask))
             {
                 // Create the barrier
-                StartCoroutine(Spawn(info.point, Target.transform.rotation));
+                LevelManager.Instance.SpawnBarrier(info.point, Target.transform.rotation);
+                //StartCoroutine(Spawn(info.point, Target.transform.rotation));
                 return true;
             }
             
@@ -30,12 +31,6 @@ namespace Zoca
             
         }
 
-        IEnumerator Spawn(Vector3 position, Quaternion rotation)
-        {
-            yield return new WaitForSeconds(0.5f);
-
-            LevelManager.Instance.SpawnBarrier(position, rotation);
-        }
         
     }
 
