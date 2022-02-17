@@ -112,7 +112,9 @@ namespace Zoca
         {
             OnPicked?.Invoke(this, picker);
 
-            
+            endParticle.transform.parent = null;
+            endParticle.GetComponent<ParticleSystem>().Play();
+            Destroy(endParticle, 10);
 
             if (PlayerController.LocalPlayer == picker || PhotonNetwork.OfflineMode)
             {
@@ -122,9 +124,7 @@ namespace Zoca
                 //{
                 //    Destroy(transform.GetChild(0).gameObject);
                 //}
-                endParticle.transform.parent = null;
-                endParticle.GetComponent<ParticleSystem>().Play();
-                Destroy(endParticle, 10);
+                
                 Destroy(baseParticle);
                 Destroy(trigger);
                 Destroy(mesh);

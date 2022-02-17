@@ -15,7 +15,8 @@ namespace Zoca
         [SerializeField]
         List<SkillPowerUp> powerUps;
 
-        
+        [SerializeField]
+        GameObject endParticle;
 
 
         // Start is called before the first frame update
@@ -49,7 +50,13 @@ namespace Zoca
                 // Add all the power ups
                 foreach (IPowerUp powerUp in powerUps)
                     powerUp.Activate(picker);
+
+               
             }
+
+            endParticle.transform.parent = null;
+            endParticle.GetComponent<ParticleSystem>().Play();
+            Destroy(endParticle, 10);
 
             OnPicked?.Invoke(this, picker);
 
