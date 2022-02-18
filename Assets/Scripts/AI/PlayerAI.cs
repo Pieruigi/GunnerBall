@@ -13,7 +13,7 @@ namespace Zoca.AI
     {
         #region inspector
         [SerializeField]
-        float reactionTime = .35f;//0.5f;
+        float reactionTime = .035f;//0.5f;
 
         [SerializeField]
         Team team = Team.Blue;
