@@ -52,6 +52,8 @@ namespace Zoca
         [SerializeField]
         GameObject electricGrenadePrefab;
 
+
+        float spawnDelay = 0.5f;
         #endregion
 
         #region private methods
@@ -90,12 +92,33 @@ namespace Zoca
             PhotonNetwork.RemoveCallbackTarget(this);
         }
 
-        
+        IEnumerator DoSpawnBarrier(Vector3 position, Quaternion rotation, double time)
+        {
+            // Check how much time has passed and add the remaining delay
+            float lag = (float)(PhotonNetwork.Time - time);
+            if (spawnDelay >= lag)
+                yield return new WaitForSeconds(spawnDelay - lag);
+
+            Instantiate(barrierPrefab, position, rotation);
+        }
+
+        IEnumerator DoSpawnElectricGrenade(Vector3 position, Quaternion rotation, int targetTeam, double time)
+        {
+            // Check how much time has passed and add the remaining delay
+            float lag = (float)(PhotonNetwork.Time - time);
+            if (spawnDelay >= lag)
+                yield return new WaitForSeconds(spawnDelay - lag);
+
+            GameObject g = Instantiate(electricGrenadePrefab, position, rotation);
+            g.GetComponent<ElectricGrenade>().SetTargetTeam((int)targetTeam);
+        }
+
         #endregion
 
         #region photon event callback
         public void OnEvent(EventData photonEvent)
         {   
+            
             switch (photonEvent.Code)
             {
                 case PhotonEvent.SpawnBarrier:
@@ -104,28 +127,32 @@ namespace Zoca
                     //if (PhotonNetwork.IsMasterClient)
                     //{
                         // Get the index of the object to be spawned
-                        object[] data = (object[])photonEvent.CustomData;
-                        //string prefabName = (string)data[0];
-                        Vector3 position = (Vector3)data[0];
-                        Quaternion rotation = (Quaternion)data[1];
+                    object[] data = (object[])photonEvent.CustomData;
+                    //string prefabName = (string)data[0];
+                    Vector3 position = (Vector3)data[0];
+                    Quaternion rotation = (Quaternion)data[1];
+                    double time = (double)data[2];
+                    StartCoroutine(DoSpawnBarrier(position, rotation, time));
                         //PhotonNetwork instantiate
                         //string path = System.IO.Path.Combine(RoomObjectsResourceFolder, prefabName);
-                        Instantiate(barrierPrefab, position, rotation);
+                        //Instantiate(barrierPrefab, position, rotation);
                     //}
                     break;
                 case PhotonEvent.SpawnElectricGrenade:
                     //if (PhotonNetwork.IsMasterClient)
                     //{
                         // Get the index of the object to be spawned
-                        data = (object[])photonEvent.CustomData;
-                        //prefabName = (string)data[0];
-                        position = (Vector3)data[0];
-                        rotation = (Quaternion)data[1];
-                        byte team = (byte)data[2];
-                        //PhotonNetwork instantiate
-                        //path = System.IO.Path.Combine(RoomObjectsResourceFolder, prefabName);
-                        GameObject g = Instantiate(electricGrenadePrefab, position, rotation);
-                        g.GetComponent<ElectricGrenade>().SetTargetTeam((int)team);
+                    data = (object[])photonEvent.CustomData;
+                    //prefabName = (string)data[0];
+                    position = (Vector3)data[0];
+                    rotation = (Quaternion)data[1];
+                    byte team = (byte)data[2];
+                    time = (double)data[3];
+                    StartCoroutine(DoSpawnElectricGrenade(position, rotation, (int)team, time));
+                    //PhotonNetwork instantiate
+                    //path = System.IO.Path.Combine(RoomObjectsResourceFolder, prefabName);
+                    //GameObject g = Instantiate(electricGrenadePrefab, position, rotation);
+                    //g.GetComponent<ElectricGrenade>().SetTargetTeam((int)team);
                     //}
                     break;
             }
@@ -133,21 +160,23 @@ namespace Zoca
         #endregion
 
         #region public methods
-        public void SpawnBarrier(Vector3 position, Quaternion rotation)
+        public void SendEventSpawnBarrier(Vector3 position, Quaternion rotation)
         {
-            object[] content = new object[] { position, rotation };
+            object[] content = new object[] { position, rotation, PhotonNetwork.Time };
             RaiseEventOptions options = new RaiseEventOptions { Receivers = ReceiverGroup.All };
             PhotonNetwork.RaiseEvent(PhotonEvent.SpawnBarrier, content, options, SendOptions.SendReliable);
             
         }
 
-        public void SpawnElectricGrenade(Vector3 position, Quaternion rotation, int targetTeam)
+        public void SendEventSpawnElectricGrenade(Vector3 position, Quaternion rotation, int targetTeam)
         {
-            object[] content = new object[] { position, rotation, (byte)targetTeam };
+            object[] content = new object[] { position, rotation, (byte)targetTeam, PhotonNetwork.Time };
             RaiseEventOptions options = new RaiseEventOptions { Receivers = ReceiverGroup.All };
             PhotonNetwork.RaiseEvent(PhotonEvent.SpawnElectricGrenade, content, options, SendOptions.SendReliable);
             
         }
+
+        
         #endregion
     }
 

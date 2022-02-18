@@ -21,7 +21,7 @@ namespace Zoca
                 int team = (int)PlayerCustomPropertyUtility.GetPlayerCustomProperty(playerController.photonView.Owner, PlayerCustomPropertyKey.TeamColor);
                 team = team == (int)Team.Blue ? (int)Team.Red : (int)Team.Blue;
 
-                LevelManager.Instance.SpawnElectricGrenade(info.point, Target.transform.rotation, team);
+                LevelManager.Instance.SendEventSpawnElectricGrenade(info.point, Target.transform.rotation, team);
                 return true;
             }
 

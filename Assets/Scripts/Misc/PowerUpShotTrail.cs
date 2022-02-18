@@ -28,6 +28,9 @@ namespace Zoca
 
             // Move
             Init();
+
+            
+            StartCoroutine(DoPath());
         }
 
         // Update is called once per frame
@@ -36,24 +39,7 @@ namespace Zoca
             transform.position += forward * speed * Time.deltaTime;
             elapsed += Time.deltaTime;
 
-            if(elapsed > 0.25f && dir == 0)
-            {
-                dir = 0.2f;
-                elapsed = 0;
-            }
-
-            if(elapsed > 0.25 && dir > 0)
-            {
-                dir = -0.4f;
-                elapsed = 0;
-            }
-
-            if (elapsed > 0.25 && dir < 0)
-            {
-                dir = 0.2f;
-                elapsed = -lifeTime;
-            }
-
+    
             if (dir != 0)
             {
                 transform.position += dir * transform.right * speed * Time.deltaTime;
@@ -77,10 +63,26 @@ namespace Zoca
 
             transform.parent = null;
 
-
-
         }
 
+        IEnumerator DoPath()
+        {
+            yield return new WaitForSeconds(lifeTime * 0.2f);
+
+            dir = .2f;
+
+            yield return new WaitForSeconds(lifeTime * 0.2f);
+
+            dir = -.4f;
+
+            yield return new WaitForSeconds(lifeTime * 0.2f);
+
+            dir = .2f;
+
+            yield return new WaitForSeconds(lifeTime * 0.2f);
+
+            dir = 0;
+        }
      
     }
 

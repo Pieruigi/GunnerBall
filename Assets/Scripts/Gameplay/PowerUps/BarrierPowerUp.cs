@@ -21,7 +21,7 @@ namespace Zoca
             if(Physics.Raycast(ray, out info, 1000, mask))
             {
                 // Create the barrier
-                LevelManager.Instance.SpawnBarrier(info.point, Target.transform.rotation);
+                LevelManager.Instance.SendEventSpawnBarrier(info.point, Target.transform.rotation);
                 //StartCoroutine(Spawn(info.point, Target.transform.rotation));
                 return true;
             }
