@@ -52,6 +52,9 @@ namespace Zoca
         [SerializeField]
         GameObject electricGrenadePrefab;
 
+        [SerializeField]
+        GameObject magnetPrefab;
+
 
         float spawnDelay = 0.5f;
         #endregion
@@ -92,15 +95,15 @@ namespace Zoca
             PhotonNetwork.RemoveCallbackTarget(this);
         }
 
-        IEnumerator DoSpawnBarrier(Vector3 position, Quaternion rotation, double time)
-        {
-            // Check how much time has passed and add the remaining delay
-            float lag = (float)(PhotonNetwork.Time - time);
-            if (spawnDelay >= lag)
-                yield return new WaitForSeconds(spawnDelay - lag);
+        //IEnumerator DoSpawnBarrier(Vector3 position, Quaternion rotation, double time)
+        //{
+        //    // Check how much time has passed and add the remaining delay
+        //    float lag = (float)(PhotonNetwork.Time - time);
+        //    if (spawnDelay >= lag)
+        //        yield return new WaitForSeconds(spawnDelay - lag);
 
-            Instantiate(barrierPrefab, position, rotation);
-        }
+        //    Instantiate(barrierPrefab, position, rotation);
+        //}
 
         IEnumerator DoSpawnElectricGrenade(Vector3 position, Quaternion rotation, int targetTeam, double time)
         {
@@ -113,6 +116,16 @@ namespace Zoca
             g.GetComponent<ElectricGrenade>().SetTargetTeam((int)targetTeam);
         }
 
+        IEnumerator DoSpawnPrefab(GameObject prefab, Vector3 position, Quaternion rotation, double time)
+        {
+            // Check how much time has passed and add the remaining delay
+            float lag = (float)(PhotonNetwork.Time - time);
+            if (spawnDelay >= lag)
+                yield return new WaitForSeconds(spawnDelay - lag);
+
+            Instantiate(prefab, position, rotation);
+        }
+
         #endregion
 
         #region photon event callback
@@ -123,37 +136,26 @@ namespace Zoca
             {
                 case PhotonEvent.SpawnBarrier:
 
-                    // Only the master client can spawn networked room objects
-                    //if (PhotonNetwork.IsMasterClient)
-                    //{
-                        // Get the index of the object to be spawned
                     object[] data = (object[])photonEvent.CustomData;
-                    //string prefabName = (string)data[0];
                     Vector3 position = (Vector3)data[0];
                     Quaternion rotation = (Quaternion)data[1];
                     double time = (double)data[2];
-                    StartCoroutine(DoSpawnBarrier(position, rotation, time));
-                        //PhotonNetwork instantiate
-                        //string path = System.IO.Path.Combine(RoomObjectsResourceFolder, prefabName);
-                        //Instantiate(barrierPrefab, position, rotation);
-                    //}
+                    StartCoroutine(DoSpawnPrefab(barrierPrefab, position, rotation, time));
                     break;
                 case PhotonEvent.SpawnElectricGrenade:
-                    //if (PhotonNetwork.IsMasterClient)
-                    //{
-                        // Get the index of the object to be spawned
                     data = (object[])photonEvent.CustomData;
-                    //prefabName = (string)data[0];
                     position = (Vector3)data[0];
                     rotation = (Quaternion)data[1];
                     byte team = (byte)data[2];
                     time = (double)data[3];
-                    StartCoroutine(DoSpawnElectricGrenade(position, rotation, (int)team, time));
-                    //PhotonNetwork instantiate
-                    //path = System.IO.Path.Combine(RoomObjectsResourceFolder, prefabName);
-                    //GameObject g = Instantiate(electricGrenadePrefab, position, rotation);
-                    //g.GetComponent<ElectricGrenade>().SetTargetTeam((int)team);
-                    //}
+                    StartCoroutine(DoSpawnElectricGrenade( position, rotation, (int)team, time));
+                    break;
+                case PhotonEvent.SpawnMagnet:
+                    data = (object[])photonEvent.CustomData;
+                    position = (Vector3)data[0];
+                    rotation = (Quaternion)data[1];
+                    time = (double)data[2];
+                    StartCoroutine(DoSpawnPrefab(magnetPrefab, position, rotation, time));
                     break;
             }
         }
@@ -176,7 +178,14 @@ namespace Zoca
             
         }
 
-        
+        public void SendEventSpawnMagnet(Vector3 position, Quaternion rotation)
+        {
+            object[] content = new object[] { position, rotation, PhotonNetwork.Time };
+            RaiseEventOptions options = new RaiseEventOptions { Receivers = ReceiverGroup.All };
+            PhotonNetwork.RaiseEvent(PhotonEvent.SpawnMagnet, content, options, SendOptions.SendReliable);
+
+        }
+
         #endregion
     }
 

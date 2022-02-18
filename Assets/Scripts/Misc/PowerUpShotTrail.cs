@@ -30,7 +30,7 @@ namespace Zoca
             Init();
 
             
-            StartCoroutine(DoPath());
+            //StartCoroutine(DoPath());
         }
 
         // Update is called once per frame

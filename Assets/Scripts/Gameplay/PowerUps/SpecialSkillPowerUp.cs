@@ -61,7 +61,7 @@ namespace Zoca
         
         #endregion
 
-        #region private methods
+        #region protected methods
         
 
         // Update is called once per frame
@@ -72,6 +72,21 @@ namespace Zoca
                 currentCooldown -= Time.deltaTime;
 
             }
+        }
+
+        protected bool CastRayFromPlayerCamera(out RaycastHit info, int distance = 1000, int? mask = null)
+        {
+            PlayerController playerController = Target.GetComponent<PlayerController>();
+
+            // Cast a ray from the camera
+            Ray ray = new Ray(playerController.PlayerCamera.transform.position, playerController.PlayerCamera.transform.forward);
+            //int mask = LayerMask.GetMask(new string[] { Layer.Ground });
+            
+            if(mask.HasValue)
+                return Physics.Raycast(ray, out info, distance, mask.Value);
+            else
+                return Physics.Raycast(ray, out info, distance);
+
         }
         #endregion
 

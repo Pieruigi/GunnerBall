@@ -51,6 +51,7 @@ namespace Zoca
         public const byte Synchronize = 198;
         public const byte SpawnBarrier = 197;
         public const byte SpawnElectricGrenade = 196;
+        public const byte SpawnMagnet = 195;
     }
 
     
