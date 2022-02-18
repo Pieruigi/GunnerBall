@@ -51,6 +51,7 @@ namespace Zoca
 
         [SerializeField]
         GameObject electricGrenadePrefab;
+
         #endregion
 
         #region private methods

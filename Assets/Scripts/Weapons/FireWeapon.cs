@@ -1,3 +1,4 @@
+using DG.Tweening;
 using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
@@ -72,6 +73,9 @@ namespace Zoca
 
         [SerializeField]
         AudioSource audioSource;
+
+        [SerializeField]
+        GameObject trailParticlePrefab;
 
 
         float shootDelay = 0.1f;
@@ -248,9 +252,12 @@ namespace Zoca
         {
             shootParticle.Play();
 
-
             // Audio
             audioSource.Play();
+
+            // Create trail
+            Instantiate(trailParticlePrefab, shootParticle.transform.position, transform.rotation, transform);
+            
         }
 
 #region private

@@ -29,6 +29,7 @@ namespace Zoca
         #endregion
 
         #region private fields
+        [Header("Common Section")]
         [SerializeField]
         int chargeCount; // How many times you can use this powerup before it expires
 
@@ -36,6 +37,7 @@ namespace Zoca
         float cooldown;
         float currentCooldown = 0;
 
+        [Header("Pickable Particles")]
         [SerializeField]
         GameObject baseParticle;
 
@@ -48,6 +50,7 @@ namespace Zoca
         [SerializeField]
         GameObject endParticle;
 
+      
         #endregion
 
         #region abstract methods
@@ -92,6 +95,8 @@ namespace Zoca
                 // Decrease charges
                 chargeCount--;
             }
+
+            
 
             if (chargeCount == 0)
                 Deactivate(Target);
