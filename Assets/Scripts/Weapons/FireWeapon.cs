@@ -77,6 +77,8 @@ namespace Zoca
         [SerializeField]
         GameObject trailParticlePrefab;
 
+        [SerializeField]
+        AudioSource failedAudioSource;
 
         float shootDelay = 0.1f;
 
@@ -159,7 +161,11 @@ namespace Zoca
 
             // Not ready yet
             if (cooldownElapsed > 0)
+            {
+                //failedAudioSource.Play();
                 return false;
+            }
+                
 
             // Ready to shoot
             cooldownElapsed = cooldown;
@@ -212,10 +218,18 @@ namespace Zoca
         public bool TryShootPowerUp(SpecialSkillPowerUp powerUp)
         {
             if (cooldownElapsed > 0)
+            {
+                //failedAudioSource.Play();
                 return false;
+            }
+                
 
             if (!powerUp || !powerUp.CanShoot())
+            {
+                failedAudioSource.Play();
                 return false;
+            }
+                
 
             bool ret = powerUp.TryShoot();
 
@@ -223,6 +237,8 @@ namespace Zoca
             {
                 if (!(cooldownElapsed > 0))
                     cooldownElapsed = failedCooldown;
+
+                failedAudioSource.Play();
             }
             else
             {

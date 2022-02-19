@@ -10,6 +10,9 @@ namespace Zoca
         [SerializeField]
         float range;
 
+        [SerializeField]
+        GameObject fxPrefab; 
+
         int targetTeam;
 
 
@@ -27,6 +30,7 @@ namespace Zoca
             }
 
             StartCoroutine(Explode());
+            
         }
 
         // Update is called once per frame
@@ -37,7 +41,13 @@ namespace Zoca
 
         IEnumerator Explode()
         {
-            yield return new WaitForSeconds(1f);
+            GameObject fx = Instantiate(fxPrefab);
+            fx.transform.position = transform.position;
+            fx.transform.Translate(Vector3.forward * 10);
+            Destroy(fx, 5);
+            fx.GetComponent<ParticleSystem>().Play();
+
+            yield return new WaitForSeconds(0.5f);
 
             // Explosion range
             Collider[] colliders = Physics.OverlapSphere(transform.position, range);
