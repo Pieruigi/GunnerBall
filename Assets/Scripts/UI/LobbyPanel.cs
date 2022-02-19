@@ -154,19 +154,22 @@ namespace Zoca.UI
             Debug.Log("Num of players:" + PhotonNetwork.CurrentRoom.PlayerCount);
 
             // Set teams
-            //if (!PhotonNetwork.OfflineMode)
-            //{
+            if (!PhotonNetwork.OfflineMode)
+            {
                 foreach (Player p in PhotonNetwork.CurrentRoom.Players.Values)
                 {
                     SetTeamPlayer(p);
                 }
-            //}
-            //else
-            //{
-            //    // Set the local player
-            //    SetTeamPlayer(PhotonNetwork.LocalPlayer);
-                
-            //}
+            }
+            else
+            {
+                // Set the local player
+                SetTeamPlayer(PhotonNetwork.LocalPlayer);
+
+                // In the game manager we simply deactivate the ai, so in this case the game
+                // is an offline 1vs1 match and we need to reset the empy red team player
+                redPlayers[0].Lock();
+            }
             
 
             // Colorize

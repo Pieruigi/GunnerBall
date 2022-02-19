@@ -27,6 +27,8 @@ namespace Zoca.UI
         [SerializeField]
         GameObject panel;
 
+         
+
         [SerializeField]
         Button backButton;
 
@@ -107,7 +109,11 @@ namespace Zoca.UI
             if (online)
                 onlineBackPanel.SetActive(true);
             else
-                offlineBackPanel.SetActive(true);
+            {
+                offlineBackPanel.SetActive(false);
+                
+            }
+                
 
         }
 
@@ -175,6 +181,11 @@ namespace Zoca.UI
         #endregion
 
         #region public methods
+        public void OpenOffline()
+        {
+            Open(false, 2);
+        }
+
         public void Open(bool online, int maxPlayers)
         {
             // Set fields

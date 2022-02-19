@@ -10714,7 +10714,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1326433294}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 49034536}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 1
 --- !u!114 &1326433294
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13528,8 +13540,8 @@ MonoBehaviour:
   arenaImage: {fileID: 497734570}
   blueTeamPanel: {fileID: 1479402792}
   redTeamPanel: {fileID: 142956763}
-  blueTeamColor: {r: 0, g: 0.7490196, b: 1, a: 1}
-  redTeamColor: {r: 1, g: 0.10849059, b: 0.10849059, a: 1}
+  blueTeamColor: {r: 0, g: 0, b: 0.74509805, a: 1}
+  redTeamColor: {r: 0.7647059, g: 0.007843138, b: 0, a: 1}
   characterImage: {fileID: 620011477}
   nextCharacterButton: {fileID: 540287736}
   prevCharacterButton: {fileID: 2050949751}

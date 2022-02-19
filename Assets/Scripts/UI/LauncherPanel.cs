@@ -102,11 +102,15 @@ namespace Zoca.UI
                     Launcher.Instance.JoinDefaultLobby();
                 }
             }
-            
+            else
+            {
+                OpenMapSelector(2);
+            }
                 
             
         }
 
+        
         void OpenMapSelector(int numOfPlayers)
         {
             Debug.Log("Opening map selector...");
