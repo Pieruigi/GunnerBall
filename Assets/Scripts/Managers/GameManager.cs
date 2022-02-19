@@ -312,57 +312,7 @@ namespace Zoca
                     }
 
 
-                    // Spawn the AIs
-                    /*
-                     
-                    int count = PhotonNetwork.CurrentRoom.MaxPlayers - 1;
-                    Team playerTeam = (Team)PlayerCustomPropertyUtility.GetLocalPlayerCustomProperty(PlayerCustomPropertyKey.TeamColor);
-                    Team opponentTeam = playerTeam == Team.Blue ? Team.Red : Team.Blue;
-                    int spawnPointId = 1;
-                    int aiCharacterId, aiWeaponId;
-
-                    for (int i = 0; i < count; i++)
-                    {
-                        // Get character and weapon id
-                        aiCharacterId = OfflineMatchData.Instance.AiCharacterIds[i];
-                        aiWeaponId = OfflineMatchData.Instance.AiWeaponIds[i];
-
-                        // Load avatar
-                        collection = Resources.LoadAll<Character>(Character.CollectionFolder);
-                        // Get the game asset from the descriptor
-                        playerPrefab = collection[aiCharacterId].GameAsset;
-
-                        Player newPlayer = Player.CreateOfflinePlayer(i + 2);
-                        PhotonNetwork.CurrentRoom.AddPlayer(newPlayer);
-
-                        // Set character id and weapon id data
-                        PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(newPlayer, PlayerCustomPropertyKey.CharacterId, aiCharacterId);
-                        PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(newPlayer, PlayerCustomPropertyKey.WeaponId, aiWeaponId);
-
-                        if (i + 1 < PhotonNetwork.CurrentRoom.MaxPlayers / 2)
-                        {
-                            PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(newPlayer, PlayerCustomPropertyKey.TeamColor, playerTeam);
-                            spawnPoint = LevelManager.Instance.BlueTeamSpawnPoints[spawnPointId];
-                        }
-                        else
-                        {
-                            if (i + 1 == PhotonNetwork.CurrentRoom.MaxPlayers / 2)
-                                spawnPointId = 0; // Reset the spawn point id
-
-                            PlayerCustomPropertyUtility.AddOrUpdatePlayerCustomProperty(newPlayer, PlayerCustomPropertyKey.TeamColor, opponentTeam);
-                            spawnPoint = LevelManager.Instance.RedTeamSpawnPoints[spawnPointId];
-                        }
-
-                        spawnPointId++;
-
-                        GameObject newPlayerObject = PhotonNetwork.InstantiateRoomObject(System.IO.Path.Combine(Character.GameAssetFolder, playerPrefab.name), spawnPoint.position, spawnPoint.rotation);
-                        newPlayerObject.GetComponent<PlayerAI>().Activate();
-                        newPlayerObject.GetComponent<PlayerAI>().Team = (Team)PlayerCustomPropertyUtility.GetPlayerCustomProperty(newPlayer, PlayerCustomPropertyKey.TeamColor);
-                        newPlayerObject.GetComponent<PhotonView>().OwnerActorNr = i + 2;
-
-
-                    }
-                    */
+                
                     int count = PhotonNetwork.CurrentRoom.MaxPlayers;
 
                     // Get the player 
@@ -404,7 +354,8 @@ namespace Zoca
                         newPlayerObject.GetComponent<PlayerAI>().Activate();
                         newPlayerObject.GetComponent<PlayerAI>().Team = (Team)PlayerCustomPropertyUtility.GetPlayerCustomProperty(p, PlayerCustomPropertyKey.TeamColor);
                         newPlayerObject.GetComponent<PhotonView>().OwnerActorNr = p.ActorNumber;
-                        
+                        // Deactivate the ai to let the local player train alone
+                        newPlayerObject.SetActive(false);
                     }
 
 

@@ -23929,7 +23929,6 @@ MonoBehaviour:
   trigger: {fileID: 1705487234605048355}
   mesh: {fileID: 3567385309039506705}
   endParticle: {fileID: 142031392}
-  shotParticlePrefab: {fileID: 3041940403282442035, guid: f7a217271a7c38b47afa03a18969ec47, type: 3}
 --- !u!1 &8738017133964823535
 GameObject:
   m_ObjectHideFlags: 0
@@ -23941,7 +23940,6 @@ GameObject:
   - component: {fileID: 8738017133965318095}
   - component: {fileID: 8738017133951160975}
   - component: {fileID: 8738017133951068975}
-  - component: {fileID: 8738017133976124943}
   m_Layer: 0
   m_Name: Granade_Freezel_001
   m_TagString: Untagged
@@ -28747,19 +28745,6 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
---- !u!114 &8738017133976124943
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8738017133964823535}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6fd2e8874f60266498a388d7229a1bac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  OnlyDeactivate: 0
 --- !u!1001 &4413685794010695744
 PrefabInstance:
   m_ObjectHideFlags: 0
