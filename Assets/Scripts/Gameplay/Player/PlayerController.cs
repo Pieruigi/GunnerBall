@@ -49,7 +49,7 @@ namespace Zoca
         }
 
         [SerializeField]
-        float jumpSpeed = 200f;
+        float jumpSpeed = 75f;
 
         [SerializeField]
         float flyingMultiplier = 0.2f;
