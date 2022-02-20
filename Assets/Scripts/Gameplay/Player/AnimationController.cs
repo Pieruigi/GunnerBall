@@ -68,6 +68,8 @@ namespace Zoca
         string freezeParam = "Freeze";
         #endregion
 
+        
+
         private void Awake()
         {
             playerController = GetComponent<PlayerController>();
@@ -81,7 +83,7 @@ namespace Zoca
         {
             oldEulerY = transform.eulerAngles.y;
 
-            
+          
         }
 
         // Update is called once per frame
@@ -94,6 +96,7 @@ namespace Zoca
         {
 
             AnimateTurnAround();
+            
             AnimateStrafe();
             AnimateMotion();
             AnimateAim();
@@ -243,11 +246,11 @@ namespace Zoca
         void AnimateAim()
         {
             currentPitch = playerController.CurrentPitch;
-
+            Debug.Log("CurrentPitch:" + currentPitch);
             float animPitch = currentPitch * pitchMultiplier;
-
+          
             spines[2].RotateAround(spines[2].position, transform.right, animPitch);
-           
+            
         }
 
         #endregion

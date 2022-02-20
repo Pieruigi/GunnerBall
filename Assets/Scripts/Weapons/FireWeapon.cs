@@ -127,6 +127,8 @@ namespace Zoca
         // Update is called once per frame
         void Update()
         {
+            Debug.Log("FireW:" + transform.rotation);
+
             // Recall
             if(cooldownElapsed > 0)
             {

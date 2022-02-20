@@ -134,7 +134,7 @@ namespace Zoca
         //}
 
         float maxPitch = 30;
-        float minPitch = -70;
+        float minPitch = -60;
 
         float currentPitch;
         public float CurrentPitch

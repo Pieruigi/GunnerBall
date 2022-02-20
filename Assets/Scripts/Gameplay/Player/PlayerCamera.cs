@@ -167,16 +167,12 @@ namespace Zoca
             //transform.rotation = GetThirdPersonTargetRotation();
             // Reset transform
             transform.forward = playerController.transform.forward;
-
+            
             // Add pitch
             Vector3 eulers = transform.localEulerAngles;
             eulers.x = currentPitch;
             transform.localEulerAngles = eulers;
         }
-
-      
-
-   
 
 
         Quaternion GetThirdPersonTargetRotation()
