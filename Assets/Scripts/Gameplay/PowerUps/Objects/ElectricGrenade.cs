@@ -43,7 +43,7 @@ namespace Zoca
         {
             GameObject fx = Instantiate(fxPrefab);
             fx.transform.position = transform.position;
-            fx.transform.Translate(Vector3.forward * 10);
+            fx.transform.Translate(Vector3.forward * 10.5f);
             Destroy(fx, 5);
             fx.GetComponent<ParticleSystem>().Play();
 

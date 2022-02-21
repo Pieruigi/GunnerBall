@@ -95,12 +95,18 @@ namespace Zoca.UI
 
         void HandleOnPowerUpDeactivated(IPowerUp powerUp)
         {
-            if (!powerUp.GetType().IsSubclassOf(typeof(SkillPowerUp)))
+            Debug.Log("Deactivated powerup:" + powerUp);
+
+            if (powerUp.GetType() != typeof(SkillPowerUp))
                 return;
+
+            Debug.Log("powerup:" + powerUp + " is skillPowerUp");
 
             if (powerUp as SkillPowerUp == characterPowerUp)
             {
                 characterPowerUp = null;
+                characterImageCharge.fillAmount = 1;
+                Debug.Log("powerup:" + powerUp + " is characterpowerup");
                 StartCoroutine(PlaySkillPowerUpOut(characterPowerUp));
             }
                 
@@ -108,6 +114,8 @@ namespace Zoca.UI
             if (powerUp as SkillPowerUp == weaponPowerUp)
             {
                 weaponPowerUp = null;
+                weaponImageCharge.fillAmount = 1;
+                Debug.Log("powerup:" + powerUp + " is weaponpowerup");
                 StartCoroutine(PlaySkillPowerUpOut(weaponPowerUp));
             }
                 

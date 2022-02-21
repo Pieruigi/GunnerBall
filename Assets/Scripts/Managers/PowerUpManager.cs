@@ -58,16 +58,38 @@ namespace Zoca
         // Update is called once per frame
         void Update()
         {
-           
-          
+            if (!playerController.photonView.IsMine)
+                return;
+
+            if(Match.Instance.State == (int)MatchState.Goaled)
+            {
+                if (powerUpList.Count > 0)
+                    RemoveAll();
+            }
                 
         }
 
-       
-       
+        void RemoveAll()
+        {
+            int count = powerUpList.Count;
+            Debug.Log("PowerUpCount:" + powerUpList.Count);
+            for (int i = 0; i < count; i++)
+            //foreach(IPowerUp pUp in powerUpList)
+            {
+                IPowerUp pUp = powerUpList[0];
+                pUp.Deactivate(gameObject);
+
+                OnPowerUpDeactivated?.Invoke(pUp);
+            }
+
+            powerUpList.Clear();
+        }
+
+
         #endregion
 
         #region public methods
+
         public void Add(IPowerUp powerUp)
         {
             powerUpList.Add(powerUp);

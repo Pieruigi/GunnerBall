@@ -246,7 +246,7 @@ namespace Zoca
         void AnimateAim()
         {
             currentPitch = playerController.CurrentPitch;
-            Debug.Log("CurrentPitch:" + currentPitch);
+            //Debug.Log("CurrentPitch:" + currentPitch);
             float animPitch = currentPitch * pitchMultiplier;
           
             spines[2].RotateAround(spines[2].position, transform.right, animPitch);

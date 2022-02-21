@@ -996,11 +996,11 @@ namespace Zoca
             }
             else
             {
-                if (stamina < staminaDefault)
+                if (stamina < staminaMax)
                 {
                     // Some delay before reloading stamina
                     if((DateTime.UtcNow - staminaLast).TotalSeconds > staminaRechargeDelay)
-                        stamina = Mathf.Min(staminaDefault, stamina + Time.deltaTime * staminaRechargeSpeed);
+                        stamina = Mathf.Min(staminaMax, stamina + Time.deltaTime * staminaRechargeSpeed);
                 }
                     
             }
