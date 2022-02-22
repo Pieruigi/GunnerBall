@@ -102,22 +102,23 @@ namespace Zoca.UI
 
             Debug.Log("powerup:" + powerUp + " is skillPowerUp");
 
-            if (powerUp as SkillPowerUp == characterPowerUp)
+            switch ((powerUp as SkillPowerUp).Skill)
             {
-                characterPowerUp = null;
-                characterImageCharge.fillAmount = 1;
-                Debug.Log("powerup:" + powerUp + " is characterpowerup");
-                StartCoroutine(PlaySkillPowerUpOut(characterPowerUp));
-            }
-                
+                case Skill.Speed:
+                    characterPowerUp = null;
+                    characterImageCharge.fillAmount = 1;
+                    Debug.Log("powerup:" + powerUp + " is characterpowerup");
+                    StartCoroutine(PlaySkillPowerUpOut(characterPowerUp));
+                    break;
+                case Skill.FirePower:
+                    weaponPowerUp = null;
+                    weaponImageCharge.fillAmount = 1;
+                    Debug.Log("powerup:" + powerUp + " is weaponpowerup");
+                    StartCoroutine(PlaySkillPowerUpOut(weaponPowerUp));
+                    break;
 
-            if (powerUp as SkillPowerUp == weaponPowerUp)
-            {
-                weaponPowerUp = null;
-                weaponImageCharge.fillAmount = 1;
-                Debug.Log("powerup:" + powerUp + " is weaponpowerup");
-                StartCoroutine(PlaySkillPowerUpOut(weaponPowerUp));
             }
+           
                 
         }
 

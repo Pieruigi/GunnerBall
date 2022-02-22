@@ -65,8 +65,11 @@ namespace Zoca
             {
                 if (powerUpList.Count > 0)
                     RemoveAll();
+
+                powerUpList.Clear();
             }
                 
+            
         }
 
         void RemoveAll()
@@ -79,7 +82,7 @@ namespace Zoca
                 IPowerUp pUp = powerUpList[0];
                 pUp.Deactivate(gameObject);
 
-                OnPowerUpDeactivated?.Invoke(pUp);
+                //OnPowerUpDeactivated?.Invoke(pUp);
             }
 
             powerUpList.Clear();
