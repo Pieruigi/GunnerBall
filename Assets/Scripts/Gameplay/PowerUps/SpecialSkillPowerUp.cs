@@ -130,11 +130,16 @@ namespace Zoca
 
         public void PickUp(GameObject picker)
         {
-            OnPicked?.Invoke(this, picker);
+            if(picker)
+                OnPicked?.Invoke(this, picker);
 
+            
             endParticle.transform.parent = null;
             endParticle.GetComponent<ParticleSystem>().Play();
             Destroy(endParticle, 10);
+
+            if (!picker)
+                return;
 
             if (PlayerController.LocalPlayer == picker || PhotonNetwork.OfflineMode)
             {

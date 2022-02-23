@@ -79,13 +79,13 @@ namespace Zoca.UI
                         // Reset character icon timer
                         characterImageCharge.fillAmount = 0;
                         characterPowerUp = powerUp as SkillPowerUp;
-                        StartCoroutine(PlaySkillPowerUpIn(characterPowerUp));
+                        StartCoroutine(PlayCharacterPowerUpInOut());
                         break;
                     case Skill.FirePower:
                         // Reset character icon timer
                         weaponImageCharge.fillAmount = 0;
                         weaponPowerUp = powerUp as SkillPowerUp;
-                        StartCoroutine(PlaySkillPowerUpIn(weaponPowerUp));
+                        StartCoroutine(PlayWeaponPowerUpInOut());
                         break;
                 }
                 
@@ -105,18 +105,19 @@ namespace Zoca.UI
             switch ((powerUp as SkillPowerUp).Skill)
             {
                 case Skill.Speed:
+                    characterPowerUp = null;
                     characterImageCharge.fillAmount = 1;
                     Debug.Log("powerup:" + powerUp + " is characterpowerup");
                     
-                    StartCoroutine(PlaySkillPowerUpOut(characterPowerUp));
-                    characterPowerUp = null;
+                    StartCoroutine(PlayCharacterPowerUpInOut());
+                    
                     break;
                 case Skill.FirePower:
-                    
+                    weaponPowerUp = null;
                     weaponImageCharge.fillAmount = 1;
                     Debug.Log("powerup:" + powerUp + " is weaponpowerup");
-                    StartCoroutine(PlaySkillPowerUpOut(weaponPowerUp));
-                    weaponPowerUp = null;
+                    StartCoroutine(PlayWeaponPowerUpInOut());
+                    
                     break;
 
             }
@@ -126,41 +127,23 @@ namespace Zoca.UI
 
        
        
-        IEnumerator PlaySkillPowerUpIn(SkillPowerUp powerUp)
+        IEnumerator PlayCharacterPowerUpInOut()
         {
-            Debug.Log("PowerUp In:" + powerUp);
-
+            
             yield return new WaitForEndOfFrame();
-            if (!powerUp)
-                yield break;
-            if (powerUp == characterPowerUp)
-            {
-                characterPowerUpImage.transform.DOShakeScale(1);
-            }
-            else
-            {
-                weaponPowerUpImage.transform.DOShakeScale(1);
-            }
+
+            characterPowerUpImage.transform.DOShakeScale(1);
             
         }
 
-        IEnumerator PlaySkillPowerUpOut(SkillPowerUp powerUp)
+        IEnumerator PlayWeaponPowerUpInOut()
         {
-            Debug.Log("PowerUp Out:" + powerUp);
+           
             yield return new WaitForEndOfFrame();
 
-            if (powerUp)
-                yield break;
-
-            if (powerUp == characterPowerUp)
-            {
-                characterPowerUpImage.transform.DOShakeScale(1);
-            }
-            else
-            {
-                weaponPowerUpImage.transform.DOShakeScale(1);
-            }
-
+            
+            weaponPowerUpImage.transform.DOShakeScale(1);
+            
         }
 
         #endregion

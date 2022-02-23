@@ -222,6 +222,7 @@ namespace Zoca
             if(Match.Instance.State == (int)MatchState.Goaled)
             {
                 spawnOnKickOff = true;
+                RemoveAll();
             }
         }
 
@@ -367,16 +368,22 @@ namespace Zoca
                             
                     }
 
-                    // Value == null means that the key has been removed ( to remove a key you just need 
-                    // to call SetCustomProperty on that key by passing null as value ).
-                    if (o == null)
-                        continue;
-
-                    // Key has not been removed, so the spawnable is alive.
                     // Get spawnable detail
                     string[] propSplits = propKey.Split('_');
                     int pickableId = int.Parse(propSplits[1]);
                     int spawnPointId = int.Parse(propSplits[2]);
+
+                    // Value == null means that the key has been removed ( to remove a key you just need 
+                    // to call SetCustomProperty on that key by passing null as value ).
+                    if (o == null)
+                    {
+                        SetSpawnPointFree(spawnPointId);
+                        continue;
+                    }
+                        
+
+                    // Key has not been removed, so the spawnable is alive.
+                    
 
                     if (propValue == 0) // Has just been initialized
                     {
@@ -499,7 +506,42 @@ namespace Zoca
                 );
 
         }
-        #endregion
+
+        public void RemoveAll()
+        {
+
+            List<object> keys = new List<object>();
+
+            foreach (object key in PhotonNetwork.CurrentRoom.CustomProperties.Keys)
+            {
+                if (key.ToString().StartsWith("sp_"))
+                    keys.Add(key);
+            }
+
+            foreach (object key in keys)
+            {
+                Debug.Log("Key:" + key.ToString());
+
+                // Remove all the keys starting with "sp_"
+                if (key.ToString().StartsWith("sp_"))
+                {
+                    PhotonNetwork.CurrentRoom.SetCustomProperties(
+                               new ExitGames.Client.Photon.Hashtable() { { key.ToString(), null } });
+                }
+            }
+
+            for (int i = 0; i < spawnPoints.Count; i++)
+            {
+                if (spawnPoints[i].childCount > 0)
+                {
+                    Transform child = spawnPoints[i].transform.GetChild(0);
+                    child.GetComponent<IPickable>().PickUp(null);
+                    SetSpawnPointFree(i);
+                }
+                
+            }
+        }
+            #endregion
     }
 
 }
