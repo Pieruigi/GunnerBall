@@ -132,8 +132,8 @@ namespace Zoca.UI
             
             yield return new WaitForEndOfFrame();
 
-            characterPowerUpImage.transform.DOShakeScale(1);
-            
+            yield return characterPowerUpImage.transform.DOShakeScale(1).WaitForCompletion();
+            characterPowerUpImage.transform.DOScale(1, 0.1f);
         }
 
         IEnumerator PlayWeaponPowerUpInOut()
@@ -142,8 +142,9 @@ namespace Zoca.UI
             yield return new WaitForEndOfFrame();
 
             
-            weaponPowerUpImage.transform.DOShakeScale(1);
-            
+            yield return weaponPowerUpImage.transform.DOShakeScale(1).WaitForCompletion();
+            weaponPowerUpImage.transform.DOScale(1, 0.1f);
+
         }
 
         #endregion

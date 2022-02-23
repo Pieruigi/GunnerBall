@@ -91,7 +91,8 @@ namespace Zoca.UI
             }
 
             // Shake the base image
-            powerUpImage.transform.DOShakeScale(1);
+            yield return powerUpImage.transform.DOShakeScale(1).WaitForCompletion();
+            powerUpImage.transform.DOScale(1, 0.1f);
         }
 
         IEnumerator PlayPowerOutEffect()
@@ -110,10 +111,11 @@ namespace Zoca.UI
             chargeCount.text = "";
 
             // Shake the base image
-            yield return powerUpImage.transform.DOShakeScale(1);
+            yield return powerUpImage.transform.DOShakeScale(1).WaitForCompletion();
+            powerUpImage.transform.DOScale(1, 0.1f);
 
             // Still empty?
-            if(!powerUp)
+            if (!powerUp)
             {
                 // If so reset charge image
                 rechargeImage.fillAmount = 0;
