@@ -30,6 +30,15 @@ namespace Zoca
         {
 
         }
+
+        //private void OnCollisionEnter(Collision collision)
+        //{
+        //    if (Tag.Ball.Equals(collision.gameObject.tag))
+        //    {
+        //        // Ball bounces
+        //        Ball.Instance.GetComponent<Rigidbody>().AddForce()
+        //    }
+        //}
     }
 
 }
