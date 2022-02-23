@@ -67,11 +67,11 @@ namespace Zoca.UI
 
         void HandleOnPowerUpActivated(IPowerUp powerUp)
         {
-            Debug.Log("PowerUpActivated:" + powerUp);
+            //Debug.Log("PowerUpActivated:" + powerUp);
 
             if (powerUp.GetType() == typeof(SkillPowerUp))
             {
-                Debug.Log("PowerUpActivated - is subclass:" + powerUp);
+                //Debug.Log("PowerUpActivated - is subclass:" + powerUp);
                 // We only take into account speed and firePower
                 switch ((powerUp as SkillPowerUp).Skill)
                 {
@@ -95,26 +95,28 @@ namespace Zoca.UI
 
         void HandleOnPowerUpDeactivated(IPowerUp powerUp)
         {
-            Debug.Log("Deactivated powerup:" + powerUp);
+            //Debug.Log("Deactivated powerup:" + powerUp);
 
             if (powerUp.GetType() != typeof(SkillPowerUp))
                 return;
 
-            Debug.Log("powerup:" + powerUp + " is skillPowerUp");
+            //Debug.Log("powerup:" + powerUp + " is skillPowerUp");
 
             switch ((powerUp as SkillPowerUp).Skill)
             {
                 case Skill.Speed:
-                    characterPowerUp = null;
                     characterImageCharge.fillAmount = 1;
                     Debug.Log("powerup:" + powerUp + " is characterpowerup");
+                    
                     StartCoroutine(PlaySkillPowerUpOut(characterPowerUp));
+                    characterPowerUp = null;
                     break;
                 case Skill.FirePower:
-                    weaponPowerUp = null;
+                    
                     weaponImageCharge.fillAmount = 1;
                     Debug.Log("powerup:" + powerUp + " is weaponpowerup");
                     StartCoroutine(PlaySkillPowerUpOut(weaponPowerUp));
+                    weaponPowerUp = null;
                     break;
 
             }
@@ -126,6 +128,8 @@ namespace Zoca.UI
        
         IEnumerator PlaySkillPowerUpIn(SkillPowerUp powerUp)
         {
+            Debug.Log("PowerUp In:" + powerUp);
+
             yield return new WaitForEndOfFrame();
             if (!powerUp)
                 yield break;
@@ -142,6 +146,7 @@ namespace Zoca.UI
 
         IEnumerator PlaySkillPowerUpOut(SkillPowerUp powerUp)
         {
+            Debug.Log("PowerUp Out:" + powerUp);
             yield return new WaitForEndOfFrame();
 
             if (powerUp)
