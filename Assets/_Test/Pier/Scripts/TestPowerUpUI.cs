@@ -42,6 +42,12 @@ public class TestPowerUpUI : MonoBehaviour
     [SerializeField]
     Text fireRangePowerUpText;
 
+    private void Awake()
+    {
+#if !UNITY_EDITORW
+    Destroy(gameObject);
+#endif
+    }
 
     // Start is called before the first frame update
     void Start()

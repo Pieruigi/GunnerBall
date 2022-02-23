@@ -55,7 +55,7 @@ namespace Zoca
         [SerializeField]
         GameObject magnetPrefab;
 
-
+        
         float spawnDelay = 0.5f;
         #endregion
 
@@ -76,7 +76,7 @@ namespace Zoca
         // Start is called before the first frame update
         void Start()
         {
-
+            Match.Instance.OnStateChanged += () => { if (Match.Instance.State == (int)MatchState.Paused) UnspawnAll(); };
         }
 
         // Update is called once per frame
@@ -184,6 +184,28 @@ namespace Zoca
             RaiseEventOptions options = new RaiseEventOptions { Receivers = ReceiverGroup.All };
             PhotonNetwork.RaiseEvent(PhotonEvent.SpawnMagnet, content, options, SendOptions.SendReliable);
 
+        }
+
+        public void UnspawnAll()
+        {
+            // Unsapawn all barriers
+            Barrier[] barriers = GameObject.FindObjectsOfType<Barrier>();
+            for(int i=0; i<barriers.Length; i++)
+            {
+                barriers[i].Destroy();
+            }
+
+            ElectricGrenade[] grenades = GameObject.FindObjectsOfType<ElectricGrenade>();
+            for (int i = 0; i < grenades.Length; i++)
+            {
+                grenades[i].Destroy();
+            }
+
+            Magnet[] magnets = GameObject.FindObjectsOfType<Magnet>();
+            for (int i = 0; i < magnets.Length; i++)
+            {
+                magnets[i].Destroy();
+            }
         }
 
         #endregion

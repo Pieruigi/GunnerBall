@@ -81,6 +81,11 @@ namespace Zoca
             Debug.Log("Setting grenade target team:" + (Team)team);
             targetTeam = team;
         }
+
+        public void Destroy()
+        {
+            Destroy(gameObject);
+        }
     }
 
 }

@@ -38,6 +38,10 @@ namespace Zoca
             ballRB.AddForce(dir.normalized * forcePower, ForceMode.Force);
         }
 
+        public void Destroy()
+        {
+            Destroy(gameObject);
+        }
 
     }
 

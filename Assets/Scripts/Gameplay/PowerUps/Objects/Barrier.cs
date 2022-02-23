@@ -31,6 +31,10 @@ namespace Zoca
 
         }
 
+        public void Destroy()
+        {
+            Destroy(gameObject);
+        }
         //private void OnCollisionEnter(Collision collision)
         //{
         //    if (Tag.Ball.Equals(collision.gameObject.tag))
