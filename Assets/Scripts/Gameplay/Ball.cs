@@ -132,7 +132,7 @@ namespace Zoca
         void Start()
         {
             
-            Launch();
+            //Launch();
         }
 
         // Update is called once per frame
@@ -356,7 +356,7 @@ namespace Zoca
             return velocity;
         }
 
-        public void ResetBall()
+        public void ResetBall(float delay)
         {
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
@@ -370,11 +370,12 @@ namespace Zoca
             //trail.ForceStop(false);
             trailForcedStop = false;
             lastHitter = null;
+            rb.useGravity = false;
 
-           
-            Launch();
+            StartCoroutine(Launch(delay));
+            //Launch();
 
-            SkipLastMasterClientSync();
+            //SkipLastMasterClientSync();
         }
 
         public void Explode()
@@ -490,16 +491,23 @@ namespace Zoca
                 grounded = false;
         }
 
-        public void Launch()
+        IEnumerator Launch(float delay)
         {
-            
+            if(delay > 0)
+                yield return new WaitForSeconds(delay);
+
+            rb.useGravity = true;
+
+            SkipLastMasterClientSync();
+
             if (!PhotonNetwork.IsMasterClient)
-                return;
+                yield break;
 
             Vector3 vel = Vector3.right * UnityEngine.Random.Range(-9f, 9f);
             vel += Vector3.forward * UnityEngine.Random.Range(-3f, 3f);
             rb.velocity = vel;
-           
+
+            
         }
 
         void SkipLastMasterClientSync()

@@ -40,9 +40,10 @@ namespace Zoca
 
     public class Constants
     {
-        public static readonly float StartDelay = 4;
+        public static readonly float StartDelay = 9;
         public static readonly float GoalDelay = 7;
-        
+        public static readonly float StartDelayOnGoal = 4;
+
     }
 
     public class PhotonEvent

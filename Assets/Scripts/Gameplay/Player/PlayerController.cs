@@ -362,6 +362,9 @@ namespace Zoca
                 // If the player is sprinting we remove the x input and set y = 1
                 Vector3 dir = Vector3.zero;
                 float speed = maxSpeed;
+                if (freezed || startPaused)
+                    sprinting = false;
+
                 if (sprinting)
                 {
                     // You can only sprint straight forward
@@ -658,12 +661,12 @@ namespace Zoca
             superShoot = false;
 
             // You can't shoot if you are sprinting
-            if (sprinting)
-            {
-                shooting = false;
+            //if (sprinting)
+            //{
+            //    shooting = false;
 
-                return;
-            }
+            //    return;
+            //}
 
             
             if (value)
@@ -682,12 +685,12 @@ namespace Zoca
         public void ShootPowerUp(bool value)
         {
             
-            if (sprinting)
-            {
-                shooting = false;
+            //if (sprinting)
+            //{
+            //    shooting = false;
                
-                return;
-            }
+            //    return;
+            //}
 
             if (value)
             {
@@ -708,6 +711,7 @@ namespace Zoca
 
         public void Sprint(bool value)
         {
+           
             sprintInput = value;
             if (!value)
                 sprinting = value;

@@ -195,10 +195,21 @@ namespace Zoca
             {
                 case (int)MatchState.Paused:
 
-                   
+                    // Set target time
+                    // The delay depends on the state of the game
+                    if (oldState != (int)MatchState.Goaled)
+                    {
+                        // Game not started yet
+                        targetTime = stateTimestamp + Constants.StartDelay;
+                    }
+                    else
+                    {
+                        targetTime = stateTimestamp + Constants.StartDelayOnGoal;
+                    }
+
                     // Reset players and ball
-                    if(Ball.Instance)
-                        Ball.Instance.ResetBall();
+                    if (Ball.Instance)
+                        Ball.Instance.ResetBall((float)(targetTime - PhotonNetwork.Time - /*Balldelay*/2f));
 
                     // We must manage also the player controllers driven by the ai for offline matches
                     List<PlayerController> players = GetOwnedPlayerControllers();
@@ -210,8 +221,7 @@ namespace Zoca
                     }
 
                   
-                    // Set target time
-                    targetTime = stateTimestamp + Constants.StartDelay;
+                    
                     break;
                 case (int)MatchState.Started:
                    
@@ -275,6 +285,7 @@ namespace Zoca
                     // case of the master client would change.
                     timeElapsed += Time.deltaTime;
                     break;
+               
             }
         }
 
