@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1112371556459759588}
   - component: {fileID: -1296434235864086916}
   - component: {fileID: 6926277753237376770}
+  - component: {fileID: 4206741635557157615}
   m_Layer: 0
   m_Name: BloomGageBarrier
   m_TagString: Untagged
@@ -156,6 +157,19 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &4206741635557157615
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7055105328436990833}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9044b2a628d4ad646ba28da50d78577d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  delay: 0.5
 --- !u!65 &8322834290518983238
 BoxCollider:
   m_ObjectHideFlags: 0
