@@ -102,7 +102,7 @@ namespace Zoca
         float distanceAdjustment;
 
         float actualDistance;
-
+        float superShotPower;
         
 
         private void Awake()
@@ -137,6 +137,20 @@ namespace Zoca
 
         }
 
+        public bool CheckSuperShot()
+        {
+            //return false;      
+            Ray ray = new Ray(owner.transform.position, Vector3.down);
+            if (Physics.Raycast(ray, 0.5f))
+                return false;
+
+            // Get player vertical velocity
+            float verticalSpeed = owner.Velocity.y;
+            if (Mathf.Abs(verticalSpeed) > 3)
+                return false;
+
+            return true;
+        }
 
 
         public bool CanShoot()
@@ -202,14 +216,36 @@ namespace Zoca
 
                 if(hittable != null)
                 {
-                    parameters = new object[5];
-                    parameters[0] = (hittable as MonoBehaviourPun).photonView.ViewID;
-                    parameters[1] = info.point;
-                    parameters[2] = info.normal;
-                    parameters[3] = PhotonNetwork.Time;
-                    parameters[4] = direction;
-                    //parameters[5] = false;// superShot; ******************** TO REMOVE
-                   
+                    List<object> paramList = new List<object>();
+                    paramList.Add((hittable as MonoBehaviourPun).photonView.ViewID);
+                    paramList.Add(info.point);
+                    paramList.Add(info.normal);
+                    paramList.Add(PhotonNetwork.Time);
+                    paramList.Add(direction);
+
+                    //parameters = new object[5];
+                    //parameters[0] = (hittable as MonoBehaviourPun).photonView.ViewID;
+                    //parameters[1] = info.point;
+                    //parameters[2] = info.normal;
+                    //parameters[3] = PhotonNetwork.Time;
+                    //parameters[4] = direction;
+                    
+                    if (Tag.Ball.Equals(info.collider.tag))
+                    {
+                        // Hit the ball, so lets check for the super shot
+                        if (CheckSuperShot())
+                        {
+                            Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA SuperShot");
+                            paramList.Add((byte)1);
+                        }
+                        else
+                        {
+                            paramList.Add((byte)0);
+                        }    
+                    }
+
+                    parameters = paramList.ToArray();
+
                 }
             }
             
@@ -332,11 +368,20 @@ namespace Zoca
                 if (hittable != null)
                 {
                     bool useDamage = false;
+                    int superShotPower = 1;
+                    bool superShot = false;
                     if (!Tag.Ball.Equals((hittable as MonoBehaviour).tag))
+                    {
                         useDamage = true;
-
+                    }
+                    else
+                    {
+                        // Hit the ball, lets check the sixth parameter
+                        superShot = (byte)parameters[5] == 1 ? true : false;
+                        
+                    }
                    
-                    hittable.Hit(owner.gameObject, hitPoint, hitNormal, hitDirection, useDamage ? damage : power);
+                    hittable.Hit(owner.gameObject, hitPoint, hitNormal, hitDirection, useDamage ? damage : !superShot ? power : 2*power);
                 }
             }
            

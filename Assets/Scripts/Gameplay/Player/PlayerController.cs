@@ -181,7 +181,7 @@ namespace Zoca
         DateTime freezedLast;
 
         bool shooting = false;
-        bool superShoot = false;
+        bool shootPowerUp = false;
 
         [SerializeField]
         float healthMax = 150;
@@ -466,7 +466,7 @@ namespace Zoca
                         //Debug.Log("Update - shooting 2...");
                         object[] parameters = null;
 
-                        if (!superShoot)
+                        if (!shootPowerUp)
                         {
                             // Returns true if the weapon is ready to shoot, otherwise returns false
                             if (fireWeapon.TryShoot(out parameters))
@@ -567,7 +567,7 @@ namespace Zoca
             }
         }
 
-       
+  
 
         public void LookAt(Vector3 target)
         {
@@ -662,7 +662,7 @@ namespace Zoca
         {
            
             // Always set the super shoot false
-            superShoot = false;
+            shootPowerUp = false;
 
             // You can't shoot if you are sprinting
             //if (sprinting)
@@ -699,12 +699,12 @@ namespace Zoca
             if (value)
             {
                 shooting = true;
-                superShoot = true;
+                shootPowerUp = true;
             }
             else
             {
                 shooting = false;
-                superShoot = false;
+                shootPowerUp = false;
             }
 
 
@@ -893,7 +893,7 @@ namespace Zoca
             
         }
 
-        public void OnSuperShoot(InputAction.CallbackContext context)
+        public void OnRightShoot(InputAction.CallbackContext context)
         {
             if (!photonView.IsMine || (PhotonNetwork.OfflineMode && photonView.Owner != PhotonNetwork.MasterClient))
                 return;
