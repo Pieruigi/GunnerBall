@@ -30,6 +30,9 @@ namespace Zoca.UI
 
         float dotElapsed = 0;
         float dotTime = 0.1f; // Check for dot color every 0.1 seconds
+        bool playingSuperShot = false;
+        float superShotPlayTime = 0.1f;
+        float superShotPlayStrength = 50f;
 
         // Start is called before the first frame update
         void Start()
@@ -49,7 +52,36 @@ namespace Zoca.UI
 
             CheckLoader();
 
-         
+            CheckSuperShot();
+        }
+
+        void CheckSuperShot()
+        {
+            if (PlayerController.Local == null)
+                return;
+
+            if (PlayerController.Local.FireWeapon.CheckSuperShot())
+            {
+                if (!playingSuperShot)
+                {
+                    playingSuperShot = true;
+                    notAimImage.transform.DOShakeRotation(superShotPlayTime, superShotPlayStrength * Vector3.forward).OnComplete(HandleOnSuperShootPlayCompleted);
+                    aimImage.transform.DOShakeRotation(superShotPlayTime, superShotPlayStrength * Vector3.forward);
+                }
+                
+            }
+            else
+            {
+                playingSuperShot = false;
+            }
+        }
+
+        void HandleOnSuperShootPlayCompleted()
+        {
+            if (!playingSuperShot)
+                return;
+            notAimImage.transform.DOShakeRotation(superShotPlayTime, superShotPlayStrength * Vector3.forward).OnComplete(HandleOnSuperShootPlayCompleted);
+            aimImage.transform.DOShakeRotation(superShotPlayTime, superShotPlayStrength * Vector3.forward);
         }
 
         void CheckDot()

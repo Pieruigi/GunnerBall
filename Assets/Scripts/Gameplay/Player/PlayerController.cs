@@ -589,6 +589,12 @@ namespace Zoca
             currentPitch = Mathf.Clamp(currentPitch, minPitch, maxPitch);
         }
 
+        public void PushBack(float force)
+        {
+            Vector3 v = transform.forward * -force;
+            velocity += v;
+        }
+
         public bool IsInGoalArea()
         {
             return inGoalArea;

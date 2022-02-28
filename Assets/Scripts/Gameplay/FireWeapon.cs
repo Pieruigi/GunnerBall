@@ -102,7 +102,7 @@ namespace Zoca
         float distanceAdjustment;
 
         float actualDistance;
-        float superShotPower;
+        float superShotPowerMul = 3;
         
 
         private void Awake()
@@ -146,7 +146,7 @@ namespace Zoca
 
             // Get player vertical velocity
             float verticalSpeed = owner.Velocity.y;
-            if (Mathf.Abs(verticalSpeed) > 3)
+            if (Mathf.Abs(verticalSpeed) > 7)
                 return false;
 
             return true;
@@ -209,6 +209,13 @@ namespace Zoca
             bool hit = Physics.SphereCast(ray, radius, out info, maxDistance, ~layer);
             /**************************************************************/
 
+            
+            bool superShot = CheckSuperShot();
+            if (superShot)
+            {
+                owner.PushBack(15);
+            }
+            Debug.Log("Checking super shot:" + superShot);
             if (hit)
             {
                 
@@ -233,7 +240,7 @@ namespace Zoca
                     if (Tag.Ball.Equals(info.collider.tag))
                     {
                         // Hit the ball, so lets check for the super shot
-                        if (CheckSuperShot())
+                        if (superShot)
                         {
                             Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA SuperShot");
                             paramList.Add((byte)1);
@@ -368,7 +375,6 @@ namespace Zoca
                 if (hittable != null)
                 {
                     bool useDamage = false;
-                    int superShotPower = 1;
                     bool superShot = false;
                     if (!Tag.Ball.Equals((hittable as MonoBehaviour).tag))
                     {
@@ -376,12 +382,12 @@ namespace Zoca
                     }
                     else
                     {
-                        // Hit the ball, lets check the sixth parameter
+                        // Ball hit, lets check the sixth parameter
                         superShot = (byte)parameters[5] == 1 ? true : false;
-                        
+                       
                     }
                    
-                    hittable.Hit(owner.gameObject, hitPoint, hitNormal, hitDirection, useDamage ? damage : !superShot ? power : 2*power);
+                    hittable.Hit(owner.gameObject, hitPoint, hitNormal, hitDirection, useDamage ? damage : !superShot ? power : superShotPowerMul * power);
                 }
             }
            
