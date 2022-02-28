@@ -74,7 +74,7 @@ namespace Zoca
             }
         }
 
-        protected bool CastRayFromPlayerCamera(out RaycastHit info, int distance = 1000, int? mask = null)
+        protected bool CastRayFromPlayerCamera(out RaycastHit info, int? mask = null, float distance = 1000)
         {
             PlayerController playerController = Target.GetComponent<PlayerController>();
 

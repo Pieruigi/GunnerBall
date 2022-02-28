@@ -34,7 +34,7 @@ namespace Zoca
             // Cast a ray from the camera
             int mask = LayerMask.GetMask(new string[] { Layer.Ground });
             RaycastHit info;
-            if (CastRayFromPlayerCamera(out info, 1000, mask))
+            if (CastRayFromPlayerCamera(out info, mask))
             {
                 // Create the barrier
                 LevelManager.Instance.SendEventSpawnBarrier(info.point, Target.transform.rotation);

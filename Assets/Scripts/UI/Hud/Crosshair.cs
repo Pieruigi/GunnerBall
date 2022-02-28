@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -35,6 +36,10 @@ namespace Zoca.UI
         {
             localPlayerController = PlayerController.Local;
             localPlayerCollider = localPlayerController.GetComponent<CharacterController>();
+
+
+            //notAimImage.transform.DOShakeRotation(1, 50 * Vector3.forward).SetLoops(-1);
+            //aimImage.transform.DOShakeRotation(1, 50*Vector3.forward).SetLoops(-1);
         }
 
         // Update is called once per frame

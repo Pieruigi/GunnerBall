@@ -32,7 +32,7 @@ namespace Zoca
             Ray ray = new Ray(playerController.PlayerCamera.transform.position, playerController.PlayerCamera.transform.forward);
             int layer = LayerMask.GetMask(new string[] { Layer.Ground });
             RaycastHit info;
-            if (CastRayFromPlayerCamera(out info, 1000, layer))
+            if (CastRayFromPlayerCamera(out info, layer))
             {
                 // Create the barrier
                 int team = (int)PlayerCustomPropertyUtility.GetPlayerCustomProperty(playerController.photonView.Owner, PlayerCustomPropertyKey.TeamColor);

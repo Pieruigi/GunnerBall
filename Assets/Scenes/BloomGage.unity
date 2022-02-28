@@ -807,7 +807,7 @@ GameObject:
   m_Component:
   - component: {fileID: 567202606}
   - component: {fileID: 567202607}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Walls
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1063,6 +1063,30 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 657366271}
     m_Modifications:
+    - target: {fileID: 350824545, guid: fff260a7385ead74ca50f5133ed2aa0f, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 350824545, guid: fff260a7385ead74ca50f5133ed2aa0f, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 350824545, guid: fff260a7385ead74ca50f5133ed2aa0f, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 350824545, guid: fff260a7385ead74ca50f5133ed2aa0f, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 350824545, guid: fff260a7385ead74ca50f5133ed2aa0f, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 350824545, guid: fff260a7385ead74ca50f5133ed2aa0f, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2209370559099369131, guid: fff260a7385ead74ca50f5133ed2aa0f, type: 3}
       propertyPath: m_RootOrder
       value: 10
@@ -1104,6 +1128,30 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2209370559099369131, guid: fff260a7385ead74ca50f5133ed2aa0f, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4932899688049100655, guid: fff260a7385ead74ca50f5133ed2aa0f, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4932899688049100655, guid: fff260a7385ead74ca50f5133ed2aa0f, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4932899688049100655, guid: fff260a7385ead74ca50f5133ed2aa0f, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4932899688049100655, guid: fff260a7385ead74ca50f5133ed2aa0f, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4932899688049100655, guid: fff260a7385ead74ca50f5133ed2aa0f, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4932899688049100655, guid: fff260a7385ead74ca50f5133ed2aa0f, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
@@ -5176,7 +5224,7 @@ GameObject:
   - component: {fileID: 1905747866}
   - component: {fileID: 1905747865}
   - component: {fileID: 1905747864}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Roof
   m_TagString: Untagged
   m_Icon: {fileID: 0}

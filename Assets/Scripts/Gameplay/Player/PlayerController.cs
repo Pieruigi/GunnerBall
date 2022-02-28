@@ -407,7 +407,11 @@ namespace Zoca
                 // The current velocity takes into account some acceleration
                 float accMul = 1;
                 if (!cc.isGrounded)
+                {
                     accMul *= 0.2f;
+                    targetVelocity *= 0.5f;
+                }
+                    
                 
 
                 velocity = Vector3.MoveTowards(velocity, targetVelocity, Time.deltaTime * acceleration * accMul);
@@ -436,7 +440,7 @@ namespace Zoca
                 if (!cc.isGrounded)
                 {
                     
-                    ySpeed += Physics.gravity.y * 2f * Time.deltaTime;
+                    ySpeed += Physics.gravity.y * /*2f * */ Time.deltaTime;
                     //Debug.LogFormat("PlayerController - Not grounded; ySpeed; {0}", ySpeed);
                 }
                 else

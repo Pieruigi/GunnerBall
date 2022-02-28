@@ -113,7 +113,7 @@ namespace Zoca.UI
         void Start()
         {
             buttonLeaveRoom.onClick.AddListener(() => { PhotonNetwork.LeaveRoom(); });
-            readyButton.onClick.AddListener(() => { GameManager.Instance.SetLocalPlayerReady(true); });
+            readyButton.onClick.AddListener(() => { GameManager.Instance.SetLocalPlayerReady(true); readyButton.interactable = false; });
 
             // Add character button listener
             nextCharacterButton.onClick.AddListener(NextCharacter);
