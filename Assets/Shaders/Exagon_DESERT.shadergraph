@@ -31,7 +31,11 @@
             "m_Id": "042b57690b924c32a944fd25453d67bf"
         }
     ],
-    "m_Keywords": [],
+    "m_Keywords": [
+        {
+            "m_Id": "ed0442e86c7a40dd89a7e7c4742e461c"
+        }
+    ],
     "m_Nodes": [
         {
             "m_Id": "f622fcefd61f46fa9790b70f234fe142"
@@ -131,6 +135,9 @@
         },
         {
             "m_Id": "2f2e8b834bb44066a7004f3e1d410117"
+        },
+        {
+            "m_Id": "e778550ab3e24362803b82951feef6d2"
         }
     ],
     "m_GroupDatas": [],
@@ -516,12 +523,15 @@
             },
             {
                 "m_Id": "879bb3c9360d4c90b2bea84e8c69bda7"
+            },
+            {
+                "m_Id": "e778550ab3e24362803b82951feef6d2"
             }
         ]
     },
     "m_PreviewData": {
         "serializedMesh": {
-            "m_SerializedMesh": "{\"mesh\":{\"fileID\":10202,\"guid\":\"0000000000000000e000000000000000\",\"type\":0}}",
+            "m_SerializedMesh": "{\"mesh\":{\"fileID\":10200,\"guid\":\"0000000000000000e000000000000000\",\"type\":0}}",
             "m_Guid": ""
         }
     },
@@ -601,7 +611,7 @@
     "m_SurfaceType": 1,
     "m_AlphaMode": 0,
     "m_TwoSided": true,
-    "m_AlphaClip": false,
+    "m_AlphaClip": true,
     "m_CustomEditorGUI": ""
 }
 
@@ -1155,8 +1165,8 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": 741.0,
-            "y": 109.0000228881836,
+            "x": 785.0001831054688,
+            "y": -44.00001525878906,
             "width": 208.0,
             "height": 374.0
         }
@@ -2589,7 +2599,7 @@
     "hlslDeclarationOverride": 0,
     "m_Hidden": false,
     "m_Value": {
-        "m_SerializedTexture": "{\"texture\":{\"fileID\":2800000,\"guid\":\"ec5a4e999ff25884189dd09c5859ea51\",\"type\":3}}",
+        "m_SerializedTexture": "{\"texture\":{\"fileID\":2800000,\"guid\":\"b74bab7231d2c9f4698cefd3e6c1e357\",\"type\":3}}",
         "m_Guid": ""
     },
     "m_Modifiable": true,
@@ -3209,6 +3219,21 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "cd55a261d11a4a09a4bc689b40e65ce3",
+    "m_Id": 0,
+    "m_DisplayName": "Alpha Clip Threshold",
+    "m_SlotType": 0,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "AlphaClipThreshold",
+    "m_StageCapability": 2,
+    "m_Value": 0.5,
+    "m_DefaultValue": 0.5,
+    "m_Labels": []
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.UVMaterialSlot",
     "m_ObjectId": "cdaa35a2dff34c1994e6350e9908d07b",
     "m_Id": 0,
@@ -3510,6 +3535,39 @@
 }
 
 {
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.BlockNode",
+    "m_ObjectId": "e778550ab3e24362803b82951feef6d2",
+    "m_Group": {
+        "m_Id": ""
+    },
+    "m_Name": "SurfaceDescription.AlphaClipThreshold",
+    "m_DrawState": {
+        "m_Expanded": true,
+        "m_Position": {
+            "serializedVersion": "2",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 0.0,
+            "height": 0.0
+        }
+    },
+    "m_Slots": [
+        {
+            "m_Id": "cd55a261d11a4a09a4bc689b40e65ce3"
+        }
+    ],
+    "synonyms": [],
+    "m_Precision": 0,
+    "m_PreviewExpanded": true,
+    "m_PreviewMode": 0,
+    "m_CustomColors": {
+        "m_SerializableColors": []
+    },
+    "m_SerializedDescriptor": "SurfaceDescription.AlphaClipThreshold"
+}
+
+{
     "m_SGVersion": 1,
     "m_Type": "UnityEditor.ShaderGraph.Internal.Vector1ShaderProperty",
     "m_ObjectId": "e7f5798db27e44338ac6cda99ed94021",
@@ -3684,6 +3742,27 @@
     "m_Property": {
         "m_Id": "78d3c8df600b4ea78bd88871131e22ea"
     }
+}
+
+{
+    "m_SGVersion": 1,
+    "m_Type": "UnityEditor.ShaderGraph.ShaderKeyword",
+    "m_ObjectId": "ed0442e86c7a40dd89a7e7c4742e461c",
+    "m_Guid": {
+        "m_GuidSerialized": "882b14f3-41a3-4378-a387-8a2f6ef1eebb"
+    },
+    "m_Name": "_RECEIVE_SHADOWS_OFF",
+    "m_DefaultRefNameVersion": 1,
+    "m_RefNameGeneratedByDisplayName": "_RECEIVE_SHADOWS_OFF",
+    "m_DefaultReferenceName": "_RECEIVE_SHADOWS_OFF",
+    "m_OverrideReferenceName": "",
+    "m_GeneratePropertyBlock": true,
+    "m_KeywordType": 0,
+    "m_KeywordDefinition": 0,
+    "m_KeywordScope": 1,
+    "m_Entries": [],
+    "m_Value": 1,
+    "m_IsEditable": true
 }
 
 {
