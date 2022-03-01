@@ -9,8 +9,8 @@ namespace Zoca
         protected override bool DoTryShoot()
         {
             RaycastHit info;
-            int mask = LayerMask.GetMask(new string[] { Layer.Wall, Layer.Top });
-            if(CastRayFromPlayerCamera(out info, mask))
+            //int mask = LayerMask.GetMask(new string[] { Layer.Wall, Layer.Top });
+            if(CastRayFromPlayerCamera(out info))
             {
                 LevelManager.Instance.SendEventSpawnMagnet(info.point, Quaternion.identity);
                 return true;
