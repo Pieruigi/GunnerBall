@@ -41,6 +41,12 @@ namespace Zoca
         [SerializeField]
         GameObject explosionPrefab;
 
+        [SerializeField]
+        ParticleSystem trailSuperShotParticle;
+
+        [SerializeField]
+        ParticleSystem superShotFlameParticle;
+
         [Header("Audio")]
         [SerializeField]
         AudioSource bounceAudioSource;
@@ -84,6 +90,8 @@ namespace Zoca
         float trailMinSpeed = 10;
         bool trailForcedStop = false;
         ParticleSystem trailParticle;
+        float superShotTrailElapsed;
+        float superShotTrailTime = 1f;
         #endregion
 
         private void Awake()
@@ -182,6 +190,17 @@ namespace Zoca
                         trailParticle.Play();
                 }
             }
+
+            if (trailSuperShotParticle.isPlaying)
+            {
+                superShotTrailElapsed += Time.deltaTime;
+                if (superShotTrailElapsed > superShotTrailTime)
+                {
+                    trailSuperShotParticle.Stop();
+                    superShotFlameParticle.Stop();
+                }
+                    
+            }
 #endif
         }
 
@@ -228,6 +247,17 @@ namespace Zoca
 
             
 
+        }
+
+        public void ActivateSuperShotFx()
+        {
+            superShotTrailElapsed = 0;
+
+            if(!trailSuperShotParticle.isPlaying)
+                trailSuperShotParticle.Play();
+
+            if (!superShotFlameParticle.isPlaying)
+                superShotFlameParticle.Play();
         }
 
         /// <summary>

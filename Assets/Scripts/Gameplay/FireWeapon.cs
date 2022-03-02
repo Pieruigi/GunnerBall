@@ -384,10 +384,14 @@ namespace Zoca
                     {
                         // Ball hit, lets check the sixth parameter
                         superShot = (byte)parameters[5] == 1 ? true : false;
-                       
+
+                        if (superShot)
+                            hitObject.GetComponent<Ball>().ActivateSuperShotFx();
                     }
                    
                     hittable.Hit(owner.gameObject, hitPoint, hitNormal, hitDirection, useDamage ? damage : !superShot ? power : superShotPowerMul * power);
+
+                    
                 }
             }
            
