@@ -8,14 +8,15 @@ namespace Zoca
 {
     public class StatsManager : MonoBehaviour
     {
-
+        // Test steamId:76561199247920575
+        
         #region consts
         public const string WonGamesStatNamePrefix = "S_WonGames_";
         public const string DrawnGamesStatNamePrefix = "S_DrawnGames_";
         public const string LostGamesStatNamePrefix = "S_LostGames_";
         public const string QuittedGamesStatNamePrefix = "S_QuittedGames_";
 
-        public const string RankingLeadNamePrefix = "Ranking_";
+        public const string RankingLeadNamePrefix = "L_Ranking_";
 
         public const int VictoryPoints = 300;
         public const int DrawPoints = 100;
@@ -26,6 +27,10 @@ namespace Zoca
 
         #region properties
         public static StatsManager Instance { get; private set; }
+        #endregion
+
+        #region private fields
+        Dictionary<string, SteamLeaderboard_t> leaderboards = new Dictionary<string, SteamLeaderboard_t>();
         #endregion
 
         #region private methods
@@ -50,15 +55,14 @@ namespace Zoca
             // Request all the local user stats
             RequestCurrentStats();
 
-            RequestCurrentLeaderboard();
+            RequestCurrentLeaderboards();
 
             if (GameManager.Instance.InGame)
             {
                 // Set the match handles
                 Match.Instance.OnStateChanged += OnMatchStateChanged;
             }
-
-            TestServerStats();
+          
         }
 
         // Update is called once per frame
@@ -67,8 +71,8 @@ namespace Zoca
             //if (Input.GetKeyDown(KeyCode.A))
             //{
             //    int statValue;
-            //    string statName = StatName.WonGames;
-            //    if(GetStat(statName, out statValue))
+            //    string statName = WonGamesStatNamePrefix + 2.ToString();
+            //    if (GetStat(statName, out statValue))
             //    {
             //        Debug.LogFormat("Stat found - {0}:{1}", statName, statValue);
             //    }
@@ -80,8 +84,8 @@ namespace Zoca
 
             //if (Input.GetKeyDown(KeyCode.S))
             //{
-                
-            //    string statName = StatName.WonGames;
+
+            //    string statName = WonGamesStatNamePrefix + 2.ToString();
             //    int statValue;
             //    GetStat(statName, out statValue);
             //    statValue++;
@@ -95,11 +99,9 @@ namespace Zoca
             //        Debug.LogFormat("SetStat failed:" + statName);
             //    }
             //}
-        }
 
-        void TestServerStats()
-        {
-            Debug.Log("steamId:" + SteamUser.GetSteamID());
+            
+           
         }
 
         void RequestCurrentStats()
@@ -111,9 +113,17 @@ namespace Zoca
             SteamUserStats.RequestCurrentStats();
         }
 
-        void RequestCurrentLeaderboard()
+        void RequestCurrentLeaderboards()
         {
             //SteamGameServerStats.SetUserStat();
+            if (!SteamManager.Initialized)
+                return;
+            for(int i=1; i<=5; i++)
+            {
+                CallResult<LeaderboardFindResult_t> result = CallResult<LeaderboardFindResult_t>.Create(OnLeaderboardFindResult);
+                result.Set(SteamUserStats.FindLeaderboard(RankingLeadNamePrefix + (2 * i).ToString()));
+            }
+            
         }
         #endregion
 
@@ -168,6 +178,27 @@ namespace Zoca
     
 
         #region steam callbacks
+        void OnLeaderboardFindResult(LeaderboardFindResult_t callback, bool ioFailed)
+        {
+            if(ioFailed)
+            {
+                Debug.Log("Leaderboard - ioFailed");
+                return;
+            }
+
+            Debug.Log("Leaderboard found:" + callback.m_bLeaderboardFound);
+            
+            if (callback.m_bLeaderboardFound == 1)
+            {
+                // Leaderboard has been found, check the dictionary
+                string name = SteamUserStats.GetLeaderboardName(callback.m_hSteamLeaderboard);
+                Debug.Log("LeaderboardName:" + name);
+                if (!leaderboards.ContainsKey(name))
+                    leaderboards.Add(name, callback.m_hSteamLeaderboard);
+                else
+                    leaderboards[name] = callback.m_hSteamLeaderboard;
+            }
+        }
 
         /// <summary>
         /// Receiving all the user stats
@@ -231,6 +262,11 @@ namespace Zoca
         {
             return SteamUserStats.StoreStats();
         }
+
+        //public bool SetLeaderboard(string leaderboardName)
+        //{
+        //    SteamUserStats.
+        //}
 
         public string BuildStatName(string statNamePrefix)
         {
