@@ -56,5 +56,6 @@ namespace Zoca
         public const byte SpawnMagnet = 195;
     }
 
-    
+
+
 }
