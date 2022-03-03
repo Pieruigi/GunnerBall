@@ -56,6 +56,19 @@ namespace Zoca
         public const byte SpawnMagnet = 195;
     }
 
+    public class CharacterSkillInfo
+    {
+        public const float SpeedMin = 7;
+        public const float SpeedMax = 10;
+        public const float SpeedStep = 0.15f;
 
+        public const float StaminaMin = 140;
+        public const float StaminaMax = 300;
+        public const float StaminaStep = 8f;
+
+        public const float FreezeTimeMin = 2;
+        public const float FreezeTimeMax = 5;
+        public const float FreezeTimeStep = -0.15f;
+    }
 
 }

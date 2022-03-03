@@ -358,8 +358,10 @@ namespace Zoca
 
             int score = 0;
 
+            ELeaderboardUploadScoreMethod uploadMethod = ELeaderboardUploadScoreMethod.k_ELeaderboardUploadScoreMethodForceUpdate;
             if (callback.m_cEntryCount > 0)
             {
+                uploadMethod = ELeaderboardUploadScoreMethod.k_ELeaderboardUploadScoreMethodKeepBest;
                 Debug.Log("Entry found");
                 LeaderboardEntry_t entry;
                 if (!SteamUserStats.GetDownloadedLeaderboardEntry(callback.m_hSteamLeaderboardEntries, 0, out entry, null, 0))
@@ -374,7 +376,7 @@ namespace Zoca
             score += leaderboardsPointsToAdd;
             Debug.Log("New score:" + score);
             CallResult<LeaderboardScoreUploaded_t> result = CallResult<LeaderboardScoreUploaded_t>.Create(OnLeaderboardScoreUpdloaded);
-            result.Set(SteamUserStats.UploadLeaderboardScore(leaderboard, ELeaderboardUploadScoreMethod.k_ELeaderboardUploadScoreMethodKeepBest, score, null, 0));
+            result.Set(SteamUserStats.UploadLeaderboardScore(leaderboard, uploadMethod, score, null, 0));
 
             Debug.Log("Leaderboard - Upload call sent.");
            

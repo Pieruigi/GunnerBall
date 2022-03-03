@@ -64,6 +64,15 @@ namespace Zoca.UI
         TMP_Text characterStaminaText;
 
         [SerializeField]
+        Image characterSpeedBarImage;
+
+        [SerializeField]
+        Image characterStaminaBarImage;
+
+        [SerializeField]
+        Image characterFreezeBarImage;
+
+        [SerializeField]
         TMP_Text characterStunnedText;
 
         [Header("Weapon Detail")]
@@ -392,6 +401,10 @@ namespace Zoca.UI
             characterSpeedText.text = character.Speed.ToString();
             characterStaminaText.text = character.Stamina.ToString();
             characterStunnedText.text = character.FreezingCooldown.ToString();
+
+            // Set the speed bar
+            float t = (character.Speed - CharacterSkillInfo.SpeedMin) / (CharacterSkillInfo.SpeedMax - CharacterSkillInfo.SpeedMin);
+            characterSpeedBarImage.fillAmount = t;
         }
 
         #endregion
