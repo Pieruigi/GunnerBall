@@ -58,31 +58,31 @@ namespace Zoca
 
     public class CharacterSkillsInfo
     {
-        public const float SpeedMin = 7;
-        public const float SpeedMax = 10;
+        public const float SpeedMin = 0;
+        public const float SpeedMax = 20;
         //public const float SpeedStep = 0.15f;
 
-        public const float StaminaMin = 140;
-        public const float StaminaMax = 300;
+        public const float StaminaMin = 0;
+        public const float StaminaMax = 400;
         //public const float StaminaStep = 8f;
 
-        public const float FreezeTimeMin = 2;
-        public const float FreezeTimeMax = 5;
+        public const float FreezeTimeMin = 0;
+        public const float FreezeTimeMax = 10;
         //public const float FreezeTimeStep = -0.15f;
     }
 
     public class FireWeaponStatsInfo
     {
-        public const float FirePowerMin = 26;
-        public const float FirePowerMax = 36;
+        public const float FirePowerMin = 0;
+        public const float FirePowerMax = 50;
         //public const float PowerStep = 0.5f;
 
-        public const float FireRateMin = 0.6f;
-        public const float FireRateMax = 1;
+        public const float FireRateMin = 0f;
+        public const float FireRateMax = 2;
         //public const float RateStep = 0.02f;
 
-        public const float FireRangeMin = 8;
-        public const float FireRangeMax = 12;
+        public const float FireRangeMin = 0;
+        public const float FireRangeMax = 20;
         //public const float FreezeTimeStep = -0.15f;
     }
 }

@@ -15,7 +15,7 @@ namespace Zoca
         #region join_parameters
         int expectedMaxPlayers = 2;
         string roomName = null;
-        float matchLength = 10;//300;
+        float matchLength = 300;
 
         bool updateRoomList = false;
             #endregion
