@@ -64,6 +64,9 @@ namespace Zoca.UI
         TMP_Text characterStaminaText;
 
         [SerializeField]
+        TMP_Text characterStunnedText;
+
+        [SerializeField]
         Image characterSpeedBarImage;
 
         [SerializeField]
@@ -72,8 +75,7 @@ namespace Zoca.UI
         [SerializeField]
         Image characterFreezeBarImage;
 
-        [SerializeField]
-        TMP_Text characterStunnedText;
+       
 
         [Header("Weapon Detail")]
         [SerializeField]
@@ -94,7 +96,14 @@ namespace Zoca.UI
         [SerializeField]
         TMP_Text fireRangeText;
 
+        [SerializeField]
+        Image weaponPowerBarImage;
 
+        [SerializeField]
+        Image weaponRateBarImage;
+
+        [SerializeField]
+        Image weaponRangeBarImage;
 
 
 
@@ -394,6 +403,16 @@ namespace Zoca.UI
             firePowerText.text = weapon.FirePower.ToString();
             fireRateText.text = weapon.FireRate.ToString();
             fireRangeText.text = weapon.FireRange.ToString();
+
+            // Set the power bar
+            float t = (weapon.FirePower - FireWeaponStatsInfo.FirePowerMin) / (FireWeaponStatsInfo.FirePowerMax - FireWeaponStatsInfo.FirePowerMin);
+            weaponPowerBarImage.fillAmount = t;
+            // Set the stamina bar
+            t = (weapon.FireRate - FireWeaponStatsInfo.FireRateMin) / (FireWeaponStatsInfo.FireRateMax - FireWeaponStatsInfo.FireRateMin);
+            weaponRateBarImage.fillAmount = t;
+            // Set the recovery bar
+            t = (weapon.FireRange - FireWeaponStatsInfo.FireRangeMin) / (FireWeaponStatsInfo.FireRangeMax - FireWeaponStatsInfo.FireRangeMin);
+            weaponRangeBarImage.fillAmount = t;
         } 
 
         void SetCharacterStats(Character character)
@@ -403,8 +422,14 @@ namespace Zoca.UI
             characterStunnedText.text = character.FreezingCooldown.ToString();
 
             // Set the speed bar
-            float t = (character.Speed - CharacterSkillInfo.SpeedMin) / (CharacterSkillInfo.SpeedMax - CharacterSkillInfo.SpeedMin);
+            float t = (character.Speed - CharacterSkillsInfo.SpeedMin) / (CharacterSkillsInfo.SpeedMax - CharacterSkillsInfo.SpeedMin);
             characterSpeedBarImage.fillAmount = t;
+            // Set the stamina bar
+            t = (character.Stamina - CharacterSkillsInfo.StaminaMin) / (CharacterSkillsInfo.StaminaMax - CharacterSkillsInfo.StaminaMin);
+            characterStaminaBarImage.fillAmount = t;
+            // Set the recovery bar
+            t = (character.FreezingCooldown - CharacterSkillsInfo.FreezeTimeMin) / (CharacterSkillsInfo.FreezeTimeMax - CharacterSkillsInfo.FreezeTimeMin);
+            characterFreezeBarImage.fillAmount = 1-t;
         }
 
         #endregion
