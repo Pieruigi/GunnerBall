@@ -103,7 +103,8 @@ namespace Zoca
 
         float actualDistance;
         float superShotPowerMul = 3;
-        
+        float pushBackForceHigh = 15;
+        float pushBackForceLow = 5;
 
         private void Awake()
         {
@@ -209,12 +210,21 @@ namespace Zoca
             bool hit = Physics.SphereCast(ray, radius, out info, maxDistance, ~layer);
             /**************************************************************/
 
-            
             bool superShot = CheckSuperShot();
-            if (superShot)
+            if (!owner.GetComponent<CharacterController>().isGrounded)
             {
-                owner.PushBack(15);
+                
+                if (superShot)
+                {
+                    owner.PushBack(pushBackForceHigh);
+                }
+                else
+                {
+                    owner.PushBack(pushBackForceLow);
+                }
             }
+            
+
             Debug.Log("Checking super shot:" + superShot);
             if (hit)
             {

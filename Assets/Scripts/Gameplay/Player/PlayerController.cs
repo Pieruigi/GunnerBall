@@ -78,6 +78,8 @@ namespace Zoca
         {
             get { return jumping; }
         }
+        DateTime lastJumpTime;
+        //bool grounded;
 
         float ySpeed = 0;
         bool sprinting = false;
@@ -317,17 +319,18 @@ namespace Zoca
 
             if (photonView.IsMine || PhotonNetwork.OfflineMode)
             {
-                
+                //grounded = CheckGrounded();
 
                 // Check for sprinting input
-                if (sprintInput && stamina > 0)
+                if (sprintInput && stamina > 0 && !jumping)
                 {
-                    sprinting = true;
+                    sprinting = true; 
                 }
                 else
                 {
-                    sprinting = false;
+                    sprinting = false; 
                 }
+
 
                 /**
                  * Look around
@@ -453,7 +456,8 @@ namespace Zoca
                     //Debug.LogFormat("PlayerController - Grounded; ySpeed; {0}", ySpeed);
                 }
 
-
+                Debug.Log("IsGrounded:" + (ySpeed==0));
+                
                 //
                 // Check shooting
                 //
@@ -566,8 +570,21 @@ namespace Zoca
                 animationController.AnimateFreeze(false);
             }
         }
+               
+        
+        bool CheckGrounded()
+        {
+            Vector3 end = transform.position + cc.center -cc.height/2f * Vector3.up + cc.radius * Vector3.up;
+           
 
-  
+            Vector3 start = transform.position + cc.center + cc.height / 2f * Vector3.up - cc.radius * Vector3.up;
+            Debug.Log("End:" + end.y);
+            Debug.Log("Start:" + start);
+            int layer = LayerMask.GetMask(new string[] { Layer.Ground });
+            //return Physics.CheckCapsule(start, end, cc.radius, layer);
+            
+            return Physics.CheckSphere(end, cc.radius+cc.skinWidth, layer);  
+        }
 
         public void LookAt(Vector3 target)
         {
@@ -857,12 +874,23 @@ namespace Zoca
             if (jumping)
                 return;
 
+            
+            // Sometimes check ground returns false even if the character seems to be grounded,
+            // so we check more accurately 
+            Vector3 origin = transform.position + cc.center - cc.height / 2f * Vector3.up + cc.radius * Vector3.up;
+            int layer = LayerMask.GetMask(new string[] { Layer.Ground });
+            bool grounded = Physics.CheckSphere(origin, cc.radius + cc.skinWidth + 0.01f, layer);
+            //return Physics.CheckCapsule(start, end, cc.radius, layer);
+
+            //return Physics.CheckSphere(end, cc.radius + cc.skinWidth, layer);
+
             // Jump
-            if (cc.isGrounded)
+            if (grounded && (DateTime.UtcNow-lastJumpTime).TotalSeconds > 0.5f)
             {
                 jumping = true;
                 stamina -= jumpStamina;
                 staminaLast = DateTime.UtcNow;
+                lastJumpTime = DateTime.UtcNow;
                 ySpeed = jumpSpeed;
             }
         }
@@ -871,6 +899,12 @@ namespace Zoca
         {
             if (!photonView.IsMine || (PhotonNetwork.OfflineMode && photonView.Owner != PhotonNetwork.MasterClient))
                 return;
+
+            //if(jumping)
+            //{
+            //    Sprint(false);
+            //    return;
+            //}
 
             if (context.performed)
             {
