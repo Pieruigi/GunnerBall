@@ -178,7 +178,7 @@ namespace Zoca
                     oldState = (byte)RoomCustomPropertyUtility.GetCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchOldState);
                     stateTimestamp = (float)RoomCustomPropertyUtility.GetCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchStateTimestamp);
 
-                    UpdateState();
+                    UpdateState();  
 
                     break;
 
@@ -328,6 +328,9 @@ namespace Zoca
                             PhotonNetwork.CurrentRoom.SetCustomProperties(new ExitGames.Client.Photon.Hashtable() { { RoomCustomPropertyKey.MatchTimeElapsed, (float)timeElapsed } });
                         }
 
+                        oldState = state;
+                        state = (int)MatchState.Started;
+
                         // Write
                         //RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
 
@@ -354,6 +357,8 @@ namespace Zoca
 
                         // Write
                         //RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
+                        oldState = state;
+                        state = (int)MatchState.Completed;
 
                         RaiseStateChangedEvent();
                     }
@@ -373,9 +378,11 @@ namespace Zoca
                         ht.Add(RoomCustomPropertyKey.MatchStateTimestamp, (float)PhotonNetwork.Time);
                         ht.Add(RoomCustomPropertyKey.MatchTimeElapsed, (float)timeElapsed);
                         PhotonNetwork.CurrentRoom.SetCustomProperties(ht);
-                        
+
                         // Write
                         //RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
+                        oldState = state;
+                        state = (int)MatchState.Paused;
 
                         RaiseStateChangedEvent();
                     }
@@ -383,10 +390,10 @@ namespace Zoca
 
                 case (int)MatchState.Completed:
                     //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchTimeElapsed, (float)timeElapsed);
-                    PhotonNetwork.CurrentRoom.SetCustomProperties(new ExitGames.Client.Photon.Hashtable() { { RoomCustomPropertyKey.MatchTimeElapsed, (float)timeElapsed } } );
+                    //PhotonNetwork.CurrentRoom.SetCustomProperties(new ExitGames.Client.Photon.Hashtable() { { RoomCustomPropertyKey.MatchTimeElapsed, (float)timeElapsed } } );
 
                     //RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
-                    RaiseStateChangedEvent();
+                    //RaiseStateChangedEvent();
 
                     break;
 

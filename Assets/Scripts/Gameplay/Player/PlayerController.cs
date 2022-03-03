@@ -456,7 +456,7 @@ namespace Zoca
                     //Debug.LogFormat("PlayerController - Grounded; ySpeed; {0}", ySpeed);
                 }
 
-                Debug.Log("IsGrounded:" + (ySpeed==0));
+                //Debug.Log("IsGrounded:" + (ySpeed==0));
                 
                 //
                 // Check shooting
