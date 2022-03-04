@@ -64,7 +64,7 @@ namespace Zoca
             get { return targetTime; }
         }
 
-      
+        bool changingState = false;
 
         private void Awake()
         {
@@ -177,6 +177,9 @@ namespace Zoca
                     state = (byte)RoomCustomPropertyUtility.GetCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchState);
                     oldState = (byte)RoomCustomPropertyUtility.GetCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchOldState);
                     stateTimestamp = (float)RoomCustomPropertyUtility.GetCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchStateTimestamp);
+
+                    if(PhotonNetwork.IsMasterClient)
+                        changingState = false;
 
                     UpdateState();  
 
@@ -302,6 +305,9 @@ namespace Zoca
             if (!PhotonNetwork.IsMasterClient)
                 return;
 
+            if (changingState)
+                return;
+
             switch (state)
             {
                 case (int)MatchState.Paused:
@@ -328,8 +334,10 @@ namespace Zoca
                             PhotonNetwork.CurrentRoom.SetCustomProperties(new ExitGames.Client.Photon.Hashtable() { { RoomCustomPropertyKey.MatchTimeElapsed, (float)timeElapsed } });
                         }
 
-                        oldState = state;
-                        state = (int)MatchState.Started;
+                        changingState = true;
+
+                        //oldState = state;
+                        //state = (int)MatchState.Started;
 
                         // Write
                         //RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
@@ -354,11 +362,11 @@ namespace Zoca
                         ht.Add(RoomCustomPropertyKey.MatchStateTimestamp, (float)PhotonNetwork.Time);
                         PhotonNetwork.CurrentRoom.SetCustomProperties(ht);
 
-
+                        changingState = true;
                         // Write
                         //RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
-                        oldState = state;
-                        state = (int)MatchState.Completed;
+                        //oldState = state;
+                        //state = (int)MatchState.Completed;
 
                         RaiseStateChangedEvent();
                     }
@@ -379,10 +387,11 @@ namespace Zoca
                         ht.Add(RoomCustomPropertyKey.MatchTimeElapsed, (float)timeElapsed);
                         PhotonNetwork.CurrentRoom.SetCustomProperties(ht);
 
+                        changingState = true;
                         // Write
                         //RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
-                        oldState = state;
-                        state = (int)MatchState.Paused;
+                        //oldState = state;
+                        //state = (int)MatchState.Paused;
 
                         RaiseStateChangedEvent();
                     }
