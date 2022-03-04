@@ -355,7 +355,7 @@ namespace Zoca
                         newPlayerObject.GetComponent<PlayerAI>().Team = (Team)PlayerCustomPropertyUtility.GetPlayerCustomProperty(p, PlayerCustomPropertyKey.TeamColor);
                         newPlayerObject.GetComponent<PhotonView>().OwnerActorNr = p.ActorNumber;
                         // Deactivate the ai to let the local player train alone
-                        //newPlayerObject.SetActive(false);
+                        newPlayerObject.SetActive(false);
                     }
 
 
