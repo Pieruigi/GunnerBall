@@ -19,15 +19,15 @@ namespace Zoca
         // Start is called before the first frame update
         void Start()
         {
-            // If the local player doesn't belong to the target team return and the match is 
-            // online we can return ( we don't take care of the other players )
-            if (!PhotonNetwork.OfflineMode)
-            {
-                int team = (int)PlayerCustomPropertyUtility.GetPlayerCustomProperty(PlayerController.Local.photonView.Owner, PlayerCustomPropertyKey.TeamColor);
+            // If the local player doesn't belong to the target team and the match is 
+            // online return ( we don't take care of the other players )
+            //if (!PhotonNetwork.OfflineMode)
+            //{
+            //    int team = (int)PlayerCustomPropertyUtility.GetPlayerCustomProperty(PlayerController.Local.photonView.Owner, PlayerCustomPropertyKey.TeamColor);
 
-                if (team != targetTeam)
-                    return;
-            }
+            //    if (team != targetTeam)
+            //        return;
+            //}
 
             StartCoroutine(Explode());
             
@@ -59,8 +59,10 @@ namespace Zoca
                 if (!player) // Its not a player
                     continue;
 
+
+
                 // Only local player or AIs are going to be freezed by the grenade
-                if(player.photonView.IsMine || PhotonNetwork.OfflineMode)
+                if (player.photonView.IsMine || PhotonNetwork.OfflineMode)
                 {
                     // Check the player team
                     Team team = (Team)PlayerCustomPropertyUtility.GetPlayerCustomProperty(player.photonView.Owner, PlayerCustomPropertyKey.TeamColor);
@@ -68,10 +70,10 @@ namespace Zoca
                     if (team == (Team)targetTeam)
                     {
                         // Freeze player
-                        player.SetFreezed();
+                        player.Freeze();
                     }
                 }
-                
+
             }
 
         }

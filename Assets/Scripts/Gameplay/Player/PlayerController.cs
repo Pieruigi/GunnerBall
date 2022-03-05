@@ -114,7 +114,7 @@ namespace Zoca
         }
 
         float staminaRechargeDelay = 2;
-        float staminaRechargeSpeed = 30;
+        float staminaRechargeSpeed = 40;
         float staminaChargeSpeed = 20;
        
         DateTime staminaLast;
@@ -736,6 +736,11 @@ namespace Zoca
             
         }
 
+        public void Freeze()
+        {
+            health = 0;
+        }
+
         public void Sprint(bool value)
         {
            
@@ -818,7 +823,7 @@ namespace Zoca
             }
         }
 
-        public void SetFreezed()
+        void SetFreezed()
         {
             currentFreezingCooldown = freezingCooldown;
             freezed = true;
