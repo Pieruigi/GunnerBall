@@ -215,7 +215,8 @@ namespace Zoca
             PlayerController playerController = target.GetComponent<PlayerController>();
 
             SetSkillValue(skill, GetSkillValue(skill) + (GetDefaultSkillValue(skill) * buff));
-
+            
+         
             loop = true;
 
             
@@ -225,6 +226,7 @@ namespace Zoca
         {
             
             SetSkillValue(skill, GetSkillValue(skill) - (GetDefaultSkillValue(skill) * buff));
+
 
             base.Deactivate(target);
         }

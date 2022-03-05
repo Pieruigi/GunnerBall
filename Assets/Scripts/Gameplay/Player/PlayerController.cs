@@ -104,7 +104,7 @@ namespace Zoca
         public float StaminaMax
         {
             get { return staminaMax; }
-            set { staminaMax = value; }
+            set { staminaMax = value; if (staminaMax > staminaDefault) stamina = staminaMax; }
         }
 
         float staminaDefault;
@@ -606,6 +606,7 @@ namespace Zoca
             currentPitch = Mathf.Clamp(currentPitch, minPitch, maxPitch);
         }
 
+        
         public void PushBack(float force)
         {
             Vector3 v = transform.forward * -force;
