@@ -33,11 +33,11 @@ namespace Zoca
         /// <summary>
         /// The maximum number of powerup spawned at the same time in the arena.
         /// </summary>
-        [SerializeField]
-        int pickableMaximumNumber = 4;
+        //[SerializeField]
+        int pickableMaximumNumber = 2;
 
-        [SerializeField]
-        int pickableMinimumNumber = 2;
+        //[SerializeField]
+        int pickableMinimumNumber = 1;
 
 
         /// <summary>
@@ -106,8 +106,9 @@ namespace Zoca
                     FillPickableArray();
 
                     // Adjust minimum and maximum depending on the number of players
-                    pickableMinimumNumber *= PhotonNetwork.CurrentRoom.MaxPlayers;
-                    pickableMaximumNumber *= PhotonNetwork.CurrentRoom.MaxPlayers;
+                    pickableMinimumNumber = PhotonNetwork.CurrentRoom.MaxPlayers / 2;
+                    pickableMaximumNumber = PhotonNetwork.CurrentRoom.MaxPlayers * 2;
+                    
                 }
                     
 
