@@ -87,7 +87,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxSpeed: 10.8
   sprintMultiplier: 2
-  jumpSpeed: 16
+  jumpSpeed: 12
   flyingMultiplier: 0.2
   stamina: 216
   freezingCooldown: 4.8
@@ -243,7 +243,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 5356899110363376708}
         m_TargetAssemblyTypeName: Zoca.PlayerController, Assembly-CSharp
-        m_MethodName: OnSuperShoot
+        m_MethodName: OnRightShoot
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -748,13 +748,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5841422607415710625}
-  m_LocalRotation: {x: -0.484769, y: 0.5675548, z: 0.4922028, w: 0.4479031}
-  m_LocalPosition: {x: -0.005, y: 0.046, z: 0.013}
+  m_LocalRotation: {x: -0.4243248, y: 0.44863376, z: 0.57478094, w: 0.53693867}
+  m_LocalPosition: {x: -0.0112, y: 0.105, z: 0.0307}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 6507067748175611779}
   m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: -85.045, y: 177.937, z: -82.505}
+  m_LocalEulerAnglesHint: {x: -76.265, y: -1.45, z: 95.038}
 --- !u!1 &6871411126029802814
 GameObject:
   m_ObjectHideFlags: 0
@@ -808,13 +808,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7786370743728723668}
-  m_LocalRotation: {x: -0.47313714, y: 0.58806646, z: 0.48497272, w: 0.44172436}
-  m_LocalPosition: {x: -0.008, y: 0.038, z: 0.021}
+  m_LocalRotation: {x: -0.3989825, y: 0.4264049, z: 0.58740485, w: 0.5603101}
+  m_LocalPosition: {x: -0.0308, y: 0.0903, z: 0.0292}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 6507067748175611779}
   m_RootOrder: 6
-  m_LocalEulerAnglesHint: {x: -83.365, y: 163.199, z: -65.966}
+  m_LocalEulerAnglesHint: {x: -71.451, y: 1.641, z: 91.524}
 --- !u!114 &3152529819860249453
 MonoBehaviour:
   m_ObjectHideFlags: 0
