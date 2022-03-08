@@ -55,6 +55,10 @@ namespace Zoca
         [SerializeField]
         GameObject magnetPrefab;
 
+        [field: Header("Misc")]
+        [field: SerializeField]
+        public GameObject StepParticlesPrefab { get; private set; }
+
         
         float spawnDelay = 0.5f;
         #endregion

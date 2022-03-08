@@ -310,7 +310,15 @@ namespace Zoca
         }
 
         // Start is called before the first frame update
-        
+        void Start()
+        {
+            if (LevelManager.Instance.StepParticlesPrefab)
+            {
+                // Add the step controller script
+                PlayerStepParticlesController comp = gameObject.AddComponent<PlayerStepParticlesController>();
+                comp.Init(LevelManager.Instance.StepParticlesPrefab, this);
+            }
+        }
 
         // Update is called once per frame
         void Update()
