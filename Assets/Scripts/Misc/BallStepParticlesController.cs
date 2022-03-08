@@ -11,7 +11,7 @@ namespace Zoca
         GameObject owner;
         ParticleSystem ps;
 
-        float groundDistance = 0.2f;
+        float groundDistance = 2f;
         #endregion
 
 
@@ -32,11 +32,15 @@ namespace Zoca
 
             Ray ray = new Ray(owner.transform.position, Vector3.down);
             int mask = LayerMask.GetMask(new string[] { Layer.Ground });
-            if (Physics.Raycast(ray, groundDistance, mask))
+            RaycastHit info;
+            if (Physics.Raycast(ray, out info, groundDistance, mask))
             {
                 // Activate the particle
                 if (!particles.isPlaying)
                     particles.Play();
+
+                // Set position
+                particles.transform.position = info.point;
             }
             else
             {
@@ -55,7 +59,8 @@ namespace Zoca
             this.particles.transform.parent = owner.transform;
             // Place in position
             this.particles.transform.localPosition = Vector3.zero;
-
+            // Rescale
+            this.particles.transform.localScale *= 3;
             this.owner = owner;
 
         }
