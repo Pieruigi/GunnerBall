@@ -316,7 +316,7 @@ namespace Zoca
             {
                 // Add the step controller script
                 PlayerStepParticlesController comp = gameObject.AddComponent<PlayerStepParticlesController>();
-                comp.Init(LevelManager.Instance.StepParticlesPrefab, this);
+                comp.Init(LevelManager.Instance.StepParticlesPrefab, gameObject);
             }
         }
 

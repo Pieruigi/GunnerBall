@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Zoca
 {
-    public class PlayerStepParticlesController : MonoBehaviour
+    public class BallStepParticlesController : MonoBehaviour
     {
         #region private fields
         ParticleSystem particles;
@@ -57,7 +57,7 @@ namespace Zoca
             this.particles.transform.localPosition = Vector3.zero;
 
             this.owner = owner;
-            
+
         }
         #endregion
     }
