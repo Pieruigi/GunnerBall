@@ -1,4 +1,4 @@
-
+#define SPRINT_ALL_DIRECTIONS
 using Photon.Pun;
 using System;
 using System.Collections;
@@ -379,7 +379,12 @@ namespace Zoca
                 if (sprinting)
                 {
                     // You can only sprint straight forward
+#if !SPRINT_ALL_DIRECTIONS
                     dir = transform.forward;
+#else
+                    dir = transform.forward * moveInput.y + transform.right * moveInput.x;
+#endif
+
                     speed *= sprintMultiplier;
                 }
                 else
@@ -1092,7 +1097,7 @@ namespace Zoca
         }
 
 
-        #endregion
+#endregion
 
     }
 
