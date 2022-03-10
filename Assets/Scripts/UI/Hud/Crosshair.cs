@@ -9,6 +9,8 @@ namespace Zoca.UI
 {
     public class Crosshair : MonoBehaviour
     {
+        public static Crosshair Instance { get; private set; }
+
         [SerializeField]
         Image notAimImage;
 
@@ -24,6 +26,9 @@ namespace Zoca.UI
         [SerializeField]
         Image superShotImage;
 
+        [SerializeField]
+        Transform root;
+
 
         PlayerController localPlayerController;
         Collider localPlayerCollider;
@@ -33,6 +38,18 @@ namespace Zoca.UI
         bool playingSuperShot = false;
         float superShotPlayTime = 0.1f;
         float superShotPlayStrength = 50f;
+
+        private void Awake()
+        {
+            if (!Instance)
+            {
+                Instance = this;
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+        }
 
         // Start is called before the first frame update
         void Start()
@@ -154,7 +171,14 @@ namespace Zoca.UI
             //}
         }
 
-       
+        public void Show()
+        {
+            root.gameObject.SetActive(true);
+        }
+        public void Hide()
+        {
+            root.gameObject.SetActive(false);
+        }
     }
 
 }
