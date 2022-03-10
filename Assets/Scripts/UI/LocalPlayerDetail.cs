@@ -1,3 +1,4 @@
+using Steamworks;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -13,6 +14,14 @@ namespace Zoca.UI
 
         [SerializeField]
         Image playerImage;
+
+        [SerializeField]
+        Button statsButton;
+
+        private void Awake()
+        {
+            statsButton.onClick.AddListener(OpenPlayerStats);
+        }
 
         // Start is called before the first frame update
         void Start()
@@ -31,6 +40,14 @@ namespace Zoca.UI
         void Update()
         {
 
+        }
+
+        void OpenPlayerStats()
+        {
+            PlayerStatsPanel.Instance.Open(SteamUser.GetSteamID());
+
+            PlayerStatsPanel.Instance.SetNickname(AccountManager.Instance.PlayerName);
+            PlayerStatsPanel.Instance.SetAvatar(playerImage.sprite);
         }
     }
 
