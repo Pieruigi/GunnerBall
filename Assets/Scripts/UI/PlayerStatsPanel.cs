@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+
 namespace Zoca.UI
 {
     public class PlayerStatsPanel : MonoBehaviour
@@ -30,6 +31,9 @@ namespace Zoca.UI
 
         [SerializeField]
         Transform root;
+
+        CSteamID userId;
+        SteamLeaderboard_t[] leaderboards;
         #endregion
 
         #region private methods
@@ -41,6 +45,9 @@ namespace Zoca.UI
                 Instance = this;
 
                 buttonClose.onClick.AddListener(()=> { Close(); });
+
+                // Init leaderboard array
+                leaderboards = new SteamLeaderboard_t[modeList.Count];
             }
             else
             {
@@ -60,21 +67,57 @@ namespace Zoca.UI
 
         }
 
-        private void OnEnable()
-        {
-            Debug.Log("OnEnabled");
-        }
-
-        private void OnDisable()
-        {
-            Debug.Log("OnDisabled");
-        }
+       
 
         void Close()
         {
             
             // Hide the panel
             root.gameObject.SetActive(false);
+
+        }
+
+        // Request leaderboard 
+        void RequestLeaderboard(string leaderboardName, CallResult<LeaderboardFindResult_t>.APIDispatchDelegate apiDispatchDelegate)
+        {
+            if (!SteamManager.Initialized)
+            {
+                Debug.LogWarning("SteamManager not initialized.");
+                return;
+            }
+
+
+            CallResult<LeaderboardFindResult_t> result = CallResult<LeaderboardFindResult_t>.Create(apiDispatchDelegate);
+            result.Set(SteamUserStats.FindLeaderboard(leaderboardName));
+        }
+        #endregion
+
+        #region steam callbacks
+        void OnLeaderboardFindResult(LeaderboardFindResult_t callback, bool ioFailed)
+        {
+            if (ioFailed)
+            {
+                Debug.Log("Leaderboard - ioFailed");
+                return;
+            }
+
+            Debug.Log("Leaderboard found:" + callback.m_bLeaderboardFound);
+
+            if (callback.m_bLeaderboardFound == 1)
+            {
+                leaderboards[0] = callback.m_hSteamLeaderboard;
+
+                // Leaderboard has been found, check the dictionary
+                string name = SteamUserStats.GetLeaderboardName(callback.m_hSteamLeaderboard);
+                Debug.Log("LeaderboardName:" + name);
+
+
+                // Get local player entry
+                List<CSteamID> users = new List<CSteamID>();
+                users.Add(SteamUser.GetSteamID());
+                //DownloadLeaderboardEntriesForUsers(callback.m_hSteamLeaderboard, users, OnLeaderboardScoresDownloaded);
+            }
+
         }
         #endregion
 
@@ -86,8 +129,12 @@ namespace Zoca.UI
 
             // Show 
             root.gameObject.SetActive(true);
-           
+            this.userId = userId;
 
+            // Request leaderboard
+            RequestLeaderboard(StatsManager.Instance.BuildStatName(StatsManager.RankingLeadNamePrefix, 2), OnLeaderboardFindResult);
+            //APIDispatchDelegate a;
+            
         }
 
         public void SetNickname(string nickname)

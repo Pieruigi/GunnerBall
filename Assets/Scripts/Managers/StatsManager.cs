@@ -419,6 +419,8 @@ namespace Zoca
         #endregion
 
         #region public methods
+       
+
         /// <summary>
         /// Get user stat.
         /// </summary>
@@ -434,7 +436,13 @@ namespace Zoca
 
         public string BuildStatName(string statNamePrefix)
         {
-            return statNamePrefix + PhotonNetwork.CurrentRoom.MaxPlayers.ToString();
+            //return statNamePrefix + PhotonNetwork.CurrentRoom.MaxPlayers.ToString();
+            return BuildStatName(statNamePrefix, PhotonNetwork.CurrentRoom.MaxPlayers);
+        }
+
+        public string BuildStatName(string statNamePrefix, int numberOfPlayers)
+        {
+            return statNamePrefix + numberOfPlayers.ToString();
         }
         #endregion
 
