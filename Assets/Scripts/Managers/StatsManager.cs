@@ -62,8 +62,7 @@ namespace Zoca
         // Start is called before the first frame update
         void Start()
         {
-            // Stats are stored in local cache so they are always updated since the only one
-            // who can modify them is the local client.
+            // Stats are stored in local cache so they are always synchronized
             RequestCurrentStats();
 
             SceneManager.sceneLoaded += OnSceneLoaded;
@@ -272,7 +271,7 @@ namespace Zoca
                         leaderboardsPointsToAdd = DrawPoints;
                         UpdateLeaderboardScore(BuildStatName(RankingLeadNamePrefix));
 
-                        if (GetStat(BuildStatName(DrawnGamesStatNamePrefix), out cValue))
+                        if (TryGetStat(BuildStatName(DrawnGamesStatNamePrefix), out cValue))
                             SetStat(BuildStatName(DrawnGamesStatNamePrefix), cValue + 1);
                     }
                     else
@@ -285,7 +284,7 @@ namespace Zoca
                             leaderboardsPointsToAdd = VictoryPoints;
                             UpdateLeaderboardScore(BuildStatName(RankingLeadNamePrefix));
 
-                            if (GetStat(BuildStatName(WonGamesStatNamePrefix), out cValue))
+                            if (TryGetStat(BuildStatName(WonGamesStatNamePrefix), out cValue))
                                 SetStat(BuildStatName(WonGamesStatNamePrefix), cValue + 1);
                         }
                         else
@@ -295,7 +294,7 @@ namespace Zoca
                             if (leaderboardsPointsToAdd != 0)
                                 UpdateLeaderboardScore(BuildStatName(RankingLeadNamePrefix));
 
-                            if (GetStat(BuildStatName(LostGamesStatNamePrefix), out cValue))
+                            if (TryGetStat(BuildStatName(LostGamesStatNamePrefix), out cValue))
                                 SetStat(BuildStatName(LostGamesStatNamePrefix), cValue + 1);
                         }
                     }
@@ -427,7 +426,7 @@ namespace Zoca
         /// <param name="statName"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public bool GetStat(string statName, out int data)
+        public bool TryGetStat(string statName, out int data)
         {
             return SteamUserStats.GetStat(statName, out data);
         }
@@ -451,11 +450,11 @@ namespace Zoca
         {
            
             int cValue;
-            GetStat(BuildStatName(WonGamesStatNamePrefix), out cValue);
+            TryGetStat(BuildStatName(WonGamesStatNamePrefix), out cValue);
             Debug.LogFormat("Wins:" + cValue);
-            GetStat(BuildStatName(DrawnGamesStatNamePrefix), out cValue);
+            TryGetStat(BuildStatName(DrawnGamesStatNamePrefix), out cValue);
             Debug.LogFormat("Drawn:" + cValue);
-            GetStat(BuildStatName(LostGamesStatNamePrefix), out cValue);
+            TryGetStat(BuildStatName(LostGamesStatNamePrefix), out cValue);
             Debug.LogFormat("Lost:" + cValue);
         }
         #endregion

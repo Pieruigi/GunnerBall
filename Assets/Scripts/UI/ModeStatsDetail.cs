@@ -69,7 +69,21 @@ namespace Zoca.UI
                 
             
             RequestLeaderboard(StatsManager.Instance.BuildStatName(StatsManager.RankingLeadNamePrefix, numberOfPlayers), OnLeaderboardFindResult);
-            
+
+            // Set stats
+            int tmp = 0;
+            if (StatsManager.Instance.TryGetStat(StatsManager.Instance.BuildStatName(StatsManager.WonGamesStatNamePrefix, numberOfPlayers), out tmp))
+            {
+                winText.text = tmp.ToString();
+            }
+            if (StatsManager.Instance.TryGetStat(StatsManager.Instance.BuildStatName(StatsManager.DrawnGamesStatNamePrefix, numberOfPlayers), out tmp))
+            {
+                drawText.text = tmp.ToString();
+            }
+            if (StatsManager.Instance.TryGetStat(StatsManager.Instance.BuildStatName(StatsManager.LostGamesStatNamePrefix, numberOfPlayers), out tmp))
+            {
+                loseText.text = tmp.ToString();
+            }
         }
 
         private void OnDisable()
@@ -83,6 +97,9 @@ namespace Zoca.UI
             leaderboardScoresDownloadedCallResult?.Cancel();
             leaderboardScoresDownloadedCallResult?.Dispose();
 
+            winText.text = "-";
+            drawText.text = "-";
+            loseText.text = "-";
         }
 
         /// <summary>
