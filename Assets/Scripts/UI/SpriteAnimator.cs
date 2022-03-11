@@ -10,6 +10,8 @@ namespace Zoca.UI
     {
         enum State { Stopped, Playing, Paused }
 
+        
+
         [SerializeField]
         Image spriteImage;
 
@@ -87,6 +89,11 @@ namespace Zoca.UI
             {
                 Play();
             }
+        }
+
+        public bool IsPlaying()
+        {
+            return state == State.Playing;
         }
 
         public void Play()

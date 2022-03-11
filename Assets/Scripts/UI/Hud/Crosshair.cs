@@ -38,12 +38,15 @@ namespace Zoca.UI
         bool playingSuperShot = false;
         float superShotPlayTime = 0.1f;
         float superShotPlayStrength = 50f;
+        SpriteAnimator superShotAnimator;
 
         private void Awake()
         {
             if (!Instance)
             {
                 Instance = this;
+                superShotImage.enabled = false;
+                superShotAnimator = superShotImage.GetComponent<SpriteAnimator>();
             }
             else
             {
@@ -82,14 +85,22 @@ namespace Zoca.UI
                 if (!playingSuperShot)
                 {
                     playingSuperShot = true;
-                    notAimImage.transform.DOShakeRotation(superShotPlayTime, superShotPlayStrength * Vector3.forward).OnComplete(HandleOnSuperShootPlayCompleted);
-                    aimImage.transform.DOShakeRotation(superShotPlayTime, superShotPlayStrength * Vector3.forward);
+                    //notAimImage.transform.DOShakeRotation(superShotPlayTime, superShotPlayStrength * Vector3.forward).OnComplete(HandleOnSuperShootPlayCompleted);
+                    //aimImage.transform.DOShakeRotation(superShotPlayTime, superShotPlayStrength * Vector3.forward);
+                    superShotImage.enabled = true;
+                    superShotAnimator.Play();
+                    superShotImage.transform.DOShakeRotation(superShotPlayTime, superShotPlayStrength * Vector3.forward).OnComplete(HandleOnSuperShootPlayCompleted);
                 }
                 
             }
             else
             {
+                
                 playingSuperShot = false;
+                if (superShotAnimator.IsPlaying())
+                    superShotAnimator.Stop();
+
+                superShotImage.enabled = false;
             }
         }
 
@@ -97,8 +108,9 @@ namespace Zoca.UI
         {
             if (!playingSuperShot)
                 return;
-            notAimImage.transform.DOShakeRotation(superShotPlayTime, superShotPlayStrength * Vector3.forward).OnComplete(HandleOnSuperShootPlayCompleted);
-            aimImage.transform.DOShakeRotation(superShotPlayTime, superShotPlayStrength * Vector3.forward);
+            //notAimImage.transform.DOShakeRotation(superShotPlayTime, superShotPlayStrength * Vector3.forward);
+            //aimImage.transform.DOShakeRotation(superShotPlayTime, superShotPlayStrength * Vector3.forward);
+            superShotImage.transform.DOShakeRotation(superShotPlayTime, superShotPlayStrength * Vector3.forward).OnComplete(HandleOnSuperShootPlayCompleted);
         }
 
         void CheckDot()
