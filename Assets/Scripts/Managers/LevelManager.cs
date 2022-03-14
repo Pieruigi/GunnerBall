@@ -35,12 +35,19 @@ namespace Zoca
         #region private fields
         [Header("Main Section")]
         [SerializeField]
+        List<Transform> blueTeamSpawnGroup;
+
+        [SerializeField]
+        List<Transform> redTeamSpawnGroup;
+
+        //[SerializeField]
         List<Transform> blueTeamSpawnPoints;
         
 
-        [SerializeField]
+        //[SerializeField]
         List<Transform> redTeamSpawnPoints;
         
+
 
         [SerializeField]
         Transform ballSpawnPoint;
@@ -69,7 +76,20 @@ namespace Zoca
             if (!Instance)
             {
                 Instance = this;
-                //Physics.gravity = Vector3.down * 12;
+                Debug.Log("LevelManager Awake");
+                // Get the spawn point group by game mode ( 1vs1, 2vs2, ecc... )
+                int index = PhotonNetwork.CurrentRoom.MaxPlayers / 2 - 1;
+                blueTeamSpawnPoints = new List<Transform>();
+                for(int i=0; i<blueTeamSpawnGroup[index].childCount; i++)
+                {
+                    blueTeamSpawnPoints.Add(blueTeamSpawnGroup[index].GetChild(i));
+                }
+                redTeamSpawnPoints = new List<Transform>();
+                for (int i = 0; i < redTeamSpawnGroup[index].childCount; i++)
+                {
+                    redTeamSpawnPoints.Add(redTeamSpawnGroup[index].GetChild(i));
+                }
+
             }
             else
             {
@@ -99,16 +119,7 @@ namespace Zoca
             PhotonNetwork.RemoveCallbackTarget(this);
         }
 
-        //IEnumerator DoSpawnBarrier(Vector3 position, Quaternion rotation, double time)
-        //{
-        //    // Check how much time has passed and add the remaining delay
-        //    float lag = (float)(PhotonNetwork.Time - time);
-        //    if (spawnDelay >= lag)
-        //        yield return new WaitForSeconds(spawnDelay - lag);
-
-        //    Instantiate(barrierPrefab, position, rotation);
-        //}
-
+     
         IEnumerator DoSpawnElectricGrenade(Vector3 position, Quaternion rotation, int targetTeam, double time)
         {
             // Check how much time has passed and add the remaining delay
@@ -190,27 +201,7 @@ namespace Zoca
 
         }
 
-        //public void UnspawnAll()
-        //{
-        //    // Unsapawn all barriers
-        //    Barrier[] barriers = GameObject.FindObjectsOfType<Barrier>();
-        //    for(int i=0; i<barriers.Length; i++)
-        //    {
-        //        barriers[i].Destroy();
-        //    }
-
-        //    ElectricGrenade[] grenades = GameObject.FindObjectsOfType<ElectricGrenade>();
-        //    for (int i = 0; i < grenades.Length; i++)
-        //    {
-        //        grenades[i].Destroy();
-        //    }
-
-        //    Magnet[] magnets = GameObject.FindObjectsOfType<Magnet>();
-        //    for (int i = 0; i < magnets.Length; i++)
-        //    {
-        //        magnets[i].Destroy();
-        //    }
-        //}
+       
 
         #endregion
     }
