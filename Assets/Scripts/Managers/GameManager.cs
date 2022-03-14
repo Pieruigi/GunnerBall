@@ -211,19 +211,23 @@ namespace Zoca
                         // Get the spawn point depending on the team the player belongs to
                         Transform spawnPoint = null;
                         int teamPlayers = PhotonNetwork.CurrentRoom.MaxPlayers / 2;
-                        int actorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
+                        int localActorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
 
                         // Get the other player
-                        Player other = null;
+                        //Player other = null;
+                        int localSpawnId = 0;
                         foreach (int key in PhotonNetwork.CurrentRoom.Players.Keys)
                         {
                             if (PhotonNetwork.CurrentRoom.Players[key] == PhotonNetwork.LocalPlayer)
                                 continue;
+
                             Team t = (Team)PlayerCustomPropertyUtility.GetPlayerCustomProperty(PhotonNetwork.CurrentRoom.Players[key], PlayerCustomPropertyKey.TeamColor);
                             if (t == team)
                             {
-                                other = PhotonNetwork.CurrentRoom.Players[key];
-                                break;
+                                //other = PhotonNetwork.CurrentRoom.Players[key];
+                                if (PhotonNetwork.CurrentRoom.Players[key].ActorNumber > localActorNumber)
+                                    localSpawnId++;
+                                //break;
                             };
 
                         }
@@ -232,22 +236,22 @@ namespace Zoca
                         {
 
                             //int id = actorNumber % teamPlayers;
-                            int id = 0;
-                            if (other != null && actorNumber > other.ActorNumber)
-                                id = 1;
-                            spawnPoint = LevelManager.Instance.BlueTeamSpawnPoints[id];
+                            //int id = 0;
+                            //if (other != null && localActorNumber > other.ActorNumber)
+                            //    id = 1;
+                            spawnPoint = LevelManager.Instance.BlueTeamSpawnPoints[localSpawnId];
                         }
                         else
                         {
                             //int id = actorNumber % (2 * teamPlayers);
-                            int id = 0;
-                            if (other != null && actorNumber > other.ActorNumber)
-                                id = 1;
-                            spawnPoint = LevelManager.Instance.RedTeamSpawnPoints[id];
+                            //int id = 0;
+                            //if (other != null && localActorNumber > other.ActorNumber)
+                            //    id = 1;
+                            spawnPoint = LevelManager.Instance.RedTeamSpawnPoints[localSpawnId];
                         }
                         // Spawn local player on network
                         GameObject p = PhotonNetwork.Instantiate(System.IO.Path.Combine(Character.GameAssetFolder, playerPrefab.name), spawnPoint.position, spawnPoint.rotation);
-                        p.name += "_" + actorNumber;
+                        p.name += "_" + localActorNumber;
                     }
 
 
