@@ -22,6 +22,9 @@ namespace Zoca.UI
         Button button2vs2;
 
         [SerializeField]
+        Button button3vs3;
+
+        [SerializeField]
         Transform roomListContent;
 
         [SerializeField]
@@ -61,6 +64,12 @@ namespace Zoca.UI
             {
                 if (PhotonNetwork.OfflineMode || PhotonNetwork.InLobby)
                     OpenMapSelector(4);
+                //CreateRoom(4);
+            });
+            button3vs3?.onClick.AddListener(() =>
+            {
+                if (PhotonNetwork.OfflineMode || PhotonNetwork.InLobby)
+                    OpenMapSelector(6);
                 //CreateRoom(4);
             });
 
@@ -122,7 +131,8 @@ namespace Zoca.UI
         {
             button1vs1.interactable = value;
             button2vs2.interactable = value;
-
+            if(button3vs3)
+                button3vs3.interactable = value;
         }
 
         IEnumerator OpenLobbyDelayed()

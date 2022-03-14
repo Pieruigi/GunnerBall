@@ -212,7 +212,7 @@ namespace Zoca
 
                     // Reset players and ball
                     if (Ball.Instance)
-                        Ball.Instance.ResetBall((float)(targetTime - PhotonNetwork.Time - /*Balldelay*/2f));
+                        Ball.Instance.ResetBall((float)(targetTime - PhotonNetwork.Time - /*Balldelay*/1.5f));
 
                     // We must manage also the player controllers driven by the ai for offline matches
                     List<PlayerController> players = GetOwnedPlayerControllers();

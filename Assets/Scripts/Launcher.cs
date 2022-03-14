@@ -133,7 +133,7 @@ namespace Zoca
             if (PhotonNetwork.IsConnected)
             {
                 // Already connected to photon network, join a random room
-                //Debug.LogFormat("PUN - Joining default lobby...");
+                Debug.LogFormat("PUN - Joining default lobby...");
                 
                 PhotonNetwork.JoinLobby();
                 connecting = false;

@@ -45,8 +45,8 @@ namespace Zoca.UI
             if (!Instance)
             {
                 Instance = this;
-                superShotImage.enabled = false;
                 superShotAnimator = superShotImage.GetComponent<SpriteAnimator>();
+                superShotImage.enabled = false;
             }
             else
             {
@@ -60,7 +60,7 @@ namespace Zoca.UI
             localPlayerController = PlayerController.Local;
             localPlayerCollider = localPlayerController.GetComponent<CharacterController>();
 
-
+           
             //notAimImage.transform.DOShakeRotation(1, 50 * Vector3.forward).SetLoops(-1);
             //aimImage.transform.DOShakeRotation(1, 50*Vector3.forward).SetLoops(-1);
         }

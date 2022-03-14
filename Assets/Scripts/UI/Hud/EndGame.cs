@@ -40,7 +40,7 @@ namespace Zoca.UI
 
         private void OnEnable()
         {
-            if (!Match.Instance)
+            if (!Match.Instance || Match.Instance.State != (int)MatchState.Completed)
                 return;
 
             Crosshair.Instance.Hide();

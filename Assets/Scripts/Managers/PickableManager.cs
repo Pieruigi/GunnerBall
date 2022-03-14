@@ -125,16 +125,7 @@ namespace Zoca
 
             Match.Instance.OnStateChanged += HandleOnStateChanged;
 
-            //if (PhotonNetwork.IsMasterClient)
-            //{
-            //    respawnCooldown = respawnTime;
-            //    int count = Random.Range(pickableMinimumNumber, pickableMaximumNumber + 1);
-            //    // We create spawnables all at once on start
-            //    for (int i = 0; i < count; i++)
-            //    {
-            //        CreatePickable();
-            //    }
-            //}
+           
             if(!PhotonNetwork.IsMasterClient) // Not the master client
             {
                 foreach (object key in PhotonNetwork.CurrentRoom.CustomProperties.Keys)

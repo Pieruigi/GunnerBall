@@ -107,7 +107,7 @@ namespace Zoca.UI
             panel.SetActive(false);
 
             if (online)
-                onlineBackPanel.SetActive(true);
+                onlineBackPanel.SetActive(false);
             else
             {
                 offlineBackPanel.SetActive(false);
