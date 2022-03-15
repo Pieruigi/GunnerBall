@@ -57,7 +57,7 @@ namespace Zoca
                 transform.parent = null;
 
                 // Set the camera target position on sprint
-                targetPositionOnSprint = target.localPosition + Vector3.forward * 0.57f;
+                targetPositionOnSprint = target.localPosition + Vector3.forward * 0.4f;
 
                 // Store the default position
                 targetPositionDefault = target.localPosition;
