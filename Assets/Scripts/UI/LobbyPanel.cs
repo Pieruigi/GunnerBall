@@ -443,6 +443,9 @@ namespace Zoca.UI
 
         public override void OnLeftRoom()
         {
+            // Reset ready button
+            readyButton.interactable = true;
+
             // Reset the lobby team
             ResetTeamPlayer(PhotonNetwork.LocalPlayer);
 

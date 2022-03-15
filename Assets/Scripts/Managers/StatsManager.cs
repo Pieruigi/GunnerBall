@@ -244,7 +244,7 @@ namespace Zoca
         void OnMatchStateChanged()
         {
             Debug.Log("Stats state changed");
-
+            
             // Only update stats in online matches
             if (PhotonNetwork.OfflineMode)
                 return;
