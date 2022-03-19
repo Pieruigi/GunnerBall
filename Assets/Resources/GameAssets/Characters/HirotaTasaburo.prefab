@@ -71,7 +71,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxSpeed: 9.6
   sprintMultiplier: 2
-  jumpSpeed: 16
+  jumpSpeed: 12
   flyingMultiplier: 0.2
   stamina: 224
   freezingCooldown: 4
@@ -227,7 +227,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 5356899110363376708}
         m_TargetAssemblyTypeName: Zoca.PlayerController, Assembly-CSharp
-        m_MethodName: OnSuperShoot
+        m_MethodName: OnRightShoot
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
