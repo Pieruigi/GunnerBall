@@ -85,8 +85,16 @@ namespace Zoca.UI
             if(!PhotonNetwork.OfflineMode || player == PhotonNetwork.LocalPlayer)
             {
                 Texture2D tex = GetPlayerAvatarTexture(player);
-                avatarImage.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), Vector2.zero);
+                //Debug.Log("tex.w:" + tex.width);
+                //Debug.Log("tex.h:" + tex.height);
+                //Debug.Log("avatarImage:" + avatarImage.sprite);
+                if (tex != null)
+                    avatarImage.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), Vector2.zero);
+                else
+                    avatarImage.sprite = emptySprite;
+                
                 nickText.text = player.NickName;
+                
             }
             else
             {

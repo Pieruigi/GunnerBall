@@ -66,8 +66,9 @@ namespace Zoca
             // Check the start timer
             if (PhotonNetwork.IsMasterClient && PhotonNetwork.InRoom && !inGame && !loading)
             {
-               
-                if (roomIsFull)
+
+                //if (roomIsFull)
+                if(PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers)
                 {
                     startElapsed += Time.deltaTime;
                     if(startElapsed > startTime)
@@ -107,8 +108,18 @@ namespace Zoca
 
             string mapName = MapManager.Instance.GetMap(mapId).Name;
 
-            StartCoroutine(LoadArenaCoroutine(mapName));
-            
+            //string level = "Arena{0}vs{0}";
+            if (!PhotonNetwork.OfflineMode)
+            {
+                PhotonNetwork.LoadLevel(string.Format(mapName, 1));
+            }
+            else
+            {
+                PhotonNetwork.LoadLevel(string.Format(mapName, 1));
+            }
+
+            //StartCoroutine(LoadArenaCoroutine(mapName));
+
             //if (!PhotonNetwork.OfflineMode)
             //{
             //    PhotonNetwork.LoadLevel(string.Format(mapName, 1));
@@ -121,7 +132,7 @@ namespace Zoca
 
         IEnumerator LoadArenaCoroutine(string mapName)
         {
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(0.1f);
 
             //string level = "Arena{0}vs{0}";
             if (!PhotonNetwork.OfflineMode)
