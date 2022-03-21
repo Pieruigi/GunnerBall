@@ -109,16 +109,16 @@ namespace Zoca
             string mapName = MapManager.Instance.GetMap(mapId).Name;
 
             //string level = "Arena{0}vs{0}";
-            if (!PhotonNetwork.OfflineMode)
-            {
-                PhotonNetwork.LoadLevel(string.Format(mapName, 1));
-            }
-            else
-            {
-                PhotonNetwork.LoadLevel(string.Format(mapName, 1));
-            }
+            //if (!PhotonNetwork.OfflineMode)
+            //{
+            //    PhotonNetwork.LoadLevel(string.Format(mapName, 1));
+            //}
+            //else
+            //{
+            //    PhotonNetwork.LoadLevel(string.Format(mapName, 1));
+            //}
 
-            //StartCoroutine(LoadArenaCoroutine(mapName));
+            StartCoroutine(LoadArenaCoroutine(mapName));
 
             //if (!PhotonNetwork.OfflineMode)
             //{
@@ -132,7 +132,7 @@ namespace Zoca
 
         IEnumerator LoadArenaCoroutine(string mapName)
         {
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(1f);
 
             //string level = "Arena{0}vs{0}";
             if (!PhotonNetwork.OfflineMode)
