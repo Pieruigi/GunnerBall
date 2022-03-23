@@ -26,8 +26,8 @@ namespace Zoca.UI
         {
 
             owner = GetComponentInParent<PlayerController>();
-            //if (owner == PlayerController.Local)
-            //    gameObject.SetActive(false);
+            if (owner == PlayerController.Local)
+                gameObject.SetActive(false);
 
 
         }
@@ -45,13 +45,14 @@ namespace Zoca.UI
             // Set the player name
             nameText.text = owner.photonView.Owner.NickName;
             // Set the text field active
-            nameText.gameObject.SetActive(true);
+            //nameText.gameObject.SetActive(true);
             // Get the local player camera
             localCamera = PlayerController.Local.PlayerCamera.GetComponent<Camera>();
 
             Debug.Log("Text size before:" + (nameText.transform as RectTransform).rect);
             (nameText.transform as RectTransform).ForceUpdateRectTransforms();
-            Debug.Log("Text size after:" + (nameText.transform as RectTransform).rect);
+            //Debug.Log("Text size after:" + (nameText.transform as RectTransform).rect);
+            StartCoroutine(ResizeBG());
         }
 
         // Update is called once per frame
@@ -67,22 +68,35 @@ namespace Zoca.UI
             dir.y = 0;
             if(Vector3.Dot(dir, PlayerController.Local.transform.forward) < 0)
             {
-                if(nameText.gameObject.activeSelf)
-                    nameText.gameObject.SetActive(false);
+                //if(nameText.gameObject.activeSelf)
+                //    nameText.gameObject.SetActive(false);
+                if (bg.gameObject.activeSelf)
+                    bg.gameObject.SetActive(false);
             }
             else
             {
-                if(!nameText.gameObject.activeSelf)
-                    nameText.gameObject.SetActive(true);
+                //if(!nameText.gameObject.activeSelf)
+                //    nameText.gameObject.SetActive(true);
+                if (!bg.gameObject.activeSelf)
+                    bg.gameObject.SetActive(true);
 
                 // Project on the screen
                 Vector3 point = localCamera.WorldToScreenPoint(target.position);
                 //Debug.Log("Point:" + point);
                 //RectTransform rt = nameText.transform as RectTransform;
-                (nameText.transform as RectTransform).anchoredPosition = point;
+                (bg.transform as RectTransform).anchoredPosition = point;
             }
             
 
+        }
+
+        IEnumerator ResizeBG()
+        {
+            yield return new WaitForEndOfFrame();
+            Debug.Log("Text size after:" + (nameText.transform as RectTransform).rect);
+            Vector2 size = (bg as RectTransform).sizeDelta;
+            size.x = (nameText.transform as RectTransform).rect.width + 32f;
+            (bg as RectTransform).sizeDelta = size;
         }
     }
 
