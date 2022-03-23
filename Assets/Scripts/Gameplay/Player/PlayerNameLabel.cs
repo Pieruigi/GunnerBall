@@ -3,31 +3,31 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Zoca.UI
 {
     public class PlayerNameLabel : MonoBehaviour
     {
         [SerializeField]
-        TMP_Text blueText;
-
-        [SerializeField]
-        TMP_Text redText;
+        TMP_Text nameText;
 
         [SerializeField]
         Transform target;
 
-        TMP_Text nameText;
         PlayerController owner;
         Camera localCamera;
 
+        Color blueColor = Color.blue;
+        Color redColor = Color.red;
+        Transform bg;
 
         private void Awake()
         {
 
             owner = GetComponentInParent<PlayerController>();
-            if (owner == PlayerController.Local)
-                gameObject.SetActive(false);
+            //if (owner == PlayerController.Local)
+            //    gameObject.SetActive(false);
 
 
         }
@@ -35,21 +35,23 @@ namespace Zoca.UI
         // Start is called before the first frame update
         void Start()
         {
-            // Reset both the text lables
-            blueText.gameObject.SetActive(false);
-            redText.gameObject.SetActive(false);
-
+           
             // Get the player team color
             Team team = (Team)PlayerCustomPropertyUtility.GetPlayerCustomProperty(owner.photonView.Owner, PlayerCustomPropertyKey.TeamColor);
-            // Set the text label depending on the team
-            nameText = team == Team.Blue ? blueText : redText;
-
+            // Set the bg color
+            bg = nameText.transform.parent;
+            bg.GetComponent<Image>().color = team == Team.Blue ? blueColor : redColor;
+            
             // Set the player name
             nameText.text = owner.photonView.Owner.NickName;
             // Set the text field active
             nameText.gameObject.SetActive(true);
             // Get the local player camera
             localCamera = PlayerController.Local.PlayerCamera.GetComponent<Camera>();
+
+            Debug.Log("Text size before:" + (nameText.transform as RectTransform).rect);
+            (nameText.transform as RectTransform).ForceUpdateRectTransforms();
+            Debug.Log("Text size after:" + (nameText.transform as RectTransform).rect);
         }
 
         // Update is called once per frame
@@ -75,7 +77,7 @@ namespace Zoca.UI
 
                 // Project on the screen
                 Vector3 point = localCamera.WorldToScreenPoint(target.position);
-                Debug.Log("Point:" + point);
+                //Debug.Log("Point:" + point);
                 //RectTransform rt = nameText.transform as RectTransform;
                 (nameText.transform as RectTransform).anchoredPosition = point;
             }
