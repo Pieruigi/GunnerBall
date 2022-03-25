@@ -216,7 +216,8 @@ namespace Zoca
             // I guess because we are using character controller; so we check for 
             // collision with all the players here.
             CheckPlayersCollision();
-            
+
+          
             if (PhotonNetwork.IsMasterClient)
                 return;
 
@@ -572,7 +573,19 @@ namespace Zoca
                         // Send hit for each player, but only the local player will take care
                         // of the health; anyway the others can apply some effect or stop
                         // moving in order to improve synchronization.
-                        c.gameObject.GetComponent<PlayerController>().Hit(Ball.Instance.gameObject, Vector3.zero, Vector3.zero, Vector3.zero, 1000);
+                        // Vector from ball to hit point
+                        
+                        Vector3 dir = c.transform.position - transform.position;
+                        // The ball velocity
+                        Vector3 velocity = rb.velocity;
+                        // The component of the ball velocity along the direction
+                        float dot = Vector3.Dot(velocity, dir.normalized);
+                       
+                        float damage = 0;
+                        if (Mathf.Abs(dot) > 8)
+                            damage = 1000;
+
+                        c.gameObject.GetComponent<PlayerController>().Hit(Ball.Instance.gameObject, Vector3.zero, Vector3.zero, Vector3.zero, damage);
                     }
                 }
             }

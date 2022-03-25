@@ -140,10 +140,11 @@ namespace Zoca.UI
             ***************************************************/
 
             /****************** Using sphere ******************************/
-            float radius = localPlayerController.FireWeapon.FireRadius;
-            int layer = LayerMask.GetMask(new string[] { Layer.Ground, Layer.Wall });
-            float maxDistance = localPlayerController.FireWeapon.FireRange + PlayerController.Local.PlayerCamera.DistanceAdjustment - radius;
-            bool hit = Physics.SphereCast(ray, radius, out info, maxDistance, ~layer);
+            //float radius = localPlayerController.FireWeapon.FireRadius;
+            //int layer = LayerMask.GetMask(new string[] { Layer.Ground, Layer.Wall });
+            //float maxDistance = localPlayerController.FireWeapon.FireRange + PlayerController.Local.PlayerCamera.DistanceAdjustment - radius;
+            //bool hit = Physics.SphereCast(ray, radius, out info, maxDistance, ~layer);
+            bool hit = localPlayerController.FireWeapon.HasTarget(out info);
 
             /**************************************************/
             Color c = Color.red;
@@ -151,6 +152,8 @@ namespace Zoca.UI
             notAimLoaderImage.enabled = true;
             aimImage.enabled = false;
             aimLoaderImage.enabled = false;
+            aimImage.transform.eulerAngles = Vector3.zero;
+            aimLoaderImage.transform.eulerAngles = Vector3.zero;
 
             if (hit && info.collider.GetComponent<IHittable>() != null)
             {
@@ -159,6 +162,8 @@ namespace Zoca.UI
                 aimLoaderImage.enabled = true;
                 notAimImage.enabled = false;
                 notAimLoaderImage.enabled = false;
+                aimImage.transform.eulerAngles = Vector3.forward * 45;
+                aimLoaderImage.transform.eulerAngles = Vector3.forward * 45;
             }
 
             // Set color

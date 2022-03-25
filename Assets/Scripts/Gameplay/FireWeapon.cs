@@ -204,10 +204,13 @@ namespace Zoca
             **************************************************************/
 
             /************************ Using sphere ************************/
-            float radius = fireRadius;
-            float maxDistance = fireRange + owner.PlayerCamera.DistanceAdjustment - radius;
-            int layer = LayerMask.GetMask(new string[] { Layer.Ground, Layer.Wall });
-            bool hit = Physics.SphereCast(ray, radius, out info, maxDistance, ~layer);
+            //float radius = fireRadius;
+            //ownerCollider.enabled = false;
+            //float maxDistance = fireRange + owner.PlayerCamera.DistanceAdjustment - radius;
+            //int layer = LayerMask.GetMask(new string[] { Layer.Ground, Layer.Wall });
+            //bool hit = Physics.SphereCast(ray, radius, out info, maxDistance, ~layer);
+            //ownerCollider.enabled = true;
+            bool hit = HasTarget(out info);
             /**************************************************************/
 
             bool superShot = CheckSuperShot();
@@ -269,6 +272,23 @@ namespace Zoca
             return true;
         }
 
+        public bool HasTarget(out RaycastHit info)
+        {
+            // Get origin, direction and speed
+            Vector3 origin = owner.PlayerCamera.transform.position;
+            Vector3 direction = owner.PlayerCamera.transform.forward;
+
+            // Check for collision
+            Ray ray = new Ray(origin, direction);
+
+            float radius = fireRadius;
+            ownerCollider.enabled = false;
+            float maxDistance = fireRange + owner.PlayerCamera.DistanceAdjustment - radius;
+            int layer = LayerMask.GetMask(new string[] { Layer.Ground, Layer.Wall });
+            bool hit = Physics.SphereCast(ray, radius, out info, maxDistance, ~layer);
+            ownerCollider.enabled = true;
+            return hit;
+        }
 
         public bool TryShootPowerUp(SpecialSkillPowerUp powerUp)
         {

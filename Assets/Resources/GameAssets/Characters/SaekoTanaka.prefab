@@ -88,7 +88,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxSpeed: 8.8
   sprintMultiplier: 2
-  jumpSpeed: 12
+  jumpSpeed: 14.7
   flyingMultiplier: 0.2
   stamina: 232
   freezingCooldown: 3.8
@@ -1081,6 +1081,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 707472009685262575}
     m_Modifications:
+    - target: {fileID: 2438622294066086123, guid: 3458985b3bd3d6e47838c64cfe5b61bc, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8689789700682137481, guid: 3458985b3bd3d6e47838c64cfe5b61bc, type: 3}
       propertyPath: target
       value: 

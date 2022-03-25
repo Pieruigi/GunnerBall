@@ -129,14 +129,14 @@ namespace Zoca
         float yawSpeed = 720;
         float yawSpeedOnSprint = 360;
         float pitchSpeed = 240;
-        
+
         //public float LookSensitivity
         //{
         //    get { return lookSensitivity; }
         //}
 
-        float maxPitch = 30;
-        float minPitch = -60;
+        float maxPitch = 60;//30;
+        float minPitch = -90;//-60;
 
         float currentPitch;
         public float CurrentPitch
@@ -433,7 +433,7 @@ namespace Zoca
                 velocity = Vector3.MoveTowards(velocity, targetVelocity, Time.deltaTime * acceleration * accMul);
 
 
-                if (freezed || startPaused/* || jumping*/)
+                if (/*freezed || */startPaused/* || jumping*/)
                 { 
                     ySpeed = 0; 
                 }
@@ -456,7 +456,7 @@ namespace Zoca
                 if (!cc.isGrounded)
                 {
                     
-                    ySpeed += Physics.gravity.y * /*2f * */ Time.deltaTime;
+                    ySpeed += Physics.gravity.y * 1.5f * Time.deltaTime;
                     //Debug.LogFormat("PlayerController - Not grounded; ySpeed; {0}", ySpeed);
                 }
                 else
@@ -469,6 +469,7 @@ namespace Zoca
                     //Debug.LogFormat("PlayerController - Grounded; ySpeed; {0}", ySpeed);
                 }
 
+                
                 //Debug.Log("IsGrounded:" + (ySpeed==0));
                 
                 //
@@ -794,7 +795,21 @@ namespace Zoca
                     bounce = bounce.normalized * ballPowerOnHit;
                     //Debug.LogFormat("PlayerController - Ball bouncing, newVelocity: {0}", bounce);
                     Ball.Instance.photonView.RPC("RpcHitByPlayer", RpcTarget.AllViaServer, bounce, PhotonNetwork.Time);
+
+                    
+                    
+                    //// Vector from ball to hit point
+                    //Vector3 dir = hitPoint - owner.transform.position;
+                    //// The ball velocity
+                    //Vector3 velocity = owner.GetComponent<Rigidbody>().velocity;
+                    //// The component of the ball velocity along the direction
+                    //float dot = Vector3.Dot(velocity, dir.normalized);
+                    //if(dot > 3)
+                    //    health = Mathf.Max(0, health - hitDamage);
+                    
+                        
                 }
+               
             }
             
            
