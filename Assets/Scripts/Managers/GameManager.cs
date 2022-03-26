@@ -380,6 +380,7 @@ namespace Zoca
             {
                 inGame = false;
 
+                Cursor.lockState = CursorLockMode.None;
                 // The player camera has not been destroyed leaving the arena, so we do it here.
                 //Debug.LogFormat("GameManager - Not in game, camera instance: {0}", PlayerCamera.Instance);
                 //if (PlayerCamera.Instance)
