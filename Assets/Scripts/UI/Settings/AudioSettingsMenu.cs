@@ -18,9 +18,9 @@ namespace Zoca.UI
 
         private void Awake()
         {
-            masterVolumeOption.OnChange += HandleOnMasterVolumeChange;
             //masterVolumeOption.OnChange += HandleOnMasterVolumeChange;
-            //masterVolumeOption.OnChange += HandleOnMasterVolumeChange;
+            musicVolumeOption.OnChange += HandleOnMusicVolumeChange;
+            fxVolumeOption.OnChange += HandleOnFxVolumeChange;
         }
 
         // Start is called before the first frame update
@@ -46,14 +46,29 @@ namespace Zoca.UI
 
         void InitOptions()
         {
-            masterVolumeOption.SetLabel("MasterVolume");
-            masterVolumeOption.InitValue(SettingsManager.Instance.MasterVolume);
+            //masterVolumeOption.SetLabel("MasterVolume");
+            //masterVolumeOption.InitValue(SettingsManager.Instance.MasterVolume);
 
+            musicVolumeOption.SetLabel("MusicVolume");
+            musicVolumeOption.InitValue(SettingsManager.Instance.MusicVolume);
+            
+            fxVolumeOption.SetLabel("FxVolume");
+            fxVolumeOption.InitValue(SettingsManager.Instance.FXVolume);
         }
 
         void HandleOnMasterVolumeChange(float value)
         {
             SettingsManager.Instance.SetMasterVolume(value);
+        }
+
+        void HandleOnMusicVolumeChange(float value)
+        {
+            SettingsManager.Instance.SetMusicVolume(value);
+        }
+
+        void HandleOnFxVolumeChange(float value)
+        {
+            SettingsManager.Instance.SetFxVolume(value);
         }
     }
 
