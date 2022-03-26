@@ -586,18 +586,13 @@ namespace Zoca
         }
                
         
-        bool CheckGrounded()
+        public bool IsGrounded()
         {
-            Vector3 end = transform.position + cc.center -cc.height/2f * Vector3.up + cc.radius * Vector3.up;
-           
-
-            Vector3 start = transform.position + cc.center + cc.height / 2f * Vector3.up - cc.radius * Vector3.up;
-            Debug.Log("End:" + end.y);
-            Debug.Log("Start:" + start);
+            Vector3 origin = transform.position + cc.center - cc.height / 2f * Vector3.up + cc.radius * Vector3.up;
             int layer = LayerMask.GetMask(new string[] { Layer.Ground });
-            //return Physics.CheckCapsule(start, end, cc.radius, layer);
-            
-            return Physics.CheckSphere(end, cc.radius+cc.skinWidth, layer);  
+            bool grounded = Physics.CheckSphere(origin, cc.radius + cc.skinWidth + 0.01f, layer);
+
+            return grounded;  
         }
 
         public void LookAt(Vector3 target)
@@ -908,12 +903,13 @@ namespace Zoca
             if (jumping)
                 return;
 
-            
+
             // Sometimes check ground returns false even if the character seems to be grounded,
             // so we check more accurately 
-            Vector3 origin = transform.position + cc.center - cc.height / 2f * Vector3.up + cc.radius * Vector3.up;
-            int layer = LayerMask.GetMask(new string[] { Layer.Ground });
-            bool grounded = Physics.CheckSphere(origin, cc.radius + cc.skinWidth + 0.01f, layer);
+            //Vector3 origin = transform.position + cc.center - cc.height / 2f * Vector3.up + cc.radius * Vector3.up;
+            //int layer = LayerMask.GetMask(new string[] { Layer.Ground });
+            //bool grounded = Physics.CheckSphere(origin, cc.radius + cc.skinWidth + 0.01f, layer);
+            bool grounded = IsGrounded();
             //return Physics.CheckCapsule(start, end, cc.radius, layer);
 
             //return Physics.CheckSphere(end, cc.radius + cc.skinWidth, layer);

@@ -100,8 +100,8 @@ namespace Zoca
 
               
                 // Only the master client should fill the spawnable array
-                if (PhotonNetwork.IsMasterClient)
-                {
+                //if (PhotonNetwork.IsMasterClient)
+                //{
                     // Fill the array
                     FillPickableArray();
 
@@ -109,7 +109,7 @@ namespace Zoca
                     pickableMinimumNumber = PhotonNetwork.CurrentRoom.MaxPlayers / 2;
                     pickableMaximumNumber = PhotonNetwork.CurrentRoom.MaxPlayers * 2;
                     
-                }
+                //}
                     
 
             }

@@ -102,7 +102,7 @@ namespace Zoca
         float distanceAdjustment;
 
         float actualDistance;
-        float superShotPowerMul = 3;
+        float superShotPowerMul = 2;
         float pushBackForceHigh = 15;
         float pushBackForceLow = 5;
 
@@ -141,8 +141,10 @@ namespace Zoca
         public bool CheckSuperShot()
         {
             //return false;      
-            Ray ray = new Ray(owner.transform.position, Vector3.down);
-            if (Physics.Raycast(ray, 0.5f))
+            //Ray ray = new Ray(owner.transform.position, Vector3.down);
+            //if (Physics.Raycast(ray, 0.5f))
+            //    return false;
+            if (owner.IsGrounded())
                 return false;
 
             // Get player vertical velocity
