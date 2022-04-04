@@ -12,8 +12,9 @@ GameObject:
   - component: {fileID: 634013361532981480}
   - component: {fileID: 2930410580844660796}
   - component: {fileID: 6796920787777161539}
+  - component: {fileID: 307318232180581457}
   m_Layer: 5
-  m_Name: Button_002
+  m_Name: Twitter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -67,7 +68,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 1862ec5711ae8ce46bbf80e75f559e2d, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -120,7 +121,32 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2930410580844660796}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 307318232180581457}
+        m_TargetAssemblyTypeName: Zoca.ExternalLink, Assembly-CSharp
+        m_MethodName: Open
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
+--- !u!114 &307318232180581457
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1151437859933221331}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50ec0663f80710a4ebaed74b7c10ef44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  url: https://twitter.com/Zocalight
 --- !u!1 &1858190224286812246
 GameObject:
   m_ObjectHideFlags: 0
@@ -133,8 +159,9 @@ GameObject:
   - component: {fileID: 6196320760268888247}
   - component: {fileID: 6371391450315929508}
   - component: {fileID: 7118984379010411357}
+  - component: {fileID: 8893549576260477708}
   m_Layer: 5
-  m_Name: Button_001
+  m_Name: Discord
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -188,7 +215,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 0c755826e29ed6b419022ee176fd19d7, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -241,7 +268,32 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6371391450315929508}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8893549576260477708}
+        m_TargetAssemblyTypeName: Zoca.ExternalLink, Assembly-CSharp
+        m_MethodName: Open
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
+--- !u!114 &8893549576260477708
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1858190224286812246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50ec0663f80710a4ebaed74b7c10ef44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  url: https://discord.com/invite/WgevXHahBB
 --- !u!1 &2197537108780320896
 GameObject:
   m_ObjectHideFlags: 0
@@ -320,7 +372,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: TWITTER
+  m_Text: 
 --- !u!1 &2720253392004541575
 GameObject:
   m_ObjectHideFlags: 0
@@ -399,7 +451,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: DISCORD
+  m_Text: 
 --- !u!1 &3495361200160760732
 GameObject:
   m_ObjectHideFlags: 0
@@ -2027,7 +2079,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7466858234755904337
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2043,10 +2095,10 @@ RectTransform:
   m_Father: {fileID: 7425552319939408130}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 75.5, y: 42}
+  m_SizeDelta: {x: 80, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7646179746478232497
 CanvasRenderer:
@@ -2190,6 +2242,6 @@ MonoBehaviour:
   m_StartCorner: 0
   m_StartAxis: 0
   m_CellSize: {x: 80, y: 80}
-  m_Spacing: {x: 0, y: 12}
+  m_Spacing: {x: 0, y: 38}
   m_Constraint: 1
   m_ConstraintCount: 1
