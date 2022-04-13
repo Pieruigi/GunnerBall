@@ -246,7 +246,7 @@ namespace Zoca
         Quaternion startRotation;
 
         bool inGoalArea = false;
-       
+        DateTime lastCameraChangeTime;
         #endregion
 
         #region networked_fields
@@ -877,6 +877,24 @@ namespace Zoca
                 
             }
 
+        }
+
+        public void OnChangeCamera(InputAction.CallbackContext context)
+        {
+            if (!photonView.IsMine || (PhotonNetwork.OfflineMode && photonView.Owner != PhotonNetwork.MasterClient))
+                return;
+
+            float scroll = context.ReadValue<float>();
+
+            if (scroll == 0)
+                return;
+
+            if((DateTime.UtcNow - lastCameraChangeTime).TotalSeconds > 0.2f)
+            {
+                lastCameraChangeTime = DateTime.UtcNow;
+                PlayerCamera.ChangeDistance(scroll < 0 ? false : true);
+            }
+                
         }
 
         public void OnLook(InputAction.CallbackContext context)

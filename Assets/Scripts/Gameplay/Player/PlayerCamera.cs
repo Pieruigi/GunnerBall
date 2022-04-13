@@ -12,7 +12,13 @@ namespace Zoca
         //public static PlayerCamera Instance { get; private set; }
 
         [SerializeField]
-        Transform target;
+        List<Transform> targets;
+
+        //[SerializeField]
+        //Transform target2;
+
+        //[SerializeField]
+        //Transform target3;
 
         // Player controller should pass this array
         [SerializeField]
@@ -44,6 +50,7 @@ namespace Zoca
         Vector3 targetPositionOnSprint;
         Vector3 targetPositionDefault;
         float onSprintLerpSpeed = 0.8f;
+        int currentTargetId;
 
         private void Awake()
         {
@@ -56,11 +63,13 @@ namespace Zoca
                 // Move the camera outside
                 transform.parent = null;
 
+                currentTargetId = 0;
+
                 // Set the camera target position on sprint
-                targetPositionOnSprint = target.localPosition + Vector3.forward * 0.4f;
+                targetPositionOnSprint = targets[currentTargetId].localPosition + Vector3.forward * 0.4f;
 
                 // Store the default position
-                targetPositionDefault = target.localPosition;
+                targetPositionDefault = targets[currentTargetId].localPosition;
 
                 // Store original and create transparent materials
                 originalMaterials = new List<Material>();
@@ -91,9 +100,6 @@ namespace Zoca
         // Start is called before the first frame update
         void Start()
         {
-            
-
-
             UpdateDistanceAdjustment();
         }
 
@@ -134,7 +140,7 @@ namespace Zoca
         void UpdateDistanceAdjustment()
         {
             
-            Vector3 camToPlayerVector = playerController.transform.position - transform.position;
+            Vector3 camToPlayerVector = playerController.transform.position - targets[currentTargetId].position;
             distanceAdjustment = Vector3.Dot(camToPlayerVector, transform.forward);
             
         }
@@ -147,11 +153,11 @@ namespace Zoca
         
             if (playerController.Sprinting)
             {
-                target.localPosition = Vector3.MoveTowards(target.localPosition, targetPositionOnSprint, onSprintLerpSpeed * Time.deltaTime);
+                targets[currentTargetId].localPosition = Vector3.MoveTowards(targets[currentTargetId].localPosition, targetPositionOnSprint, onSprintLerpSpeed * Time.deltaTime);
             }
             else
             {
-                target.localPosition = Vector3.MoveTowards(target.localPosition, targetPositionDefault, onSprintLerpSpeed * Time.deltaTime);
+                targets[currentTargetId].localPosition = Vector3.MoveTowards(targets[currentTargetId].localPosition, targetPositionDefault, onSprintLerpSpeed * Time.deltaTime);
             }
         }
 
@@ -161,7 +167,7 @@ namespace Zoca
         void UpdatePositionAndRotation()
         {
             // Adjust position
-            transform.position = target.position;
+            transform.position = targets[currentTargetId].position;
 
             // Adjust rotation taking into account the current pitch
             //transform.rotation = GetThirdPersonTargetRotation();
@@ -238,7 +244,7 @@ namespace Zoca
             // collision point if any
             // Calculate the origin
             Vector3 origin = playerController.transform.position;
-            origin.y = target.position.y;
+            origin.y = targets[currentTargetId].position.y;
             // The direction
             Vector3 fromPlayerToCamera = transform.position - origin; 
             // The ray
@@ -252,7 +258,7 @@ namespace Zoca
             {
                 // Clipping, replace camera
                 Vector3 newPos = info.point - fromPlayerToCamera.normalized * .2f;
-                newPos.y = target.position.y;
+                newPos.y = targets[currentTargetId].position.y;
                 transform.position = newPos;
                 
             }
@@ -263,6 +269,27 @@ namespace Zoca
         #endregion
 
         #region public
+        public void ChangeDistance(bool back)
+        {
+            // Reset position
+            targets[currentTargetId].localPosition = targetPositionDefault;
+
+            if (back)
+                currentTargetId--;
+            else
+                currentTargetId++;
+
+            currentTargetId = Mathf.Clamp(currentTargetId, 0, targets.Count - 1);
+
+            // Set the camera target position on sprint
+            targetPositionOnSprint = targets[currentTargetId].localPosition + Vector3.forward * 0.4f;
+
+            // Store the default position
+            targetPositionDefault = targets[currentTargetId].localPosition;
+
+            UpdateDistanceAdjustment();
+        }
+
         public void SetPlayerController(PlayerController playerController)
         {
             this.playerController = playerController;
@@ -282,11 +309,11 @@ namespace Zoca
                 Destroy(GetComponent<Camera>());
 
                 // Move the camera pivot behind
-                target.localPosition = new Vector3(0, target.localPosition.y, target.localPosition.z);
-                targetPositionOnSprint = target.localPosition;
+                targets[currentTargetId].localPosition = new Vector3(0, targets[currentTargetId].localPosition.y, targets[currentTargetId].localPosition.z);
+                targetPositionOnSprint = targets[currentTargetId].localPosition;
 
                 //// Store the default position
-                targetPositionDefault = target.localPosition;
+                targetPositionDefault = targets[currentTargetId].localPosition;
             }
         }
 

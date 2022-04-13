@@ -19,10 +19,10 @@ namespace Zoca
     public class SettingsManager : MonoBehaviour
     {
         public UnityAction OnResolutionChanged;
+        public UnityAction OnHideNicknameChanged;
 
         public readonly string MouseSensitivityKey = "MouseSensitivity";
-
-
+        public readonly string HideNicknameKey = "HideNickname";
 
         #region properties
         public static SettingsManager Instance { get; private set; }
@@ -45,6 +45,11 @@ namespace Zoca
         public float FXVolume
         {
             get { return fxVolume; }
+        }
+
+        public bool HideNickname
+        {
+            get { return hideNickname; }
         }
         #endregion
 
@@ -79,6 +84,8 @@ namespace Zoca
         // Misc
         //
         bool saveEnabled = false;
+        bool hideNickname = false;
+        bool hideNicknameDefault = false;
         #endregion
 
 
@@ -100,6 +107,9 @@ namespace Zoca
 
                 // Read settings
                 InitControlsSettings();
+
+                // Init misc settings
+                InitMiscSettings();
 
                 // Input action rebinding if needed
                 //InitKeyboardBinding();
@@ -178,6 +188,18 @@ namespace Zoca
             PlayerPrefs.Save();
         }
 
+        public void SetHideNickname(bool value)
+        {
+            hideNickname = value;
+
+            if (!saveEnabled)
+                return;
+
+            PlayerPrefs.SetInt(HideNicknameKey, value ? 1 : 0);
+            PlayerPrefs.Save();
+
+            OnHideNicknameChanged?.Invoke();
+        }
         #endregion
 
        
@@ -205,10 +227,15 @@ namespace Zoca
             mouseSensitivity = PlayerPrefs.GetFloat(MouseSensitivityKey, mouseSensitivityDefault);
         }
 
+        void InitMiscSettings()
+        {
+            // Hide nickname
+            hideNickname = PlayerPrefs.GetInt(HideNicknameKey, hideNicknameDefault ? 1 : 0) == 0 ? false : true;
+        }
+
         void InitKeyboardBinding()
         {
             
-
             InputControlScheme? ics = inputActionAsset.FindControlScheme("XBox Gamepad");
             if (ics == null)
                 Debug.LogError("SettingsManager - No input control scheme found: MouseAndKeyboard");

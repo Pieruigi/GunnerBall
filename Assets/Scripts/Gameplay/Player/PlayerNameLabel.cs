@@ -21,15 +21,25 @@ namespace Zoca.UI
         Color blueColor = Color.blue;
         Color redColor = Color.red;
         Transform bg;
+        bool hidden = false;
 
         private void Awake()
         {
 
             owner = GetComponentInParent<PlayerController>();
             if (owner == PlayerController.Local)
+            {
                 gameObject.SetActive(false);
+            }
+            else
+            {
+                SettingsManager.Instance.OnHideNicknameChanged += delegate ()
+                {
 
-
+                    Show(!SettingsManager.Instance.HideNickname);
+                };
+            }
+            
         }
 
         // Start is called before the first frame update
@@ -53,6 +63,8 @@ namespace Zoca.UI
             (nameText.transform as RectTransform).ForceUpdateRectTransforms();
             //Debug.Log("Text size after:" + (nameText.transform as RectTransform).rect);
             StartCoroutine(ResizeBG());
+
+
         }
 
         // Update is called once per frame
@@ -77,7 +89,7 @@ namespace Zoca.UI
             {
                 //if(!nameText.gameObject.activeSelf)
                 //    nameText.gameObject.SetActive(true);
-                if (!bg.gameObject.activeSelf)
+                if (!bg.gameObject.activeSelf && !hidden)
                     bg.gameObject.SetActive(true);
 
                 // Project on the screen
@@ -90,6 +102,13 @@ namespace Zoca.UI
 
         }
 
+        public void Show(bool value)
+        {
+            hidden = !value;
+            bg.gameObject.SetActive(value);
+                
+        }
+
         IEnumerator ResizeBG()
         {
             yield return new WaitForEndOfFrame();
@@ -97,6 +116,10 @@ namespace Zoca.UI
             Vector2 size = (bg as RectTransform).sizeDelta;
             size.x = (nameText.transform as RectTransform).rect.width + 32f;
             (bg as RectTransform).sizeDelta = size;
+
+            // Check for visibility
+            Show(!SettingsManager.Instance.HideNickname);
+
         }
     }
 
