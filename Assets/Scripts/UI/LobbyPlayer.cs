@@ -40,6 +40,9 @@ namespace Zoca.UI
         [SerializeField]
         Sprite aiSprite;
 
+        [SerializeField]
+        Image readyLight;
+
         bool empty = false;
         bool locked = false;
         Player player;
@@ -82,7 +85,10 @@ namespace Zoca.UI
             locked = false;
             this.player = player;
 
-            if(!PhotonNetwork.OfflineMode || player == PhotonNetwork.LocalPlayer)
+            // Reset ready light
+            SetReady(false);
+
+            if (!PhotonNetwork.OfflineMode || player == PhotonNetwork.LocalPlayer)
             {
                 Texture2D tex = GetPlayerAvatarTexture(player);
                 //Debug.Log("tex.w:" + tex.width);
@@ -113,7 +119,7 @@ namespace Zoca.UI
             player = null;
             avatarImage.sprite = emptySprite;
             nickText.text = "";
-            
+            SetReady(false);
         }
 
         public void Lock()
@@ -123,7 +129,13 @@ namespace Zoca.UI
             player = null;
             avatarImage.sprite = lockedSprite;
             nickText.text = "";
-            
+            SetReady(false);
+        }
+
+        public void SetReady(bool ready)
+        {
+            readyLight.color = ready ? Color.green : Color.red;
+
         }
     }
 

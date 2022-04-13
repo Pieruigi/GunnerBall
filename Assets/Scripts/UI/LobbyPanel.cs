@@ -124,14 +124,43 @@ namespace Zoca.UI
         List<LobbyPlayer> redPlayers;
 
         //bool offline = false;
+        
         #endregion
 
         #region private methods
         // Start is called before the first frame update
         void Start()
         {
-            buttonLeaveRoom.onClick.AddListener(() => { PhotonNetwork.LeaveRoom(); });
-            readyButton.onClick.AddListener(() => { GameManager.Instance.SetLocalPlayerReady(true); readyButton.interactable = false; });
+            buttonLeaveRoom.onClick.AddListener(() => 
+            {
+                GameManager.Instance.Leaving = true;
+
+                GameManager.Instance.SetLocalPlayerReady(false); 
+                PhotonNetwork.LeaveRoom(); 
+            });
+
+            readyButton.onClick.AddListener(() => 
+            {
+                bool wasReady = GameManager.Instance.IsLocalPlayerReady();
+                GameManager.Instance.SetLocalPlayerReady(!wasReady);
+
+                readyButton.GetComponentInChildren<TMP_Text>().text = wasReady ? "Ready" : "Not Ready";
+                // readyButton.interactable = false; 
+                if (!wasReady)
+                {
+                    nextCharacterButton.interactable = false;
+                    prevCharacterButton.interactable = false;
+                    nextWeaponButton.interactable = false;
+                    prevWeaponButton.interactable = false;
+                }
+                else
+                {
+                    nextCharacterButton.interactable = true;
+                    prevCharacterButton.interactable = true;
+                    nextWeaponButton.interactable = true;
+                    prevWeaponButton.interactable = true;
+                }
+            });
 
             // Add character button listener
             nextCharacterButton.onClick.AddListener(NextCharacter);
@@ -140,6 +169,8 @@ namespace Zoca.UI
             // Add weapon button listener
             nextWeaponButton.onClick.AddListener(NextWeapon);
             prevWeaponButton.onClick.AddListener(PrevWeapon);
+
+            
 
             // Init player lists
             bluePlayers = new List<LobbyPlayer>(blueTeamPanel.GetComponentsInChildren<LobbyPlayer>());
@@ -244,6 +275,9 @@ namespace Zoca.UI
             }
             // Add the new player
             lp.Init(player);
+            byte ready = (byte)PlayerCustomPropertyUtility.GetPlayerCustomProperty(player, PlayerCustomPropertyKey.Ready);
+            if (ready != 0)
+                lp.SetReady(true);
         }
 
         IEnumerator SetTeamPlayerDelayed(Player player)
@@ -443,8 +477,13 @@ namespace Zoca.UI
 
         public override void OnLeftRoom()
         {
-            // Reset ready button
+            // Reset fields
             readyButton.interactable = true;
+            nextCharacterButton.interactable = true;
+            prevCharacterButton.interactable = true;
+            nextWeaponButton.interactable = true;
+            prevWeaponButton.interactable = true;
+            readyButton.GetComponentInChildren<TMP_Text>().text = "Ready";
 
             // Reset the lobby team
             ResetTeamPlayer(PhotonNetwork.LocalPlayer);
@@ -489,6 +528,40 @@ namespace Zoca.UI
 
             // Test name and avatar
             //testPlayerName.text = "Empty";
+        }
+
+        /// <summary>
+        /// Used to set player ready light 
+        /// </summary>
+        /// <param name="targetPlayer"></param>
+        /// <param name="changedProps"></param>
+        public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
+        {
+            base.OnPlayerPropertiesUpdate(targetPlayer, changedProps);
+
+            if (changedProps.ContainsKey(PlayerCustomPropertyKey.Ready))
+            {
+                // Ready property has changed
+                bool ready = (byte)changedProps[PlayerCustomPropertyKey.Ready] == 0 ? false : true;
+
+                // Look for the player lobby element in the blue team
+                LobbyPlayer lp = bluePlayers.Find(p => p.Player == targetPlayer);
+                if(lp == null)
+                {
+                    // Look in the red team
+                    lp = redPlayers.Find(p => p.Player == targetPlayer);
+                }
+
+                if(lp == null)
+                {
+                    // Not found
+                    Debug.LogWarning("No player found");
+                    return;
+                }
+
+                // Set the ready light
+                lp.SetReady(ready);
+            }
         }
         #endregion
     }

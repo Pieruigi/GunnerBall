@@ -22,7 +22,7 @@ namespace Zoca
 
 
         bool leavingRoom = false;
-        GameMenu gameMenu;
+        //GameMenu gameMenu;
 
         #region private
         private void Awake()
@@ -30,7 +30,7 @@ namespace Zoca
             if (!Instance)
             {
                 Instance = this;
-                gameMenu = gameMenuUI.GetComponent<GameMenu>();
+                //gameMenu = gameMenuUI.GetComponent<GameMenu>();
                      
             }
             else
@@ -140,7 +140,7 @@ namespace Zoca
                 return;
             
             //Debug.Log("Paused game");
-            if (!gameMenu.Opened)
+            if (!gameMenuUI.activeSelf)
                 OpenGameMenuUI();
             else
                 CloseGameMenuUI();
@@ -158,20 +158,20 @@ namespace Zoca
                 return;
             if (MessageBox.IsVisible())
                 return;
-            if (gameMenu.Opened)
+            if (gameMenuUI.activeSelf)
                 return;
 
 
             GeneralUtility.ShowCursor(true);
-            gameMenu.Open();
+            gameMenuUI.SetActive(true);
         }
 
         public void CloseGameMenuUI()
         {
-            if (!gameMenu.Opened)
+            if (!gameMenuUI.activeSelf)
                 return;
 
-            gameMenu.Close();
+            gameMenuUI.SetActive(false);
             GeneralUtility.ShowCursor(false);
         }
         #endregion

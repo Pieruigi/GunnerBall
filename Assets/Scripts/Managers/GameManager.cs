@@ -26,6 +26,7 @@ namespace Zoca
             get { return inGame; }
         }
 
+        public bool Leaving { get; set; }
         #endregion
 
         #region private fields
@@ -34,6 +35,7 @@ namespace Zoca
         float startElapsed = 0;
         bool roomIsFull = false;
         bool loading = false;
+
         #endregion
 
         #region private methods
@@ -64,19 +66,19 @@ namespace Zoca
         void Update()
         {
             // Check the start timer
-            if (PhotonNetwork.IsMasterClient && PhotonNetwork.InRoom && !inGame && !loading)
-            {
+            //if (PhotonNetwork.IsMasterClient && PhotonNetwork.InRoom && !inGame && !loading)
+            //{
 
-                //if (roomIsFull)
-                if(PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers)
-                {
-                    startElapsed += Time.deltaTime;
-                    if(startElapsed > startTime)
-                    {
-                        StartMatch();
-                    }
-                }
-            }
+            //    //if (roomIsFull)
+            //    if(PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers)
+            //    {
+            //        startElapsed += Time.deltaTime;
+            //        if(startElapsed > startTime)
+            //        {
+            //            StartMatch();
+            //        }
+            //    }
+            //}
         }
 
         void StartMatch()
@@ -108,40 +110,45 @@ namespace Zoca
 
             string mapName = MapManager.Instance.GetMap(mapId).Name;
 
-            //string level = "Arena{0}vs{0}";
-            //if (!PhotonNetwork.OfflineMode)
-            //{
-            //    PhotonNetwork.LoadLevel(string.Format(mapName, 1));
-            //}
-            //else
-            //{
-            //    PhotonNetwork.LoadLevel(string.Format(mapName, 1));
-            //}
-
+          
             StartCoroutine(LoadArenaCoroutine(mapName));
 
-            //if (!PhotonNetwork.OfflineMode)
-            //{
-            //    PhotonNetwork.LoadLevel(string.Format(mapName, 1));
-            //}
-            //else
-            //{
-            //    PhotonNetwork.LoadLevel(string.Format(mapName, 1));
-            //}
         }
 
         IEnumerator LoadArenaCoroutine(string mapName)
         {
             yield return new WaitForSeconds(1f);
 
+            if(Leaving)
+            {
+                Leaving = false;
+                yield break;
+            }
+
             //string level = "Arena{0}vs{0}";
             if (!PhotonNetwork.OfflineMode)
             {
-                PhotonNetwork.LoadLevel(string.Format(mapName, 1));
+                if (AllPlayersAreReady())
+                {
+                    PhotonNetwork.LoadLevel(string.Format(mapName, 1));
+                }
+                else
+                {
+                    PhotonNetwork.CurrentRoom.IsOpen = true;
+                    PhotonNetwork.CurrentRoom.IsVisible = true;
+                }
             }
             else
             {
-                PhotonNetwork.LoadLevel(string.Format(mapName, 1));
+                if (AllPlayersAreReady())
+                {
+                    PhotonNetwork.LoadLevel(string.Format(mapName, 1));
+                }
+                else 
+                {
+                    PhotonNetwork.CurrentRoom.IsOpen = true;
+                    PhotonNetwork.CurrentRoom.IsVisible = true;
+                }
             }
         }
 
@@ -602,26 +609,30 @@ namespace Zoca
                         if (!PhotonNetwork.OfflineMode)
                         {
                             // If the room is full and all the players are ready then starts the match
-                            if (PhotonNetwork.CurrentRoom.MaxPlayers == PhotonNetwork.CurrentRoom.Players.Count)
+                            if (AllPlayersAreReady())
                             {
-                                bool start = true;
-                                foreach (Player player in PhotonNetwork.CurrentRoom.Players.Values)
-                                {
-                                    // If there is at least one player not ready then return.
-                                    if (!IsPlayerReady(player))
-                                    {
-                                        start = false;
-                                        break;
-                                    }
-
-                                }
-
-                                if (start)
-                                {
-                                    // Start
-                                    StartMatch();
-                                }
+                                StartMatch();
                             }
+                            //if (PhotonNetwork.CurrentRoom.MaxPlayers == PhotonNetwork.CurrentRoom.Players.Count)
+                            //{
+                            //    bool start = true;
+                            //    foreach (Player player in PhotonNetwork.CurrentRoom.Players.Values)
+                            //    {
+                            //        // If there is at least one player not ready then return.
+                            //        if (!IsPlayerReady(player))
+                            //        {
+                            //            start = false;
+                            //            break;
+                            //        }
+
+                            //    }
+
+                            //    if (start)
+                            //    {
+                            //        // Start
+                            //        StartMatch();
+                            //    }
+                            //}
                         }
                         else // Offline mode
                         {
@@ -700,6 +711,31 @@ namespace Zoca
         public bool IsLocalPlayerReady()
         {
             return IsPlayerReady(PhotonNetwork.LocalPlayer);
+        }
+
+        public bool AllPlayersAreReady()
+        {
+            if (PhotonNetwork.OfflineMode && IsLocalPlayerReady())
+                return true;
+
+            // If the room is full and all the players are ready then starts the match
+            if (PhotonNetwork.CurrentRoom.MaxPlayers == PhotonNetwork.CurrentRoom.Players.Count)
+            {
+                foreach (Player player in PhotonNetwork.CurrentRoom.Players.Values)
+                {
+                    // If there is at least one player not ready then return.
+                    if (!IsPlayerReady(player))
+                    {
+                        //start = false;
+                        return false;
+                    }
+
+                }
+
+                return true;
+            }
+
+            return false;
         }
 
         #endregion
