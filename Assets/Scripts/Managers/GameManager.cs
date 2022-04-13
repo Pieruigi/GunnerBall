@@ -26,6 +26,7 @@ namespace Zoca
             get { return inGame; }
         }
 
+        [field:SerializeField]
         public bool Leaving { get; set; }
         #endregion
 
@@ -421,6 +422,7 @@ namespace Zoca
             // Try to set the start timer
             if (PhotonNetwork.IsMasterClient && !inGame)
             {
+                Leaving = false;
                 startElapsed = 0;
                 if (PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers)
                 {

@@ -4,12 +4,12 @@ using UnityEngine;
 
 namespace Zoca.UI
 {
-    public class OptionPanel : MonoBehaviour
+    public class GameMenuBackButton : MonoBehaviour
     {
         // Start is called before the first frame update
         void Start()
         {
-            gameObject.SetActive(false);
+
         }
 
         // Update is called once per frame
@@ -18,6 +18,10 @@ namespace Zoca.UI
 
         }
 
+        public void Back()
+        {
+            UIManager.Instance.CloseGameMenuUI();
+        }
     }
 
 }

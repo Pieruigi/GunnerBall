@@ -216,18 +216,18 @@ namespace Zoca
             /**************************************************************/
 
             bool superShot = CheckSuperShot();
-            if (!owner.GetComponent<CharacterController>().isGrounded)
-            {
+            //if (!owner.GetComponent<CharacterController>().isGrounded)
+            //{
                 
-                if (superShot)
-                {
-                    owner.PushBack(pushBackForceHigh);
-                }
-                else
-                {
-                    owner.PushBack(pushBackForceLow);
-                }
-            }
+            //    if (superShot)
+            //    {
+            //        owner.PushBack(pushBackForceHigh);
+            //    }
+            //    else
+            //    {
+            //        owner.PushBack(pushBackForceLow);
+            //    }
+            //}
             
 
             Debug.Log("Checking super shot:" + superShot);

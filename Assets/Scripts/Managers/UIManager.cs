@@ -161,7 +161,8 @@ namespace Zoca
             if (gameMenuUI.activeSelf)
                 return;
 
-
+            Crosshair.Instance.Hide();
+            
             GeneralUtility.ShowCursor(true);
             gameMenuUI.SetActive(true);
         }
@@ -173,6 +174,7 @@ namespace Zoca
 
             gameMenuUI.SetActive(false);
             GeneralUtility.ShowCursor(false);
+            Crosshair.Instance.Show();
         }
         #endregion
     }
