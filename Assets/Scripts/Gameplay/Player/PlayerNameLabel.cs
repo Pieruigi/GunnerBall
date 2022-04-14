@@ -35,7 +35,6 @@ namespace Zoca.UI
             {
                 SettingsManager.Instance.OnHideNicknameChanged += delegate ()
                 {
-
                     Show(!SettingsManager.Instance.HideNickname);
                 };
             }
@@ -45,7 +44,8 @@ namespace Zoca.UI
         // Start is called before the first frame update
         void Start()
         {
-           
+            
+
             // Get the player team color
             Team team = (Team)PlayerCustomPropertyUtility.GetPlayerCustomProperty(owner.photonView.Owner, PlayerCustomPropertyKey.TeamColor);
             // Set the bg color
