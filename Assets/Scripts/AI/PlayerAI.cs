@@ -22,10 +22,15 @@ namespace Zoca.AI
         //[SerializeField]
         //PlayerBehaviour behaviour = PlayerBehaviour.Neutral;
 
+        string code;
         #endregion
 
         #region properties
 
+        public void SetCustomPropertyReference(string code)
+        {
+            this.code = code;
+        }
 
 
         public float ReactionTime
@@ -37,6 +42,8 @@ namespace Zoca.AI
             get { return team; }
             set { team = value; }
         }
+
+        
         //public PlayerBehaviour Behaviour
         //{
         //    get { return behaviour; }

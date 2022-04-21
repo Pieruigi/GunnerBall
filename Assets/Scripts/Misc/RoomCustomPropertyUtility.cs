@@ -17,7 +17,13 @@ namespace Zoca
         public static readonly string RedTeamScore = "rts"; // byte
         public static readonly string PlayerCreator = "pc"; // byte
         public static readonly string MapId = "mid"; // byte
+
+#if AI_SUPPORT
+        public static readonly string AICount = "aic"; // byte
+        public static readonly string AINextCodeValue = "anc"; // byte
+        public static readonly string AITeamKeyPrefix = "ait_"; // byte
         
+#endif
     }
 
     public class RoomCustomPropertyUtility
@@ -90,7 +96,110 @@ namespace Zoca
             
         }
 
-      
+#if AI_SUPPORT
+        public static void SetAICountCustomProperty(Room room, byte value)
+        {
+            if (room.CustomProperties.ContainsKey(RoomCustomPropertyKey.AICount))
+                room.CustomProperties[RoomCustomPropertyKey.AICount] = value;
+            else
+                room.CustomProperties.Add(RoomCustomPropertyKey.AICount, value);
+        }
+
+        public static void SetAICountCustomProperty(byte value)
+        {
+            SetAICountCustomProperty(PhotonNetwork.CurrentRoom, value);
+        }
+
+        public static bool TryGetAICountCustomProperty(Room room, out byte value)
+        {
+            value = 0;
+            if (!room.CustomProperties.ContainsKey(RoomCustomPropertyKey.AICount))
+                return false;
+
+            value = (byte) room.CustomProperties[RoomCustomPropertyKey.AICount];
+            return true;
+        }
+
+        public static bool TryGetAICountCustomProperty(out byte value)
+        {
+            return TryGetAICountCustomProperty(PhotonNetwork.CurrentRoom, out value);
+        }
+
+        public static void SetAITeamCustomProperty(Room room, byte aiCode, byte value)
+        {
+            string key = RoomCustomPropertyKey.AITeamKeyPrefix + aiCode.ToString();
+            if (room.CustomProperties.ContainsKey(key))
+                room.CustomProperties[key] = value;
+            else
+                room.CustomProperties.Add(key, value);
+        }
+
+        public static void SetAITeamCustomProperty(byte aiCode, byte value)
+        {
+            SetAITeamCustomProperty(PhotonNetwork.CurrentRoom, aiCode, value);
+        }
+
+        public static void ResetAITeamCustomProperty(Room room, byte aiCode)
+        {
+            string key = RoomCustomPropertyKey.AITeamKeyPrefix + aiCode;
+            if (!room.CustomProperties.ContainsKey(key))
+                return;
+
+            room.CustomProperties[key] = null;
+        }
+
+        public static void ResetAITeamCustomProperty(byte aiCode)
+        {
+            ResetAITeamCustomProperty(PhotonNetwork.CurrentRoom, aiCode);
+        }
+
+        public static bool TryGetAITeamCustomProperty(Room room, byte aiCode, out byte value)
+        {
+            value = 0;
+            string key = RoomCustomPropertyKey.AITeamKeyPrefix + aiCode.ToString();
+            if (!room.CustomProperties.ContainsKey(key))
+                return false;
+
+            value = (byte)room.CustomProperties[key];
+            return true;
+        }
+
+        public static bool TryGetAITeamCustomProperty(byte aiCode, out byte value)
+        {
+            return TryGetAITeamCustomProperty(PhotonNetwork.CurrentRoom, aiCode, out value);
+        }
+
+
+
+        public static void SetAINextCodeValueCustomProperty(Room room, byte value)
+        {
+            if (room.CustomProperties.ContainsKey(RoomCustomPropertyKey.AINextCodeValue))
+                room.CustomProperties[RoomCustomPropertyKey.AINextCodeValue] = value;
+            else
+                room.CustomProperties.Add(RoomCustomPropertyKey.AINextCodeValue, value);
+        }
+
+        public static void SetAINextCodeValueCustomProperty(byte value)
+        {
+            SetAINextCodeValueCustomProperty(PhotonNetwork.CurrentRoom, value);
+        }
+
+        public static bool TryGetAINextCodeCustomProperty(Room room, out byte value)
+        {
+            value = 0;
+            if (!room.CustomProperties.ContainsKey(RoomCustomPropertyKey.AINextCodeValue))
+                return false;
+
+            value = (byte)room.CustomProperties[RoomCustomPropertyKey.AINextCodeValue];
+            return true;
+        }
+
+        public static bool TryGetAINextCodeCustomProperty(out byte value)
+        {
+            return TryGetAINextCodeCustomProperty(PhotonNetwork.CurrentRoom, out value);
+        }
+
+#endif
     }
 
 }

@@ -26,7 +26,7 @@ namespace Zoca
             get { return inGame; }
         }
 
-        [field:SerializeField]
+        //[field:SerializeField]
         public bool Leaving { get; set; }
         #endregion
 
@@ -36,7 +36,7 @@ namespace Zoca
         float startElapsed = 0;
         bool roomIsFull = false;
         bool loading = false;
-
+        int iaCount = 0;
         #endregion
 
         #region private methods
@@ -80,6 +80,52 @@ namespace Zoca
             //        }
             //    }
             //}
+
+            // If the room is full we close and make it not visible, otherwise we set it
+            // open and visible.
+            if (PhotonNetwork.IsMasterClient)
+            {
+                byte aiCount = 0;
+                RoomCustomPropertyUtility.TryGetAICountCustomProperty(out aiCount);
+
+                if (PhotonNetwork.CurrentRoom.PlayerCount + aiCount >= PhotonNetwork.CurrentRoom.MaxPlayers)
+                {
+                    // Room is full
+                    PhotonNetwork.CurrentRoom.IsOpen = false;
+                    PhotonNetwork.CurrentRoom.IsVisible = false;
+                }
+                else
+                {
+                    // Room is not full
+                    PhotonNetwork.CurrentRoom.IsOpen = true;
+                    PhotonNetwork.CurrentRoom.IsVisible = true;
+                }
+            }
+
+
+            //////////////////////////// TEST ////////////////////////////
+            if (PhotonNetwork.IsMasterClient)
+            {
+                if (Input.GetKeyDown(KeyCode.L))
+                {
+                    int code = AddAI(0);
+                    Debug.Log("New AI added, code: " + code);
+                    
+                    //Player newPlayer = Player.CreateOfflinePlayer(10);
+                    //PhotonNetwork.CurrentRoom.AddPlayer(newPlayer);
+                    //PhotonNetwork.RaiseEvent
+                }
+            }
+            //if(PhotonNetwork.CurrentRoom != null)
+            //    Debug.Log("PlayerCount:" + PhotonNetwork.CurrentRoom.PlayerCount);
+            //if (PhotonNetwork.CurrentRoom != null)
+            //{
+            //    //Debug.Log("PlayerCount:" + PhotonNetwork.CurrentRoom.PlayerCount);
+            //    Debug.Log("MaxPlayers:" + PhotonNetwork.CurrentRoom.MaxPlayers);
+            //}
+
+
+            ////////////////////////////////////////////////////////////
         }
 
         void StartMatch()
@@ -176,14 +222,7 @@ namespace Zoca
 
         void InitRoomCustomProperties()
         {
-            //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchStateTimestamp, (float)PhotonNetwork.Time);
-            //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchState, (byte)MatchState.Paused);
-            //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchOldState, (byte)MatchState.None);
-            //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.MatchTimeElapsed, 0f);
-            //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.BlueTeamScore, (byte)0);
-            //RoomCustomPropertyUtility.AddOrUpdateCurrentRoomCustomProperty(RoomCustomPropertyKey.RedTeamScore, (byte)0);
-            //RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
-
+        
             ExitGames.Client.Photon.Hashtable ht = new ExitGames.Client.Photon.Hashtable();
             ht.Add(RoomCustomPropertyKey.MatchStateTimestamp, (float)PhotonNetwork.Time);
             ht.Add(RoomCustomPropertyKey.MatchState, (byte)MatchState.Paused);
@@ -243,29 +282,20 @@ namespace Zoca
                             Team t = (Team)PlayerCustomPropertyUtility.GetPlayerCustomProperty(PhotonNetwork.CurrentRoom.Players[key], PlayerCustomPropertyKey.TeamColor);
                             if (t == team)
                             {
-                                //other = PhotonNetwork.CurrentRoom.Players[key];
+                              
                                 if (PhotonNetwork.CurrentRoom.Players[key].ActorNumber > localActorNumber)
                                     localSpawnId++;
-                                //break;
+                           
                             };
 
                         }
 
                         if (team == Team.Blue)
                         {
-
-                            //int id = actorNumber % teamPlayers;
-                            //int id = 0;
-                            //if (other != null && localActorNumber > other.ActorNumber)
-                            //    id = 1;
                             spawnPoint = LevelManager.Instance.BlueTeamSpawnPoints[localSpawnId];
                         }
                         else
                         {
-                            //int id = actorNumber % (2 * teamPlayers);
-                            //int id = 0;
-                            //if (other != null && localActorNumber > other.ActorNumber)
-                            //    id = 1;
                             spawnPoint = LevelManager.Instance.RedTeamSpawnPoints[localSpawnId];
                         }
                         // Spawn local player on network
@@ -656,11 +686,82 @@ namespace Zoca
         }
 
 
-       
+
         #endregion
 
         #region public methods
 
+#if AI_SUPPORT
+        /// <summary>
+        /// Add a new ai to the match.
+        /// Returns the code of the new ai.
+        /// </summary>
+        public int AddAI(byte team)
+        {
+            // Get the next code
+            byte nextCode;
+           
+            if (!RoomCustomPropertyUtility.TryGetAINextCodeCustomProperty(out nextCode))
+            {
+                Debug.LogError("CustomRoomProperty " + RoomCustomPropertyKey.AINextCodeValue + " not found.");
+                return -1;
+            }
+           
+
+            byte aiCount;
+            if (!RoomCustomPropertyUtility.TryGetAICountCustomProperty(out aiCount))
+            {
+                Debug.LogError("CustomRoomProperty " + RoomCustomPropertyKey.AICount + " not found.");
+                return -1;
+            }
+
+            // First we update the code for safe
+            RoomCustomPropertyUtility.SetAINextCodeValueCustomProperty((byte)(nextCode + 1));
+
+            // Set the new ai
+            RoomCustomPropertyUtility.SetAITeamCustomProperty(nextCode, team);
+
+            // Update AI count
+            aiCount++;
+            RoomCustomPropertyUtility.SetAICountCustomProperty(aiCount);
+            RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
+            if (PhotonNetwork.CurrentRoom.PlayerCount + aiCount >= PhotonNetwork.CurrentRoom.MaxPlayers)
+            {
+                PhotonNetwork.CurrentRoom.IsOpen = false;
+                PhotonNetwork.CurrentRoom.IsVisible = false;
+            }
+
+            return nextCode;
+        }
+
+        /// <summary>
+        /// Remove a specific AI.
+        /// </summary>
+        /// <param name="code"></param>
+        /// <param name="team"></param>
+        public void RemoveAI(byte code)
+        {
+            byte aiCount;
+            if (!RoomCustomPropertyUtility.TryGetAICountCustomProperty(out aiCount))
+                throw new Exception("CustomRoomProperty " + RoomCustomPropertyKey.AICount + " not found.");
+
+            // Remove the ai
+            RoomCustomPropertyUtility.ResetAITeamCustomProperty(code);
+            // Update AI count
+            aiCount--;
+            RoomCustomPropertyUtility.SetAICountCustomProperty(aiCount);
+
+            RoomCustomPropertyUtility.SynchronizeCurrentRoomCustomProperties();
+
+            if (PhotonNetwork.CurrentRoom.PlayerCount + aiCount < PhotonNetwork.CurrentRoom.MaxPlayers)
+            {
+                PhotonNetwork.CurrentRoom.IsOpen = true;
+                PhotonNetwork.CurrentRoom.IsVisible = true;
+            }
+            
+
+        }
+#endif
         public void Pause()
         {
             if (inGame)
