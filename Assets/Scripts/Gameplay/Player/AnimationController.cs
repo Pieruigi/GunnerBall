@@ -95,11 +95,11 @@ namespace Zoca
         private void LateUpdate()
         {
 
-            AnimateTurnAround();
+            //AnimateTurnAround();
             
-            AnimateStrafe();
+            //AnimateStrafe();
             AnimateMotion();
-            AnimateAim();
+            //AnimateAim();
         }
 
         public void AnimateShoot(float speed)

@@ -422,16 +422,48 @@ namespace Zoca
 
                 // The current velocity takes into account some acceleration
                 float accMul = 1;
-                if (!cc.isGrounded)
+                //if (!cc.isGrounded)
+                if(!IsGrounded())
                 {
                     accMul *= 0.2f;
                     targetVelocity *= 0.5f;
                 }
-                    
-                
+
+                Debug.Log("IsGrounded:" + IsGrounded());
+
+                // Check if we are moving on a slope
+                bool onSlope = false;
+                if (IsGrounded())
+                {
+                    Vector3 origin = transform.position;
+                    int layer = LayerMask.GetMask(new string[] { Layer.Ground });
+                    RaycastHit info;
+                    if(Physics.Raycast(origin, Vector3.down, out info,  1, layer))
+                    {
+                        if(info.normal != Vector3.up)
+                        {
+                            onSlope = true;
+                            //Vector3 left = Vector3.Cross(info.normal, Vector3.up);
+                            //Debug.Log("Left:" + left);
+                            //Vector3 slopeDir = Vector3.Cross(left, info.normal);
+                            //Debug.DrawRay(transform.position, slopeDir * 10, Color.green);
+
+                            //float tSpeed = targetVelocity.magnitude;
+                            //targetVelocity = Vector3.Project(targetVelocity, slopeDir.normalized).normalized;
+                            //targetVelocity *= tSpeed;
+
+                            float tSpeed = targetVelocity.magnitude;
+                            targetVelocity = Vector3.ProjectOnPlane(targetVelocity, info.normal).normalized;
+                            targetVelocity *= tSpeed;
+                            
+                        }
+
+
+                    }
+                }
 
                 velocity = Vector3.MoveTowards(velocity, targetVelocity, Time.deltaTime * acceleration * accMul);
-
+                Debug.DrawRay(transform.position, velocity, Color.green);
 
                 if (/*freezed || */startPaused/* || jumping*/)
                 { 
@@ -439,10 +471,29 @@ namespace Zoca
                 }
 
 
+                
+                //if (!cc.isGrounded)
+                //{
+                //    if (!onSlope)
+                //        ySpeed += Physics.gravity.y * 1.5f * Time.deltaTime;
+                //    //Debug.LogFormat("PlayerController - Not grounded; ySpeed; {0}", ySpeed);
+
+                //}
+                //else
+                //{
+                //    // When player hits the ground we must reset vertical speed
+                //    if (ySpeed < 0 && !onSlope)
+                //        ySpeed = 0;
+
+                //    jumping = false;
+                //    //Debug.LogFormat("PlayerController - Grounded; ySpeed; {0}", ySpeed);
+                //}
+
                
 
                 // Set the vertical speed
-                velocity.y = ySpeed;
+                if(!onSlope || ySpeed > 0)
+                    velocity.y = ySpeed;
 
                 // Move the character controller
                 if(velocity != Vector3.zero)
@@ -451,27 +502,22 @@ namespace Zoca
                     cc.Move(velocity * Time.deltaTime);
                 }
 
-
                 // Gravity
-                if (!cc.isGrounded)
+                //if (cc.isGrounded)
+                if (!IsGrounded())
                 {
-                    
                     ySpeed += Physics.gravity.y * 1.5f * Time.deltaTime;
-                    //Debug.LogFormat("PlayerController - Not grounded; ySpeed; {0}", ySpeed);
                 }
                 else
                 {
-                    // When player hits the ground we must reset vertical speed
                     if (ySpeed < 0)
                         ySpeed = 0;
-
+                    
                     jumping = false;
-                    //Debug.LogFormat("PlayerController - Grounded; ySpeed; {0}", ySpeed);
                 }
 
-                
-                //Debug.Log("IsGrounded:" + (ySpeed==0));
-                
+               
+
                 //
                 // Check shooting
                 //
@@ -662,8 +708,9 @@ namespace Zoca
             {
                 velocity = Vector3.zero; 
                 targetVelocity = Vector3.zero;
-                
-                cc.Move(startPosition - transform.position);
+
+                //cc.Move(startPosition - transform.position);
+                cc.transform.position = startPosition;
                 transform.rotation = startRotation;
 
                 inGoalArea = false;

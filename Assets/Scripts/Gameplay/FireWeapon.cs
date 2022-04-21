@@ -147,6 +147,9 @@ namespace Zoca
             if (owner.IsGrounded())
                 return false;
 
+            if (!owner.Jumping)
+                return false;
+
             // Get player vertical velocity
             float verticalSpeed = owner.Velocity.y;
             if (Mathf.Abs(verticalSpeed) > 7)
