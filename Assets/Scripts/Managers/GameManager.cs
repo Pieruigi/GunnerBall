@@ -83,6 +83,7 @@ namespace Zoca
 
             // If the room is full we close and make it not visible, otherwise we set it
             // open and visible.
+            return;
             if (PhotonNetwork.IsMasterClient)
             {
                 byte aiCount = 0;
