@@ -165,13 +165,7 @@ namespace Zoca.UI
                         }
                     }
 
-                    //if (res.refreshRate == Screen.currentResolution.refreshRate && refreshRateId < 0)
-                    //{
-                    //    Debug.Log("Setting refreshrate id");
-                    //    refreshRateId = options.Count - 1;
-                    //    oldRefreshRateId = refreshRateId;
-                    //}
-                        
+                   
                 }
             }
             Debug.Log("setting refreshRateId:" + refreshRateId);

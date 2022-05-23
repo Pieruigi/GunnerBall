@@ -429,7 +429,7 @@ namespace Zoca
                     targetVelocity *= 0.5f;
                 }
 
-                Debug.Log("IsGrounded:" + IsGrounded());
+                
 
                 // Check if we are moving on a slope
                 bool onSlope = false;
