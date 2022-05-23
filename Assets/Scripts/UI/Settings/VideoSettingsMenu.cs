@@ -131,6 +131,7 @@ namespace Zoca.UI
             List<string> options = new List<string>();
             //int currentId = -1;
             refreshRateId = -1;
+            int delta = 0;
             foreach(Resolution res in Screen.resolutions)
             {
                 if(options.Find(r=>r.Equals(res.refreshRate.ToString())) == null)
@@ -138,17 +139,42 @@ namespace Zoca.UI
                     // Add new option
                     options.Add(res.refreshRate.ToString());
 
+                    Debug.Log("Adding new refresh rate:" + res.refreshRate.ToString());
+
                     // Check for the current refresh rate
-                    if (res.refreshRate == Screen.currentResolution.refreshRate &&
-                        refreshRateId < 0)
+                    Debug.Log("res.refreshRate:" + res.refreshRate);
+                    Debug.Log("cur.refreshRate:" + Screen.currentResolution.refreshRate);
+                    Debug.Log("refreshRateId:" + refreshRateId);
+                    
+                    if(refreshRateId < 0)
                     {
-                        refreshRateId = options.Count - 1;
+                        // Add the first refresh rate element
+                        refreshRateId = 0;
+                        delta = Mathf.Abs(int.Parse(options[refreshRateId]) - Screen.currentResolution.refreshRate);
                         oldRefreshRateId = refreshRateId;
                     }
+                    else
+                    {
+                        int currentId = options.Count - 1;
+                        int newDelta = Mathf.Abs(int.Parse(options[currentId]) - Screen.currentResolution.refreshRate);
+                        if(newDelta < delta)
+                        {
+                            delta = newDelta;
+                            refreshRateId = currentId;
+                            oldRefreshRateId = refreshRateId;
+                        }
+                    }
+
+                    //if (res.refreshRate == Screen.currentResolution.refreshRate && refreshRateId < 0)
+                    //{
+                    //    Debug.Log("Setting refreshrate id");
+                    //    refreshRateId = options.Count - 1;
+                    //    oldRefreshRateId = refreshRateId;
+                    //}
                         
                 }
             }
-
+            Debug.Log("setting refreshRateId:" + refreshRateId);
             refreshRateOption.SetOptions(options);
             refreshRateOption.SetCurrentOptionId(refreshRateId);
         }
