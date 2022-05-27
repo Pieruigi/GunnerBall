@@ -21,7 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Exagon_Moviment
-  m_Shader: {fileID: -6465566751694194690, guid: 4a084233e2197d7448caa4de699a4dfd, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 592934d6a9e8d0849a6c8d501d2f83eb, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 2
@@ -33,6 +33,14 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - GlowTexture:
+        m_Texture: {fileID: 2800000, guid: 2810dbc93087f3e4987cb9851ea12a27, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Mask:
+        m_Texture: {fileID: 10300, guid: 0000000000000000f000000000000000, type: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - Texture:
         m_Texture: {fileID: 2800000, guid: 4ff0403086f6bc54990dea4a8e6281ea, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -127,9 +135,15 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
+    - GlowColor: {r: 1.4676244, g: 0.03461378, b: 0.2781799, a: 0}
+    - GlowPower: {r: 2, g: 2, b: 0, a: 0}
+    - Speed: {r: 0.5, g: 0, b: 0, a: 0}
     - Tile: {r: 0.5, g: 0.5, b: 0, a: 0}
+    - TwirlStranch: {r: 10, g: 10, b: 0, a: 0}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 0.117511004, g: 0.015686274, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+    - dissolve: {r: 1, g: 1, b: 0, a: 0}
+    - scale: {r: 1, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []
