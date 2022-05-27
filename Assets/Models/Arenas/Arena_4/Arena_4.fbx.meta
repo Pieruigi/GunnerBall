@@ -3,7 +3,42 @@ guid: 2ea22cbd07fc95a4ab77cd0acd7eddcc
 ModelImporter:
   serializedVersion: 21202
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Floor_Platternmetal
+    second: {fileID: 2100000, guid: d8d1b8f2abfc24c42852ec908ebbdff8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Subplatternmetal
+    second: {fileID: 2100000, guid: aeb95343917e1594b817531c23ed867a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: blu_alluminium
+    second: {fileID: 2100000, guid: 1c0a3197c2896304c847ff645fcb440c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: glass
+    second: {fileID: 2100000, guid: c460b23df3665d54c95f85ffbc349722, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: red_alluminium
+    second: {fileID: 2100000, guid: dc92032926a9ce14f8c8c6c399c3845b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: shader
+    second: {fileID: 2100000, guid: 61f8777afac015044bf97ac7a584bd33, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: shader_red
+    second: {fileID: 2100000, guid: 95a95d14c65a624439048e0179c5d8e5, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
