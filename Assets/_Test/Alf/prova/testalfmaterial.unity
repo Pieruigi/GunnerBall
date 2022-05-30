@@ -275,10 +275,72 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &575109499
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 485ba65521bb9494f91aa0693c4f6a14, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 485ba65521bb9494f91aa0693c4f6a14, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 26.366013
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 485ba65521bb9494f91aa0693c4f6a14, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -138.1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 485ba65521bb9494f91aa0693c4f6a14, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -19.663605
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 485ba65521bb9494f91aa0693c4f6a14, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 485ba65521bb9494f91aa0693c4f6a14, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 485ba65521bb9494f91aa0693c4f6a14, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 485ba65521bb9494f91aa0693c4f6a14, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 485ba65521bb9494f91aa0693c4f6a14, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 485ba65521bb9494f91aa0693c4f6a14, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 485ba65521bb9494f91aa0693c4f6a14, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 485ba65521bb9494f91aa0693c4f6a14, type: 3}
+      propertyPath: m_Name
+      value: blocco
+      objectReference: {fileID: 0}
+    - target: {fileID: 4753796691765661336, guid: 485ba65521bb9494f91aa0693c4f6a14, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 95a95d14c65a624439048e0179c5d8e5, type: 2}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 485ba65521bb9494f91aa0693c4f6a14, type: 3}
 --- !u!1 &1126300001
 GameObject:
   m_ObjectHideFlags: 0
@@ -289,6 +351,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1126300003}
   - component: {fileID: 1126300002}
+  - component: {fileID: 1126300004}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -368,7 +431,28 @@ Transform:
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!114 &1126300004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1126300001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 1
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}

@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Exagon_Trasp
-  m_Shader: {fileID: -6465566751694194690, guid: 83a9df8cbb3e7434893c86207329c1d0, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 4a084233e2197d7448caa4de699a4dfd, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 2
@@ -20,6 +20,10 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - Texture:
+        m_Texture: {fileID: 2800000, guid: 4ff0403086f6bc54990dea4a8e6281ea, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _BaseMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -124,6 +128,7 @@ Material:
     - gradient_y: 4
     - shieldspeed: 0.17
     m_Colors:
+    - Tile: {r: 0.3, g: 0.3, b: 0, a: 0}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
